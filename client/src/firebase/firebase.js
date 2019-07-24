@@ -11,7 +11,6 @@ const config = {
 
 };
 
-
 try{
 	!firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
 }catch (e) {
