@@ -1,0 +1,14 @@
+{
+  "name": "bigfeather",
+  "version": "1.0.0",
+  "description": "big feather music portal",
+  "main": "index.js",
+  "author": "justice ndou",
+  "license": "y",
+  "private": true,
+  "dependencies": {
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.6.4",
+    "restify": "^8.3.3"
+  }
+}
