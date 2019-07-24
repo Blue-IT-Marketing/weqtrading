@@ -1,13 +1,13 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 const config = {
-apiKey: "AIzaSyBtzdAXIhZ0CWOwfSrJ8S0nFKt8fPNHvXU",
-	authDomain: "bigfeather.firebaseapp.com",
-	databaseURL: "https://bigfeather.firebaseio.com",
-	projectId: "bigfeather",
-	storageBucket: "bigfeather.appspot.com",
-	messagingSenderId: "1038866503460",
-	appId: "1:1038866503460:web:5fb05ca8648994ac"
+	apiKey: 'AIzaSyATnH54OeLn-T1c3D_clH2lo2FFz4IHRQA',
+	authDomain: 'p2ptraders-app.firebaseapp.com',
+	databaseURL: 'https://p2ptraders-app.firebaseio.com',
+	projectId: 'p2ptraders-app',
+	storageBucket: 'p2ptraders-app.appspot.com',
+	messagingSenderId: '339827645019'
+
 };
 
 

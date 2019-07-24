@@ -127,6 +127,24 @@ class myLocalStore {
         }
     };
 
+
+    // staleItemFound = async (seed,stateKey) => {
+    //         let stamp_2 = new Date();
+    //         stamp_2 = stamp_2.getTime();
+    //
+    //
+    //         const stamp_1 = await decrypt(localStorage.getItem(stateKey+'_timestamp'),seed);
+    //         let diff = parseInt(parseFloat(stamp_2) - parseFloat(stamp_1));
+    //
+    //         console.log('Here is the diff', diff);
+    //         if (diff > this.stale_period){
+    //             console.log('Item found',stateKey);
+    //             await localStorage.removeItem(stateKey);
+    //             await localStorage.removeItem(stateKey+'_timestamp');
+    //         }
+    //         return true;
+    // }
+
 };
 
 

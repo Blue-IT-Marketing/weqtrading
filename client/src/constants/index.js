@@ -1,12 +1,6 @@
 
+import * as program_constants from './program_constants';
 import * as routes from './routes';
+import {Utils} from './utilities';
 
-export {
-    routes
-};
-
-
-export const app_name = 'Big feather music portal';
-
-
-
+export { program_constants,routes,Utils};
