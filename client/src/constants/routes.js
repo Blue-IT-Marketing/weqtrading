@@ -1,15 +1,18 @@
 
-export const signup = '/signup';
+export const signup_page = '/signup';
 export const signin = '/signin';
 export const signout = '/signout';
 export const landing = '/';
-export const home = '/home';
+export const home_page = '/';
 
 export const admin = '/admin';
 export const account = '/account';
-export const password_forget = '/forget-pw';
-export const about = '/about';
-export const contact = '/contact';
+export const forget_password_page = '/forget-pw';
+export const about_page = '/about';
+export const contact_page = '/contact';
+export const blog_page = '/blog';
+export const login_page = '/login';
+export const profile_page = '/profile';
 export const chat = '/chat';
 
 export const employees = '/employees';

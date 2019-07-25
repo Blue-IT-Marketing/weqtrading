@@ -8,7 +8,6 @@ const config = {
 	storageBucket: "weqtrading.appspot.com",
 	messagingSenderId: "308547563709",
 	appId: "1:308547563709:web:def203ccd0d35c07"
-
 };
 
 try{

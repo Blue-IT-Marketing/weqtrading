@@ -1,0 +1,11 @@
+handlers:
+
+- url: /send_sms
+  login: admin
+  script: sms.app
+- url: /sentsms
+  script: sms.app
+
+- url: /replysms
+  script: sms.app
+
