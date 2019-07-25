@@ -18,11 +18,10 @@ import InlineMessage from "../../Forms/InlineMessage";
 class Login extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             showsignIn: true,
             signupText: 'SignUp',
-            showsideScreen: true,
+            showsideScreen: false,
 
         };
 
@@ -109,8 +108,8 @@ class SignInForm extends Component {
 
 
         // TODO- dispatch signin action here
-
-        this.props.onLogin(email, password);
+        doDispatchLoginUser(email, password);
+        // this.props.onLogin(email, password);
     };
 
     render() {
