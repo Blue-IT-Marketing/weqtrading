@@ -82,7 +82,7 @@ class Utilities {
         return age;
     };
     isIDNumber = (n) => {
-        return n !== undefined ? (isNumber(n)) && (n.length === 13) : true;
+        return n !== undefined ? (this.isNumber(n)) && (n.length === 13) : true;
     };
     numDaysBetweenDates = (firstDate, secondDate) => {
 
@@ -158,8 +158,6 @@ class Utilities {
             inDebounce = setTimeout(() => func.apply(context, args), delay)
         }
     };
-
-
 }
 
 // (today,url)
