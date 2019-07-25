@@ -17,12 +17,11 @@ handlers:
 
 - url: /static
   static_dir: templates/static
-
 - url: /
   script: main.app
-
 - url: .*
   script: main.app
+
 libraries:
 - name: webapp2
   version: "2.5.2"
