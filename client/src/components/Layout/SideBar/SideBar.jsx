@@ -18,7 +18,7 @@ export default function SideBar (){
                  
           <div className="user-panel">
               <div className="pull-left image">
-                  <img src="/static/dist/img/sms.jpeg" id="strSideUserImageID" className="img-circle" alt="Big-Feather" />
+                  <img src="/static/dist/img/sms.jpeg" id="strSideUserImageID" className="img-circle" alt="Weq-Trading" />
               </div>
                 <div className="pull-left info">
                   <p id="strSideUserNameID"><Link to={routes.login_page}>Please Login</Link></p>
