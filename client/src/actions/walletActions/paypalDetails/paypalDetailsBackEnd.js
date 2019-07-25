@@ -1,5 +1,5 @@
 import {localStorageKey} from '../../../constants/program_constants';
-import {myStore} from '../../../localStorage';
+import {myStore} from '../../../localstorage';
 import Axios from 'axios';
 import {paypal_account_details} from '../../../types';
 

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route} from 'react-router-dom';
 
 import {routes} from '../../constants';
 
+
 import Header from '../Layout/Header/Header';
 import Home from '../Home/Home';
 import About from '../About/About';
@@ -35,6 +36,7 @@ export default function App () {
 							<Route path={routes.signup_page} component={Signup} />
 							<Route path={routes.forget_password_page} component={Forget} />
 							<Route path={routes.market_page} component={Market} />
+
 						</section>
 					</section>
 				</div>

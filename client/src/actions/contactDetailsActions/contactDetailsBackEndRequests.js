@@ -1,4 +1,4 @@
-import {myStore} from '../../localStorage';
+import {myStore} from '../../localstorage';
 import {localStorageKey} from '../../constants/program_constants';
 
 import {

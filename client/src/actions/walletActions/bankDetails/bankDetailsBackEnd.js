@@ -10,8 +10,8 @@
 
 import {localStorageKey} from '../../../constants/program_constants';
 import Axios from 'axios';
-import {myStore} from '../../../localStorage';
-import {Utils} from '../../../constants/utilities';
+import {myStore} from '../../../localstorage';
+import {Utils} from '../../../utilities';
 import {bank_account_errors_details} from '../../../types';
 
 export const doSaveBankAccountDetails = async user_bank_account_details => {

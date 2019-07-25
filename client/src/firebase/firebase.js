@@ -1,13 +1,13 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 const config = {
- 	apiKey: "AIzaSyBtzdAXIhZ0CWOwfSrJ8S0nFKt8fPNHvXU",
- 	authDomain: "bigfeather.firebaseapp.com",
- 	databaseURL: "https://bigfeather.firebaseio.com",
- 	projectId: "bigfeather",
- 	storageBucket: "bigfeather.appspot.com",
- 	messagingSenderId: "1038866503460",
- 	appId: "1:1038866503460:web:5fb05ca8648994ac"
+ apiKey: "AIzaSyBRJIk9O1Y8CAh9pQ9tKy9hPkDHnI4hjEc",
+ 	authDomain: "weqtrading.firebaseapp.com",
+ 	databaseURL: "https://weqtrading.firebaseio.com",
+ 	projectId: "weqtrading",
+ 	storageBucket: "weqtrading.appspot.com",
+ 	messagingSenderId: "308547563709",
+ 	appId: "1:308547563709:web:def203ccd0d35c07"
 };
 
 try{
