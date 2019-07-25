@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {Link } from 'react-router-dom';
+import { routes } from '../../constants';
 
 
 export default function Home (){
@@ -11,7 +12,7 @@ export default function Home (){
 
 					<div className='box-tools'>
 
-						<button className='btn btn-box-tool'><strong> <i className='fa fa-shopping-bag'> </i> Market Place </strong> </button>
+            <button className='btn btn-box-tool'><Link to={routes.market_page}><strong> <i className='fa fa-shopping-bag'> </i> Market Place </strong> </Link></button>
 					</div>
 
 				</div>

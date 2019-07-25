@@ -11,6 +11,7 @@ export const download_page = '/download';
 export const profile_page = '/profile';
 
 export const blog_page = '/blog';
+export const market_page = '/market';
 
 export const admin_page = '/admin/user/'; // + userid
 export const dashboard_page = '/dashboard'; // site owner and administrator only
