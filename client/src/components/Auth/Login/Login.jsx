@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { NavLink, Link } from 'react-router-dom';
 
 import Signup  from '../Signup/Signup';
 import * as routes from '../../../constants/routes';
@@ -46,36 +46,18 @@ class Login extends Component {
     };
 
     render() {
-        return (
-
-            <div className="sign-in">
-                <div className="row">
-                    <div className="col-md-3">
-                        <div className="box box-header">
-                            <h3 className="box-title"> <strong> <i className="fa fa-sign-in"> </i> Login </strong></h3>
-                        </div>
-                        <button className="btn btn-success btn-lg"
-                            onClick={e => this.showSignUp(e)}>
-                            <strong> <i className="fa fa-arrow-right"> </i> {this.state.signupText}</strong>
-                        </button>
-                    </div>
-                    <div className="col-md-9">
-                        {
-                            (this.state.showsignIn) ?
-                                <div>
-                                    <SignInForm
+        return ( 
+             this.state.showsignIn ? <SignInForm
                                         user={this.props.user}
                                         user_errors={this.props.user_errors}
                                         form_response={this.props.form_response}
                                         response_code={this.props.response_code}
+                                        onLogin={this.props.onLogin}
+                                        showSignUp={this.showSignUp}
                                     />
-                                </div>
-                                : <Signup />
-                        }
-                    </div>
-                </div>
-
-            </div>
+                                
+                : <Signup ShowLogin={this.showSignUp} />
+            
         )
     }
 };
@@ -108,8 +90,8 @@ class SignInForm extends Component {
 
 
         // TODO- dispatch signin action here
-        doDispatchLoginUser(email, password);
-        // this.props.onLogin(email, password);
+        //doDispatchLoginUser(email, password);
+        this.props.onLogin(email, password);
     };
 
     render() {
@@ -121,7 +103,7 @@ class SignInForm extends Component {
         } = this.props;
 
         return (
-            <div className="box box-primary col-lg-6">
+            <div className="box box-body">
 
                 <div className="box box-header">
                     <h3 className="box-title">
@@ -164,9 +146,16 @@ class SignInForm extends Component {
                                 //disabled={isInvalid}
                                 type="signup"
                                 className="btn btn-primary btn-lg"
+                                onClick={e => this.props.showSignUp(e)}
                             >
                                 <strong> <i className="fa fa-sign-out"> </i> Sign Up</strong>
                             </button>
+                            <Link to={routes.forget_password_page}><button
+                                type='button'
+                                className='btn btn-warning btn-lg'
+                                
+                            ><strong> <i className='fa fa-pencil'> </i> Forget Password </strong>                            
+                            </button></Link>
                         </div>
                         <div className={'form-group'}>
                             {(form_response) ? <InlineMessage message={form_response} /> : ''}

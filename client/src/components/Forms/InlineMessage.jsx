@@ -12,8 +12,8 @@ class InlineMessage extends Component {
 		return (
 			<div className={'box-info'}>
 				<div className={'box box-header'}>
-					<h3 className={'box-title btn-outline-info'}><small><strong> <i className={'fa fa-server'}> </i> Response </strong></small></h3>
-					<div className={'box-tools pull-left'}>
+					
+					<div className={'box-tools'}>
 						<button
 							type={'button'}
 							className={'box-title btn-outline-info btn-lg'}
