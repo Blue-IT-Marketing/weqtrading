@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {Component, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {routes} from '../../../constants';
@@ -45,18 +45,54 @@ const SideBarMenuNonAuth = () => {
 	) 
 }
 
-export default function MenuItems (props) {
-	const [user, setLoggedIn] = useState({user:''})
-	return (
-		<div>
-			{
-				user.isLoggedIn ? <SideBarMenuAuth /> : <SideBarMenuNonAuth />
-			}
-        
-		</div>
-	)
+
+
+export default class MenuItems extends Component {
+
+	isUserLoggedIN(){
+		return true
+	}
+	render() {
+		console.log('THIS PROPS',this.props);
+		return (
+			<div>
+				{
+					this.isUserLoggedIN() ? <SideBarMenuAuth /> : <SideBarMenuNonAuth />
+				}
+
+			</div>
+		)
+	}
 }
+
 
 MenuItems.propTypes = {
+	user: PropTypes.shape({
+		uid: PropTypes.string.isRequired,
+		displayName: PropTypes.string,
+		photoURL: PropTypes.string,
+		email: PropTypes.string,
+		password: PropTypes.string,
+		emailVerified: PropTypes.bool,
+		phoneNumber: PropTypes.string,
+		isAnonymous: PropTypes.bool,
+		providerId: PropTypes.string,
+
+		signing_in: PropTypes.bool.isRequired,
+		user_signed_in: PropTypes.bool.isRequired,
+		user_deleted: PropTypes.bool.isRequired,
+		password_changed: PropTypes.bool.isRequired,
+		email_verification_sent: PropTypes.bool.isRequired,
+		onetime_pin_sent: PropTypes.bool.isRequired,
+
+	}),
 
 }
+
+
+const mapStateToProps = (state) => {
+	return {
+		user: state.profile.account_details.user_account,
+		
+	}
+};
