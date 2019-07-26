@@ -116,7 +116,7 @@ class SignInForm extends Component {
                         <div className="form-group">
                             <input className="form-control"
                                 name={'email'}
-                                value={user.email}
+                                value={this.state.email}
                                 onChange={e => this.onChangeHandler(e)}
                                 type="text"
                                 placeholder="Email Address"
@@ -127,7 +127,7 @@ class SignInForm extends Component {
                         <div className="form-group">
                             <input className="form-control"
                                 name={'password'}
-                                value={user.password}
+                                value={this.state.password}
                                 onChange={e => this.onChangeHandler(e)}
                                 type="password"
                                 placeholder="Password"
