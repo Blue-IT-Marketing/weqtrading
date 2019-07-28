@@ -14,4 +14,6 @@ export const blog_page = '/blog';
 export const market_page = '/market';
 
 export const admin_page = '/admin/user/'; // + userid
+export const shopping_basket_page = '/admin/user/shopping-basket';
+
 export const dashboard_page = '/dashboard'; // site owner and administrator only

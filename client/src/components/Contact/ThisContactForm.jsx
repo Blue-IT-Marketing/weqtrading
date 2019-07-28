@@ -62,7 +62,7 @@ class ThisContactForm extends Component {
         console.log(data);
         let self = this;
 
-        axios.post("/api/contact/submit-contact-form","data=" + data).then( function(response){
+        axios.post("/api/contact","&data=" + data).then( function(response){
             if (response.status === 200){
                 return response.data;
             }

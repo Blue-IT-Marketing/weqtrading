@@ -184,7 +184,7 @@ Login.propTypes = {
         isAnonymous: PropTypes.bool,
         providerId: PropTypes.string,
 
-        signing_in: PropTypes.bool.isRequired,
+        signing_in: PropTypes.bool,
         user_signed_in: PropTypes.bool.isRequired,
         user_deleted: PropTypes.bool.isRequired,
         password_changed: PropTypes.bool.isRequired,
@@ -200,7 +200,7 @@ Login.propTypes = {
         phoneNumber_error: PropTypes.string
     }),
     form_response: PropTypes.string,
-    response_code: PropTypes.number
+    response_code: PropTypes.string
 
 };
 
