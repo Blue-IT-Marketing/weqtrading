@@ -1,7 +1,7 @@
 import {USER_ACCOUNT_ACTIONS} from '../../actions';
 import {account_details_type, account_details_type_error} from '../../types';
 
-let UserAccountInitState = {
+export let UserAccountInitState = {
 	user_account : {...account_details_type},
 	user_account_errors : {...account_details_type_error},
 	form_response: '',

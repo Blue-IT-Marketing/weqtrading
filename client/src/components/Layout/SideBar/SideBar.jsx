@@ -1,44 +1,54 @@
-import React, { Fragment } from 'react';
+import React, { Fragment,useContext } from 'react';
 import { Link } from 'react-router-dom';
 import MenuItems from '../MenuItems/MenuItems';
 import { routes } from '../../../constants';
+import { LoginContext } from '../../App/MyApp';
 
 export default function SideBar (){
+	const loginContext = useContext(LoginContext);
+	console.log('Hello from context',loginContext);
+  
+	let onSearch = e => {    
+		e.preventDefault();
+		console.log('Searching site...');
+		// Remember to clear search field      
+	};
 
-  let onSearch = e => {
-      e.preventDefault();
-      console.log('Searching site...');
-      // Remember to clear search field      
-  }
-
-  return (
-    <Fragment>    
-      <aside className="main-sidebar">      
-        <section className="sidebar"> 
+	return (
+		<Fragment>    
+			<aside className="main-sidebar">      
+				<section className="sidebar"> 
                  
-          <div className="user-panel">
-              <div className="pull-left image">
-                  <img src="/static/dist/img/sms.jpeg" id="strSideUserImageID" className="img-circle" alt="Weq-Trading" />
-              </div>
-                <div className="pull-left info">
-                  <p id="strSideUserNameID"><Link to={routes.login_page}>Please Login</Link></p>
-                </div>
-              </div>
+					<div className="user-panel">
+						<div className="pull-left image">
+							<img src="/static/dist/img/sms.jpeg" id="strSideUserImageID" className="img-circle" alt="Weq-Trading" />
+						</div>
+						<div className="pull-left info">
+							{/* use dispatch to check the login state */}
+							{
+								(loginContext.userState.user_account.uid === '') ?
+									<p id="strSideUserNameID"><Link to={routes.login_page}>Please Login</Link></p>
+									:
+									<p id="strSideUserNameID"><Link to={routes.logout_page}>Logout</Link></p>
+							}
+							
+						</div>
+					</div>
 
-              <form onSubmit={e => onSearch(e)} method="get" className="sidebar-form">
-                <div className="input-group">
-                  <input type="text" name="q" className="form-control" placeholder="Search..." />
-                    <span className="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" className="btn btn-flat"><i className="fa fa-search"></i></button>
-                    </span>
-                  </div>
-              </form>
+					<form onSubmit={e => onSearch(e)} method="get" className="sidebar-form">
+						<div className="input-group">
+							<input type="text" name="q" className="form-control" placeholder="Search..." />
+							<span className="input-group-btn">
+								<button type="submit" name="search" id="search-btn" className="btn btn-flat"><i className="fa fa-search"></i></button>
+							</span>
+						</div>
+					</form>
 
-              <ul className="sidebar-menu">
-                      <MenuItems />
-              </ul>
-        </section>      
-      </aside>
-    </Fragment>
-  )
+					<ul className="sidebar-menu">
+						<MenuItems />
+					</ul>
+				</section>      
+			</aside>
+		</Fragment>
+	);
 }

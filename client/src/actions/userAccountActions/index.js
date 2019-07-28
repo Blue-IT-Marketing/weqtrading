@@ -5,6 +5,7 @@ import {account_details_type} from '../../types';
 export const USER_ACCOUNT_ACTIONS = {
 	USER_LOGGED_IN : 'USER:USER_LOGGED_IN',
 	USER_SIGNED_OUT: 'USER:USER_SIGNED_OUT',
+	USER_LOGIN_STATUS : 'USER:USER_LOGIN_STATUS',
 	CREATE_USER : 'USER:CREATE_USER',
 	LOGIN_USER : 'USER:LOGIN_USER',
 	LOGOUT_USER : 'USER:LOGOUT_USER',
@@ -13,6 +14,8 @@ export const USER_ACCOUNT_ACTIONS = {
 	SEND_VERIFICATION_EMAIL : 'USER:SEND_VERIFICATION_EMAIL',
 	SEND_ONETIME_PIN : 'USER:SEND_ONETIME_PIN'
 };
+
+
 
 export const doDispatchUserSignedIn = (user) => {
 	let user_account = {...account_details_type};
@@ -34,6 +37,16 @@ export const doDispatchUserSignedOut = (user) => {
 		});
 	};
 };
+
+
+export const doDispatchLoginStatus = () => {
+	return dispatch => {
+		dispatch({
+			type:USER_ACCOUNT_ACTIONS.USER_LOGIN_STATUS,
+		})
+	}
+}
+
 
 export const doDispatchCreateUser =  (username,password) => {
 	return dispatch => {

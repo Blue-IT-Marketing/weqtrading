@@ -22,6 +22,12 @@ export const doCreateUserWithEmailAndPassword = async  (username, password) => {
 	return result;
 };
 
+export const doCheckIfUserLoggedIN = async () => {
+	let result;
+	try{
+		let user = firebase.currentUser
+	}
+}
 
 // Sign In
 export const doSignInWithEmailAndPassword = async (username, password) => {
