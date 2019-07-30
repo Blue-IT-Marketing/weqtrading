@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {routes} from '../../../constants';
 import {firebase,auth} from '../../../firebase';
+import { UserAccountContext } from "../../../context/UserAccount/userAccountContext";
 const SideBarMenuAuth = () => {
 	return (
 		<ul className="sidebar-menu">
@@ -45,7 +46,7 @@ const SideBarMenuAuth = () => {
 			<li>
 				<Link
 					to={routes.blog_page}
-					title="Bulk Messaging &amp; Contact Management Blog"
+					title="Weq Trading Blog"
 				>
 					<i className="fa fa-book"> </i> <strong>Blog</strong>
 				</Link>
@@ -53,6 +54,11 @@ const SideBarMenuAuth = () => {
 			<li>
 				<Link to={routes.dashboard_page} title="Dashboard">
 					<i className="fa fa-dashboard"> </i> <strong>Dashboard</strong>
+				</Link>
+			</li>
+			<li>
+				<Link to={routes.logout_page} title='Logout'>
+					<i className='fa fa-sign-out'> </i> <strong> Logout </strong>
 				</Link>
 			</li>
 		</ul>
@@ -99,13 +105,21 @@ export default class MenuItems extends Component {
 	render() {
 		
 		return (
-			<div>
-				{
-					this.state.user_logged_in ? <SideBarMenuAuth /> : <SideBarMenuNonAuth />
-				}
-
-			</div>
-		)
+      <UserAccountContext.Consumer>{(context) => {
+			  const { doLogin, user_account_state } = context;
+			  console.log('SIDEBAR',user_account_state.user_account);
+			return (
+        <div>
+          {user_account_state.user_account.uid ? (
+            <SideBarMenuAuth />
+          ) : (
+            <SideBarMenuNonAuth />
+          )}
+        </div>
+      );
+	  }}
+      </UserAccountContext.Consumer>
+    );
 	}
 }
 
