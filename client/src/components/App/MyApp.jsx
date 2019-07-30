@@ -16,40 +16,46 @@ import Market from '../Market/Market';
 
 
 import UserAccountContextProvider from '../../context/UserAccount/userAccountContext';
+import Dashboard from '../Dashboard/Dashboard';
+import Blog from '../Blog/Blog';
+import Account from '../Account/Account';
+import Shopping from '../Shopping/Basket';
 
 export default function App () {
 	
 	
 	return (
-		<UserAccountContextProvider>
-			console.log(value.)
-			<Fragment>
-				<Router>
-					{/* Header  Component*/}
-					<Header/>
-					{/* Sidebar Component */}
-					<SideBar />
-					{/* Body and Main Page Routes */}
-					<div className="content-wrapper">            
-						<section className="content-header">              
-							<section className="content">
-								<Route exact path={routes.home_page} component={Home} />
-								<Route exact path={routes.about_page} component={About} />
-								<Route exact path={routes.contact_page} component={Contact} />
-								<Route path={routes.profile_page} component={Profile} />
-								<Route path ={routes.login_page} component={Login} />
-								<Route path={routes.logout_page} component={Logout} />
-								<Route path={routes.signup_page} component={Signup} />
-								<Route path={routes.forget_password_page} component={Forget} />
-								<Route path={routes.market_page} component={Market} />
-
-							</section>
-						</section>
-					</div>
-					{/* Footer Component  */}
-					<Footer/>  
-				</Router>       
-			</Fragment>
-		</UserAccountContextProvider>
-	)
+    <UserAccountContextProvider>
+      console.log(value.)
+      <Fragment>
+        <Router>
+          {/* Header  Component*/}
+          <Header />
+          {/* Sidebar Component */}
+          <SideBar />
+          {/* Body and Main Page Routes */}
+          <div className="content-wrapper">
+            <section className="content-header">
+              <section className="content">
+                <Route exact path={routes.home_page} component={Home} />
+                <Route exact path={routes.about_page} component={About} />
+                <Route exact path={routes.contact_page} component={Contact} />
+                <Route path={routes.login_page} component={Login} />
+                <Route path={routes.logout_page} component={Logout} />
+                <Route path={routes.signup_page} component={Signup} />
+                <Route path={routes.forget_password_page} component={Forget}/>
+                <Route path={routes.market_page} component={Market} />
+                <Route path={routes.blog_page} component={Blog} />
+                <Route path={routes.dashboard_page} component={Dashboard} />
+                <Route exact path={routes.admin_page} component={Account} />
+				<Route path={routes.shopping_basket_page} component={Shopping} />
+              </section>
+            </section>
+          </div>
+          {/* Footer Component  */}
+          <Footer />
+        </Router>
+      </Fragment>
+    </UserAccountContextProvider>
+  );
 };

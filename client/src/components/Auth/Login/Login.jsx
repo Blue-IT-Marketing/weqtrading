@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useContext, useRef,useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,Redirect ,navigate} from "react-router-dom";
 import { routes } from "../../../constants";
 
 
@@ -85,7 +85,11 @@ export default function Login() {
                     type="button"
                     className="btn btn-success btn-lg"
                     ref={submitRef}
-                    onClick={e => context.doLogin(username,password)}
+                    onClick={e => {
+                      doLogin(username,password);
+                      //navigate("/", true);
+                    }
+                    }
                   >
                     <strong>
                       <i className="fa fa-sign-in"> </i> Login

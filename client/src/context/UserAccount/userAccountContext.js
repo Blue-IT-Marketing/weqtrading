@@ -5,7 +5,7 @@ import userAccountReducer, {
 } from '../../reducers/profileReducers/accountDetailsReducer';
 
 import {
-  loginUser
+  loginUser, logOutUser
 } from './actions';
 
 export const UserAccountContext = createContext();
@@ -15,6 +15,13 @@ export default class UserAccountContextProvider extends Component {
     doLogin = async (username,password) => {
       let user_account_state = await loginUser(username,password);
       this.setState({user_account_state})
+    }
+
+    doLogout = async() => {
+      let user_account_state = await logOutUser();
+      this.setState({
+        user_account_state
+      })
     }
 
     onChange = (user) => {
@@ -39,7 +46,11 @@ export default class UserAccountContextProvider extends Component {
 
   render() {
     return (
-      <UserAccountContext.Provider value = {{...this.state,doLogin:this.doLogin}}>
+      < UserAccountContext.Provider value = {
+        {
+          ...this.state,doLogin: this.doLogin,doLogout:this.doLogout
+        }
+      } >
                 {this.props.children}
       </UserAccountContext.Provider>              
     )

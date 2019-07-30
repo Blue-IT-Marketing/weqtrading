@@ -43,3 +43,42 @@ export let loginUser = async (username, password) => {
     console.dir('USER ACCOUNT STATE',user_account_state);
     return {...user_account_state};
 }
+
+
+
+
+export let logOutUser = async() => {
+        let user_account_state = {
+            ...UserAccountInitState
+        };
+        let user_account;
+        let form_response;
+        let response_code;
+
+    await auth.doSignOut().then(result => {
+        if (result.status === true){
+                user_account = {
+                    ...account_details_type
+                };
+                form_response = 'User Logout Successfully';
+                response_code = 200;
+                }
+                else {
+                    user_account = {
+                        ...account_details_type
+                    };
+                    form_response = result.error.message;
+                    response_code = result.error.code;
+                }
+    });
+    user_account_state.user_account = {
+        ...user_account
+    };
+    user_account_state.form_response = form_response;
+    user_account_state.response_code = response_code;
+    console.dir('USER ACCOUNT STATE', user_account_state);
+    return {
+        ...user_account_state
+    };
+
+}

@@ -8,7 +8,7 @@ export const logout_page = '/logout';
 export const signup_page = '/signup';
 export const forget_password_page ='/forget';
 export const download_page = '/download';
-export const profile_page = '/profile';
+export const account_page = '/account';
 
 export const blog_page = '/blog';
 export const market_page = '/market';
