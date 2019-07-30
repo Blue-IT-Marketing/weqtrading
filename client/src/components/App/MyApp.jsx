@@ -13,6 +13,7 @@ import SideBar from '../Layout/SideBar/SideBar';
 import Footer from '../Layout/Footer/Footer';
 import Forget from '../Auth/Forget/Forget';
 import Market from '../Market/Market';
+import MyMarket from '../Market/MyMarket';
 
 
 import UserAccountContextProvider from '../../context/UserAccount/userAccountContext';
@@ -43,12 +44,23 @@ export default function App () {
                 <Route path={routes.login_page} component={Login} />
                 <Route path={routes.logout_page} component={Logout} />
                 <Route path={routes.signup_page} component={Signup} />
-                <Route path={routes.forget_password_page} component={Forget}/>
+                <Route
+                  path={routes.forget_password_page}
+                  component={Forget}
+                />
                 <Route path={routes.market_page} component={Market} />
                 <Route path={routes.blog_page} component={Blog} />
                 <Route path={routes.dashboard_page} component={Dashboard} />
                 <Route exact path={routes.admin_page} component={Account} />
-				<Route path={routes.shopping_basket_page} component={Shopping} />
+                <Route
+                  exact
+                  path={routes.shopping_basket_page}
+                  component={Shopping}
+                />
+                <Route
+                  path={routes.my_market_products}
+                  component={MyMarket}
+                />
               </section>
             </section>
           </div>
