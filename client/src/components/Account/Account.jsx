@@ -1,4 +1,4 @@
-import React,{Fragment,useState,useEffect} from 'react'
+import React,{Fragment,useState,useEffect} from 'react';
 
 
 function Verifications(){
@@ -53,6 +53,21 @@ function AccountSettings(){
                 </small>{" "}
               </strong>
             </h3>
+          </div>
+          <div className="box-footer">
+            <form className="form-horizontal">
+              <div className="form-group">
+                <div className="input-group">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    checked
+                    name="account_active"
+                  />
+                  <label className='layout layout-boxed'> Account Active </label>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </Fragment>
