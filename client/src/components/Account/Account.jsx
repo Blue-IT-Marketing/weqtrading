@@ -1,21 +1,85 @@
 import React,{Fragment,useState,useEffect} from 'react'
 
 
+function Verifications(){
+    const[verifications,setVerifications] = useState({        
+            active : true,
+            cell : '',
+            lastVerified : ''})
+
+    return (
+      <Fragment>
+        <div className="box box-body">
+          <div className="box-header">
+            <h3 className="box-title">
+              <strong>
+                {" "}
+                <small>
+                  <i className="fa fa-lock"> </i>
+                  Verifications{" "}
+                </small>
+              </strong>
+            </h3>
+          </div>
+          <div className='box-footer'>
+            <form className='form-horizontal'>
+              <div className='form-group'>
+                
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </Fragment>
+    );
+}
+
+
+function AccountSettings(){
+    const[accountSettings,setAccountSettings] = useState({
+        account_active: true,
+        receive_job_offers:true,
+        receive_sms:true        
+    });
+
+    return (
+      <Fragment>
+        <div className="box box-body">
+          <div className="box-header">
+            <h3 className="box-title">
+              <strong>
+                <small>
+                  <i className="fa fa-cogs"> </i> Account Settings{" "}
+                </small>{" "}
+              </strong>
+            </h3>
+          </div>
+        </div>
+      </Fragment>
+    );
+}
+
 function PersonalDetails(){
+    // use context here
     return (
       <div className="box box-body">
         <div className="box-header">
           <h3 className="box-title">
-            <strong> <i className='fa fa-user'> </i> {" "} Personal Details</strong>
+            <strong>
+              <small>
+                {" "}
+                <i className="fa fa-user"> </i> Personal Details{" "}
+              </small>
+            </strong>
           </h3>
         </div>
 
-        <div className="box-footer">
+        <div className="box-footer col-lg-8">
           <form className="form-horizontal">
             <div className="form-group">
               <input
                 type="text"
-                className="from-control"
+                className="form-control"
                 name="names"
                 placeholder="Names..."
               />
@@ -23,7 +87,7 @@ function PersonalDetails(){
             <div className="form-group">
               <input
                 type="text"
-                className="from-control"
+                className="form-control"
                 name="surname"
                 placeholder="Surname..."
               />
@@ -31,7 +95,7 @@ function PersonalDetails(){
             <div className="form-group">
               <input
                 type="text"
-                className="from-control"
+                className="form-control"
                 name="cell"
                 placeholder="Cell..."
               />
@@ -39,7 +103,7 @@ function PersonalDetails(){
             <div className="form-group">
               <input
                 type="text"
-                className="from-control"
+                className="form-control"
                 name="email"
                 placeholder="Email..."
               />
@@ -71,15 +135,21 @@ function PersonalDetails(){
 }
 
 export default function Account (){
-    const[display,setDisplay] = useState({display:''});
+    const [display, setDisplay] = useState("personaldetails");
     
-    let onChangeHandler = (e) => {
+    let onSwitchScreen = (e) => {
+
         setDisplay(e.target.name);
+        console.log(display);
+        
     }
 
-    useEffect(() => {      
-        setDisplay('personal-details');      
+    
+    useEffect(() => {
+      console.log(display);
     }, [])
+    
+
   return (
     <Fragment>
       <div className="box box-body">
@@ -93,37 +163,39 @@ export default function Account (){
             <button
               type="button"
               className="btn btn-box-tool"
-              name="personal-details"
-              onClick={e => onChangeHandler(e)}
+              name="personaldetails"
+              onClick={e => onSwitchScreen(e)}
             >
-              <strong>
+              
                 <i className="fa fa-user"> </i> Personal Details
-              </strong>
+              
             </button>
             <button
               type="button"
               className="btn btn-box-tool"
-              name="account-settings"
-              onClick={e => onChangeHandler(e)}
+              name="accountsettings"
+              onClick={e => onSwitchScreen(e)}
             >
-              <strong>
+              
                 <i className="fa fa-cogs"> </i> Account Settings
-              </strong>
+              
             </button>
             <button
               type="button"
               className="btn btn-box-tool"
               name="verifications"
-              onClick={e => onChangeHandler(e)}
+              onClick={e => onSwitchScreen(e)}
             >
-              <strong>
+              
                 <i className="fa fa-lock"> </i> Verifications
-              </strong>
+              
             </button>
           </div>
         </div>
 
-        {display === "personal-details" ? <PersonalDetails /> : ""}
+        {display === "personaldetails" ? <PersonalDetails /> : ""}
+        {display === "accountsettings" ? <AccountSettings /> : ""}
+        {display === "verifications" ? <Verifications /> : ""}
       </div>
     </Fragment>
   );
