@@ -1,17 +1,40 @@
 
-import React,{Fragment} from 'react'
+import React,{Fragment, useState,useEffect} from 'react'
 
 function BlogHome(){
-    return(
-        <Fragment>
-            <div className='box box-body'>
-                <div className='box-header'>
-                    <h3 className='box-title'><strong> Blog Home</strong></h3>
-                </div>
-                <BlogPost/>
-            </div>
-        </Fragment>
-    )
+    const [posts,setPosts] = useState({posts:[]});
+
+    useEffect(() => {
+      return () => {
+        
+      };
+    }, [])
+
+    return (
+      <Fragment>
+        <div className="box box-body">
+          <div className="box-header">
+            <h3 className="box-title">
+              <strong> Blog Home</strong>
+            </h3>
+          </div>
+          <div className="row">
+              <div className="col-lg-3">
+                <BlogPost />
+              </div>
+              <div className="col-lg-3">
+                <BlogPost />
+              </div>
+              <div className="col-lg-3">
+                <BlogPost />
+              </div>
+              <div className="col-lg-3">
+                <BlogPost />
+              </div>
+          </div>
+        </div>
+      </Fragment>
+    );
 }
 
 

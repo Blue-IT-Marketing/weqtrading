@@ -7,9 +7,9 @@ export default function Shopping () {
             <div className='box-header'>
                 <h3 className='box-title'>
                     <strong> 
-                        <i className='fa fa-shopping-basket'> </i>
+                        <i className='fa fa-shopping-cart'> </i>
                         {" "}
-                        Shopping Basket
+                        Shopping Cart
                         
                     </strong>
                 </h3>

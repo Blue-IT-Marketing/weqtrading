@@ -13,7 +13,9 @@ export default function Logout() {
             <Fragment>
               <div className="box box-body">
                 <div className="box box-header">
-                  <h3 className="box-title">Logout</h3>
+                  <h3 className="box-title">
+                    <i className="fa fa-sign-out"> </i> Logout
+                  </h3>
                 </div>
 
                 <form className="form-horizontal">
@@ -23,10 +25,11 @@ export default function Logout() {
                       className="btn btn-danger"
                       name="logout"
                       onClick={e => {
-                          doLogout();
-                          //navigate("/", true);
-                        } }
+                        doLogout();
+                        //navigate("/", true);
+                      }}
                     >
+                      <i className="fa fa-sign-out"> </i>{" "}
                       <strong> Logout </strong>
                     </button>
                   </div>

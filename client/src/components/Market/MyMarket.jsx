@@ -7,7 +7,8 @@ export default function MyMarket (){
               <div className='box-header'>
                   <h3 className='box-title'>
                       <strong>
-                          <i className='fa fa-shopping-cart'> </i>
+                          <i className='fa fa-shopping-basket'> </i>
+                          {" "}
                           My Products &amp; Services
                       </strong>
                   </h3>
