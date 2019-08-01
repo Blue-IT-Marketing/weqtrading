@@ -21,7 +21,9 @@ function Verifications(){
         });
     }
     let UpdateVerifications = e => {
-
+        console.log('Updating verifications');
+        //TODO- this means that i have to actually send a verification
+        //sms to the old number and then to the new number
     }
 
     return (
@@ -92,6 +94,10 @@ function AccountSettings(){
         receive_sms:true        
     });
 
+    let onChangeHandler = e => {
+
+    }
+
     return (
       <Fragment>
         <div className="box box-body">
@@ -107,15 +113,59 @@ function AccountSettings(){
           <div className="box-footer">
             <form className="form-horizontal">
               <div className="form-group">
-                <div className="input-group">
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    checked
-                    name="account_active"
+                <label>
+                  <Switch
+                    onChange={e => onChangeHandler(e)}
+                    checked={accountSettings.account_active}
                   />
-                  <label className='layout layout-boxed'> Account Active </label>
-                </div>
+
+                  <span title={'Close Account'}>
+                    {"  "}
+                    <em> Account Status</em>{" "}
+                  </span>
+                </label>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <Switch
+                    onChange={e => onChangeHandler(e)}
+                    checked={accountSettings.receive_job_offers}
+                  />
+                  <span>Receive Job Offers </span>
+                  {"  "}
+                </label>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <Switch
+                    onChange={e => onChangeHandler(e)}
+                    checked={accountSettings.receive_job_offers}
+                  />
+                  <span>Receive SMS Notifications </span>
+                  {"  "}
+                </label>
+              </div>
+              <div className="form-group">
+                <label>
+                  <Switch
+                    onChange={e => onChangeHandler(e)}
+                    checked={accountSettings.receive_job_offers}
+                  />
+                  <span>Receive Email Notifications </span>
+                  {"  "}
+                </label>
+              </div>
+              <div className='form-group'>
+                <button
+                  type='button'
+                  className='btn btn-success btn-lg'
+                  name='update-account-settings'
+                >
+                  <strong><i className='fa fa-save'> </i> {" "} Update Account Settings</strong>
+
+                </button>
               </div>
             </form>
           </div>

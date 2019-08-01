@@ -1,4 +1,6 @@
 import React, {Fragment, Component } from 'react'
+import Products from './Products/Products';
+import Service from './Service/Service';
 
 export default class Market extends Component {
 	render() {
@@ -32,8 +34,50 @@ export default class Market extends Component {
                   </button>
                 </span>
               </div>
-            
-			</div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
+            <div className="col-lg-3">
+              <Products />
+            </div>
           </div>
         </div>
       </Fragment>
