@@ -1,11 +1,28 @@
 import React,{Fragment,useState,useEffect} from 'react';
-
+import Switch from 'react-switch';
 
 function Verifications(){
-    const[verifications,setVerifications] = useState({        
+    const[verifications,setVerifications] = useState(
+          {        
             active : true,
-            cell : '',
-            lastVerified : ''})
+            cell : '0790471559'});
+
+    let toggleVerifications = (e) => {
+      setVerifications({
+        active: !verifications.active,
+        cell: verifications.cell          
+      })
+    }
+
+    let OnChangeHandler = e => {
+        setVerifications({
+          active: verifications.active,
+          cell: e.target.value
+        });
+    }
+    let UpdateVerifications = e => {
+
+    }
 
     return (
       <Fragment>
@@ -21,12 +38,45 @@ function Verifications(){
               </strong>
             </h3>
           </div>
-          <div className='box-footer'>
-            <form className='form-horizontal'>
-              <div className='form-group'>
-                
-              </div>
+          <div className="box-footer">
+            <form className="form-horizontal">
+              <div className="form-group">
+                <label>
+                  <Switch
+                    onChange={e => toggleVerifications(e)}
+                    checked={verifications.active}
+                  />
 
+                  <span>Activate SMS Verifications </span>
+                  {"  "}
+                </label>
+              </div>
+              <div className="form-group">
+                <div className="input-group-addon">
+                  <div className="input-group" />
+                  <i className="fa fa-mobile-phone"> </i> Cell 
+                </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="cell"
+                  onChange={e => OnChangeHandler(e)}
+                  value={verifications.cell}
+                />
+              </div>
+              <div className="form-group">
+                <button
+                  type="button"
+                  className="btn btn-success btn-lg"
+                  name="update-verifications"
+                  onClick={e => UpdateVerifications(e)}
+                >
+                  <strong>
+                    <i className="fa fa-mobile-phone"> </i> Update
+                    Verifications
+                  </strong>
+                </button>
+              </div>
             </form>
           </div>
         </div>
