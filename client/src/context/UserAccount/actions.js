@@ -44,9 +44,6 @@ export let loginUser = async (username, password) => {
     return {...user_account_state};
 }
 
-
-
-
 export let logOutUser = async() => {
         let user_account_state = {
             ...UserAccountInitState
@@ -81,4 +78,39 @@ export let logOutUser = async() => {
         ...user_account_state
     };
 
+}
+
+
+export let SendEmailVerification = async(user) => {
+        let user_account_state = {
+            ...UserAccountInitState
+        };
+        let user_account;
+        let form_response;
+        let response_code;
+
+        console.log('Sending email verifications');
+
+    await auth.doSendEmailVerification(user).then( result => {
+        if (result.status === true){
+            user_account={
+                ...user,
+                email_verification_sent : true
+            };
+            form_response= 'successfully sent email verifications';
+            response_code= 200
+        }else{
+            user_account = {
+                ...user,
+                email_verification_sent: false
+            };
+            form_response= result.error.message;
+            response_code= result.error.code
+        }
+    });
+    user_account_state.user_account = {...user_account};
+    user_account_state.form_response = form_response;
+    user_account_state.response_code = response_code;
+
+    return user_account_state;
 }

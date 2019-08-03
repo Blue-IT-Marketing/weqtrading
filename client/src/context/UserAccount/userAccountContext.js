@@ -5,7 +5,7 @@ import userAccountReducer, {
 } from '../../reducers/profileReducers/accountDetailsReducer';
 
 import {
-  loginUser, logOutUser
+  loginUser, logOutUser, SendEmailVerification
 } from './actions';
 
 export const UserAccountContext = createContext();
@@ -22,6 +22,17 @@ export default class UserAccountContextProvider extends Component {
       this.setState({
         user_account_state
       })
+    }
+
+    doSendEmailVerification = async() => {
+      if (this.state.user_account_state.user_account.emailVerified){
+      console.log('Cannot send verification email account already verified');
+    }else{
+      let user_account_state = await SendEmailVerification(this.state.user_account_state.user_account);
+      this.setState({
+        user_account_state: user_account_state
+      });
+    }
     }
 
     onChange = (user) => {
@@ -48,7 +59,7 @@ export default class UserAccountContextProvider extends Component {
     return (
       < UserAccountContext.Provider value = {
         {
-          ...this.state,doLogin: this.doLogin,doLogout:this.doLogout
+          ...this.state, doLogin: this.doLogin, doLogout: this.doLogout, doSendEmailVerification: this.doSendEmailVerification
         }
       } >
                 {this.props.children}

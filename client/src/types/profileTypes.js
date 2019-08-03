@@ -133,6 +133,7 @@ export let account_details_type = {
 	email : '',
 	password : '',
 	emailVerified : false,
+	phoneVerified:false,
 	phoneNumber : '',
 	isAnonymous : false,
 	providerId : 'password',
@@ -143,6 +144,7 @@ export let account_details_type = {
 	password_changed : false,
 	email_verification_sent : false,
 	onetime_pin_sent: false,
+
 
 };
 
