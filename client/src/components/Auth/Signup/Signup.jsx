@@ -13,6 +13,16 @@ const SignUpPage = (props) => {
         <div className="sign-up">
             <div className="box box-header">
                 <h3 className="box-title"> <strong> <i className='fa fa-sign-out'> </i> Sign Up</strong></h3>
+                <div className='box-tools'>
+                    <Link to={routes.login_page}>
+                        <button
+                            type='button'
+                            className='btn btn-box-tool btn-lg'                            
+                        ><strong><i className='fa fa-sign-in'> </i> Login </strong>
+                        </button>    
+                    </Link>
+
+                </div>
             </div>
 
             <SignUpForm ShowLogin={props.ShowLogin}  />
@@ -119,7 +129,7 @@ class SignUpForm extends Component {
                             onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
                             type="password"
                             placeholder="Confirm Password"
-                        />
+                        />2
                     </div>
                     <div className="form-group">
 
@@ -133,16 +143,8 @@ class SignUpForm extends Component {
                             type='reset'
                             className='btn btn-warning btn-lg'
                         >
-                            <strong> <i className='fa fa-eraser'> </i> Reset  </strong>
+                            <strong> <i className='fa fa-eraser'> </i> Cancel  </strong>
                         </button>
-                        <button
-                            type='button'
-                            className='btn btn-primary btn-lg'
-                            onClick={e => this.props.ShowLogin(e)}
-                        >
-                            
-                                <strong><i className='fa fa-sign-in'> </i> Login </strong>
-                        </button>    
                     </div>
                     {error && <p>{error.message}</p>}
 

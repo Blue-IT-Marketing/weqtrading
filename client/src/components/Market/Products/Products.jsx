@@ -1,18 +1,11 @@
 import React ,{useState}from 'react';
 import { useCart } from "react-ecommerce-hook";
+import {products_init} from '../market-constants';
 import './Products.css';
 
 
-export default function Products() {
-  const [product, setProduct] = useState({
-    id: "",
-    product_name: "",
-    description: "",
-    product_img: "static/img/volunteer.jpg",
-    price: "",
-    currency: ""
-  });
-
+export default function Products({product}) {
+  
     const {
       addToCart,
       removeFromCart,

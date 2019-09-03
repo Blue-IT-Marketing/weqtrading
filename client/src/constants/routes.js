@@ -18,3 +18,15 @@ export const shopping_basket_page = '/admin/user/shopping-basket';
 export const my_market_products = '/admin/user/market';
 
 export const dashboard_page = '/dashboard'; // site owner and administrator only
+
+
+
+/**
+ * api routes 
+ */
+
+ export const api_products_endpoint = '/api/products';
+ export const api_services_endpoint = '/api/services';
+
+
+ export const api_categories_endpoint = '/api/categories';

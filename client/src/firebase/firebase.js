@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/storage';
 const config = {
  apiKey: "AIzaSyBRJIk9O1Y8CAh9pQ9tKy9hPkDHnI4hjEc",
  	authDomain: "weqtrading.firebaseapp.com",
@@ -17,7 +18,9 @@ try{
 }
 
 const auth = firebase.auth();
+const storage = firebase.storage();
 
 export {auth,
-	firebase
+	firebase,
+	storage
 };

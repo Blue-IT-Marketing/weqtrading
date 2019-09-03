@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import { useCart } from "react-ecommerce-hook";
+import {service_init} from '../market-constants';
 
 export default function Products() {
-  const[service,setService] = useState({
-      id:'',
-      product_name : '',
-      description:'',
-      price:'',
-      currency:''
-    });
+  const[service,setService] = useState(service_init);
     
 
   const {
