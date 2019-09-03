@@ -82,7 +82,7 @@ function AddProduct(){
         setCategories([]);
       };
     }, [])
-    
+    const placeholder = "https://via.placeholder.com/300/09f/fff.png";
     return (
       <Fragment>
         <div className="box box-body">
@@ -177,7 +177,7 @@ function AddProduct(){
                     className="pola-image" 
                     height='300' 
                     width='300' 
-                    src={product.product_art || 'https://via.placeholder.com/300/09f/fff.png'} 
+                    src={product.product_art || placeholder} 
                     />
               </div>
             </div>
@@ -207,7 +207,7 @@ function AddProduct(){
 
 function AddService(){
     const [service,setService] = useState(service_init);
-
+const placeholder = "https://via.placeholder.com/300/09f/fff.png";
     return (
       <Fragment>
         <div className="box box-body">
