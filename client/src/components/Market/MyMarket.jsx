@@ -1,5 +1,5 @@
 import React,{Fragment,useState,useEffect} from 'react';
-import {products_init,service_init} from './market-constants';
+import {products_init,service_init,category_init} from './market-constants';
 import {firebase} from '../../firebase';
 import * as RequestsAPI from './api-requests';
 
@@ -175,8 +175,8 @@ function AddProduct(){
               <div className="polaroid">
                 <img 
                     className="pola-image" 
-                    height='240' 
-                    width='320' 
+                    height='300' 
+                    width='300' 
                     src={product.product_art || 'https://via.placeholder.com/300/09f/fff.png'} 
                     />
               </div>
@@ -204,15 +204,6 @@ function AddProduct(){
       </Fragment>
     );
 };
-
-        //  uid: "",
-        //  id: "",
-        //  group_id: "",
-        //  service_name: "",
-        //  description: "",
-        //  service_art : '',
-        //  price: "",
-        //  currency: "zar"
 
 function AddService(){
     const [service,setService] = useState(service_init);
@@ -272,8 +263,8 @@ function AddService(){
               <div className="polaroid">
                 <img
                   className="pola-image"
-                  height="240"
-                  width="320"
+                  height="300"
+                  width="300"
                   src={
                     service.service_art ||
                     "https://via.placeholder.com/300/09f/fff.png"
@@ -301,10 +292,137 @@ function AddService(){
 };  
 
 
+
+function AddCategories () {
+    const [categories,setCategories] = useState([]);
+    const [category, setCategory] = useState(category_init);
+    const [uploaded,setUploaded] = useState({
+        image :'',
+        url : '',
+        size : 0,
+        filename : '',
+        progress : 0
+    });
+
+
+    const CategoryArtFileChange = e => {
+        if (e.target.files[0]) {
+          const image = e.target.files[0];
+          console.log(image);
+          setUploaded({
+            ...uploaded,
+            image: image
+          });
+          return true;
+        }
+        return false;
+    };
+
+    const placeholder = "https://via.placeholder.com/300/09f/fff.png";
+    return (
+      <Fragment>
+        <div className="box box-body">
+          <div className="box box-header">
+            <h3 className="box-title">
+              <strong>
+                <i className="fa fa-bookmark-o"></i> Add Categories
+              </strong>
+            </h3>
+          </div>
+
+          <form className="form-horizontal">
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                name="category_name"
+                placeholder='Category Name...'
+                value={category.category_name}
+                onChange={e => setCategory({...category,[e.target.name]:e.target.value})}
+              />              
+            </div>
+            <div className='form-group'>
+                <input 
+                    type='text' 
+                    className='form-control' 
+                    name='description' 
+                    placeholder='Description...'
+                    value={category.description}
+                />
+            </div>
+            <div className='form-group'>
+                <textarea
+                    
+                    className='form-control'
+                    name='notes'
+                    placeholder='Notes...'
+                    value={category.notes}
+                />
+            </div>
+            <div className='form-group'>
+                <label> Category Art</label>
+                <input type='file' className='form-control' onChange={e => CategoryArtFileChange(e)}/>
+            </div>
+            <div className='form-group'>
+                <button
+                    type='button'
+                    className='btn btn-bitbucket'
+                    name='upload-category-art'                    
+                >
+                    <strong>
+                        <i className='fa fa-cloud-upload'> </i>{' '}
+                        Upload Category Art
+                    </strong>
+
+                </button>
+            </div>
+            <div className='form-group'>
+                <div className='polaroid'>
+                    <img 
+                        className='pola-image' 
+                        height='300' 
+                        width='300' 
+                        src={category.category_art || placeholder}
+                    />
+                </div>
+            </div>
+
+            <div className='form-group'>
+                <button
+                    type='button'
+                    className='btn btn-success'
+                    name='save-category'
+                >
+                    <strong>
+                        <i className ='fa fa-save'> </i> {' '}
+                        Save Category
+                    </strong>
+                </button>
+
+                <button
+                    type='button'
+                    className='btn btn-warning'
+                    name='reset-category'
+                >
+                    <strong>
+                        <i className ='fa fa-save'> </i> {' '}
+                        Reset
+                    </strong>
+                </button>
+
+            </div>
+
+          </form>
+        </div>
+      </Fragment>
+    );
+}
+
+
 export default function MyMarket (){
     const [display,setDisplay] = useState('add-products');
     const [product, setProduct] = useState(products_init);
-    const[service,setService] = useState(service_init);
+    const [service,setService] = useState(service_init);
 
 
   return (
@@ -319,6 +437,16 @@ export default function MyMarket (){
                       </strong>
                   </h3>
                   <div className='box-tools'>
+                      <button
+                        type='button'
+                        className='btn btn-box-tool btn-outline-dark'
+                        name='add-categories'
+                        onClick = {e => setDisplay(e.target.name)}
+                      >
+                          <i className='fa fa-bookmark'> </i>{' '}
+                          Add Categories
+                      </button>
+
                       <button
                         type='button'
                         className='btn btn-box-tool'
@@ -340,15 +468,6 @@ export default function MyMarket (){
                           
                       </button>
 
-                      <button
-                        type='button'
-                        className='btn btn-box-tool btn-outline-dark'
-                        name='add-categories'
-                        onClick = {e => setDisplay(e.target.name)}
-                      >
-                          <i className='fa fa-bookmark'> </i>{' '}
-                          Add Categories
-                      </button>
 
                   </div>
               </div>
@@ -362,6 +481,11 @@ export default function MyMarket (){
             {
                 display === 'add-services' ? 
                     <AddService /> : ''
+            }
+
+            {
+                display === 'add-categories' ? 
+                    <AddCategories /> : ''
             }
           </div>
 

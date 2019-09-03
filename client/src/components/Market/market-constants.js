@@ -4,7 +4,8 @@ export const category_init = {
     category_id : '',
     category_name : '',
     description : '',
-    notes : ''
+    notes : '',
+    category_art : '',
 }
 
 export const products_init = {
