@@ -61,3 +61,21 @@ export const fetchCategories = async () => {
 
     return results;
 };
+
+export const saveCategory = async (category) => {
+    let results = [];
+
+    await axios.post(routes.api_categories_endpoint,category).then(result => {
+        if (result.status === 200){
+            return result.data;
+        }else{
+            throw new Error('there was an error saving new category');
+        }
+    }).then(category => {
+        results = category;
+    }).catch(error => {
+        console.log('Save Caregoty',error.message);
+    });
+
+    return results;
+};

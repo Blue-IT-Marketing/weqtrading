@@ -27,7 +27,7 @@ export default function App () {
 	
 	return (
     <UserAccountContextProvider>
-      console.log(value.)
+      
       <Fragment>
         <Router>
           {/* Header  Component*/}

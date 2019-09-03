@@ -1,10 +1,11 @@
 
-export const category_init = {
-    
+export const category_init = {    
     category_id : '',
     category_name : '',
     description : '',
     notes : '',
+    category_type : '',
+    sub_category : '',
     category_art : '',
 }
 
