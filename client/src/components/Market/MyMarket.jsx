@@ -1,5 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { products_init, service_init, category_init } from "./market-constants";
+import {
+  products_init,
+  service_init,
+  category_init,
+  category_errors_init
+} from "./market-constants";
 import { firebase } from "../../firebase";
 import * as RequestsAPI from "./api-requests";
 import axios from "axios";
@@ -295,6 +300,7 @@ function AddCategories() {
   const [category, setCategory] = useState(category_init);
   const [uploaded, setUploaded] = useState({image: "",url: "",size: 0,filename: "",progress: 0});
   const [inline,setInline] = useState({message:'',message_type:'info'});
+  const [errors, setErrors] = useState(category_errors_init);
 
   const CategoryArtFileChange = e => {
     if (e.target.files[0]) {
@@ -351,17 +357,110 @@ function AddCategories() {
 
   const doAddCategory = async e => {
         e.preventDefault();
-        let category = Object.assign({},category);
-        category.uid = firebase.auth.currentUser.uid;
-        category = JSON.stringify(category);
-        RequestsAPI.saveCategory(category).then(results => {            
-            setCategory(category);
-            setCategories({categories: categories.push(category)})
-            setInline({message:'successfully created new category'});
-        }).catch(error => {
-            setInline({message:error.message,message_type:'error'});
-        });
+        let my_category = Object.assign({},category);
+        my_category.uid = firebase.auth.currentUser.uid;
+        my_category = JSON.stringify(my_category);
+        console.log("CATEGORY", my_category);
+        RequestsAPI.saveCategory(my_category)
+          .then(results => {
+            setCategory(results);
+            setCategories({ categories: categories.push(results) });
+            setInline({ message: "successfully created new category" });
+          })
+          .catch(error => {
+            setInline({ message: error.message, message_type: "error" });
+          });
   };
+
+
+
+    // category_id : '',
+    // category_name : '',
+    // description : '',
+    // notes : '',
+    // category_type : '',
+    // sub_category : '',
+    // category_art : '',
+
+  const checkErrors = async e => {
+        e.preventDefault();
+        let isError = false;
+        const check_category_name = () => {
+            if(Utils.isEmpty(category.category_name)){
+                setErrors({
+                    ...errors,
+                    category_name_error: 'category name cannot be empty'
+                });
+                return true;
+            }
+            return false;
+        }
+        const check_category_type = () => {    
+            if(Utils.isEmpty(category.category_type)){
+                setErrors({
+                    ...errors,
+                    category_type_error : 'Please select category type'
+                });
+                return true;
+            }
+            return false;
+        }
+        const check_sub_category = () => {
+            if(Utils.isEmpty(category.sub_category)){
+                setErrors({
+                    ...errors,
+                    sub_category_error: 'sub category cannot be empty'
+                });
+                return true;
+            }
+            return false;
+        }
+        const check_description = () => {
+            if(Utils.isEmpty(category.description)){
+                setErrors({
+                    ...errors,
+                    description_error : 'description cannot be empty'
+                });
+                return true;
+            }
+            return false;
+        }
+        const check_notes = () => {
+            if(Utils.isEmpty(category.notes)){
+                setErrors({
+                    ...errors,
+                    notes_error : 'Notes cannot be empty'
+                });
+                return true
+            }
+            return false;
+        }
+        const check_category_art = () => {
+            if(Utils.isEmpty(category.category_art)){
+                setErrors({
+                    ...errors,
+                    category_art_error : 'Category Art cannot be empty'
+                });
+                return true;
+            }
+            return false;
+        }
+
+        const do_check = () => {
+            check_category_name() ? isError = true : isError = isError;
+            check_category_type() ? isError = true : isError = isError;
+            check_sub_category() ? isError = true : isError = isError;
+            check_description() ? isError = true : isError = isError;
+            check_notes() ? isError = true : isError = isError;
+            check_category_art() ? isError = true : isError = isError;
+
+            return isError;
+        }
+
+        return await do_check();
+  };
+
+
 
   const placeholder = "https://via.placeholder.com/300/09f/fff.png";
   return (
@@ -390,6 +489,7 @@ function AddCategories() {
               <option value="products">Products</option>
               <option value="services">Services</option>
             </select>
+            {errors.category_type_error ? <InlineError message={errors.category_type_error} /> : ''}
           </div>
 
           <div className='form-group'>
@@ -403,6 +503,7 @@ function AddCategories() {
                     setCategory({ ...category, [e.target.name]: e.target.value })
                 }
             />
+            {errors.sub_category_error ? <InlineError message={errors.sub_category_error} /> : ''}
           </div>
 
           <div className="form-group">
@@ -416,6 +517,7 @@ function AddCategories() {
                 setCategory({ ...category, [e.target.name]: e.target.value })
               }
             />
+            {errors.category_name_error ? <InlineError message={errors.category_name_error} /> : ''}
           </div>
           <div className="form-group">
             <input
@@ -429,6 +531,7 @@ function AddCategories() {
               }
 
             />
+            {errors.description_error ? <InlineError message={errors.description_error} /> : ''}
           </div>
           <div className="form-group">
             <textarea
@@ -441,6 +544,7 @@ function AddCategories() {
               }
 
             />
+            {errors.notes_error ? <InlineError message={errors.notes_error} /> : ''}
           </div>
           <div className="form-group">
             <label> Category Art</label>
@@ -449,6 +553,7 @@ function AddCategories() {
               className="form-control"
               onChange={e => CategoryArtFileChange(e)}
             />
+            {errors.category_art_error ? <InlineError message={errors.category_art_error} /> : ''}
           </div>
           <div className="form-group">
             <button
@@ -478,7 +583,10 @@ function AddCategories() {
               type="button"
               className="btn btn-success"
               name="save-category"
-              onClick={e => doAddCategory(e)}
+              onClick={e => checkErrors(e).then(isError => {
+                  isError ? setInline({message: 'there was an error processing form ', message_type:'error'}) 
+                    : doAddCategory(e)
+              }) }
             >
               <strong>
                 <i className="fa fa-save"> </i> Save Category
