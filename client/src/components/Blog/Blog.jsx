@@ -1,206 +1,149 @@
+/* eslint-disable no-unused-vars */
+import React, { Fragment, useState, useEffect } from 'react';
+import Axios from 'axios';
+import './Blog.css';
+import {useForceUpdate} from '../hooks/forceUpdate';
+import {get_blog_articles} from './articles';
+let blog_posts = '';
 
-import React,{Fragment, useState,useEffect} from 'react'
 
-function BlogHome(){
-    const [posts,setPosts] = useState({posts:[]});
+function BlogPost({ post_data }) {
+	const [post, setPost] = useState({});
 
-    useEffect(() => {
-      return () => {
-        
-      };
-    }, [])
-
-    return (
-      <Fragment>
-        <div className="box box-body">
-          <div className="box-header">
-            <h3 className="box-title">
-              <strong> <i className='fa fa-file'> </i> Articles</strong>
-            </h3>
-          </div>
-          <div className="row">
-              <div className="col-lg-3">
-                <BlogPost />
-              </div>
-              <div className="col-lg-3">
-                <BlogPost />
-              </div>
-              <div className="col-lg-3">
-                <BlogPost />
-              </div>
-              <div className="col-lg-3">
-                <BlogPost />
-              </div>
-          </div>
-        </div>
-      </Fragment>
-    );
+	let article = post_data;
+	console.log('Articles',article);
+	return (
+		<Fragment>
+			<div className="box box-body with-border">
+				<div className="box box-header with-border">
+					<a href={article.url} target="_blank">
+						<h2 className="box-title">{article.title}</h2>
+					</a>
+				</div>
+				<div className="polaroid">
+					<img src={article.urlToImage} className="pola-image" />
+					<div className="polatext">{article.description}</div>
+					<div className="box box-footer with-border">
+						<a href={article.url} target="_blank">
+							<h3 className="box-title">
+								{' '}
+								{article.source.name} - {article.author}{' '}
+							</h3>
+						</a>
+						<button
+							type='button'
+							className='btn btn-primary'
+							onClick={e => {}}
+						>
+							<i className='fa fa-file-pdf-o'> </i>{' '}
+              Read more...
+						</button>
+					</div>
+				</div>
+			</div>
+		</Fragment>
+	);
 }
 
+export default function Blog() {
+	const[category,setCategory] = useState('entertainment');
+	const [posts, setPosts] = useState([]);
+	const forceUpdate = useForceUpdate();
 
-function BlogPost({fetch_post_id}){
+	useEffect(() => {
+		async function fetchData() {
+			let blog_posts = await get_blog_articles(category);			
+			setPosts(blog_posts);
+		}
+		fetchData();    
+		forceUpdate();
+		console.log('Force update called');
 
-    const [post,setPost] = useState({
-      post_id:'',
-      title:'',
-      summary:'',
-      article:'',
-      author_name:'',
-      author_id:'',
-      datePosted:'',
-      timePosted:'',
-      comment_id:''
-    });
+	}, [category]);
+  
+  const title = `${category[0].toUpperCase()}${category.slice(1)} News`;
 
-    let ReadMore = (e) => {
-      console.log('Loading full post');
-        // fetch post_id from
-        // state then load the full version of the blog post
-    };
+	return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <strong>
+              {" "}
+              <i className="fa fa-file-text"> </i> Blog{" "}
+            </strong>
+          </h3>
 
-    useEffect(() => {
-      //fetch post from backend if post_id changed
-      //once post has been fetched setState with it
-    }, [fetch_post_id]);
-
-    const {
-      post_id,
-      title,
-      summary,
-      article,
-      author_name,
-      author_id,
-      datePosted,
-      timePosted,
-      comment_id
-    } = post;
-
-
-    return post_id !== "" ? (
-      <Fragment>
-        <div className="content">
-          <div className="content-header">
-            <h3 className="box-title">
-              <em>{title}</em>
-            </h3>
-          </div>
-          <div className="box box-footer">
-            {summary}
-            <div className="box-tools">
-              <span className="btn-box-tool">
-                <em>Author : {author_name}</em>
-              </span>
-              <br />
-              <span className="btn-box-tool">
-                <em>Date Posted: {datePosted}, {timePosted}</em>
-              </span>
-            </div>
-          </div>
-          <div className="box-footer">
+          <div className="box-tools">
             <button
               type="button"
-              className="btn btn-box-tool btn-outline-dark"
-              onClick={e => ReadMore(e)}
+              className="btn btn-box-tool"
+              name="pages"
+              onClick={() => setCategory("entertainment")}
             >
-              <i className="fa fa-hashtag"> </i>
-              Read More...
+              <i className="fa fa-folder"> </i> Entertainment{" "}
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-box-tool"
+              name="posts"
+              onClick={() => setCategory("sports")}
+            >
+              <i className="fa fa-folder"> </i> Sports{" "}
+            </button>
+            <button
+              type="button"
+              className="btn btn-box-tool"
+              name="categories"
+              onClick={() => setCategory("business")}
+            >
+              {" "}
+              <i className="fa fa-folder"> </i> Business{" "}
+            </button>
+            <button
+              type="button"
+              className="btn btn-box-tool"
+              name="categories"
+              onClick={() => setCategory("tech")}
+            >
+              {" "}
+              <i className="fa fa-folder"> </i> Tech{" "}
+            </button>
+            <button
+              type="button"
+              className="btn btn-box-tool"
+              name="categories"
+              onClick={() => setCategory("science")}
+            >
+              {" "}
+              <i className="fa fa-folder"> </i> Science{" "}
+            </button>
+            <button
+              type="button"
+              className='btn btn-box-tool'
+              name='categories'
+              onClick={() => setCategory("health")}
+            >{" "} <i className='fa fa-folder'> </i> Health
+
             </button>
           </div>
         </div>
-      </Fragment>
-    ) : (
-      <Fragment>
-        <div className="box box-body">
-          <div className="box box-header">
-            <h3 className="box-title">
-              <em>How to watch Paint dry!</em>
-            </h3>
-          </div>
-          <div className="box-body">
-            Internet slang for staring at your download progress bar or
-            watching download speeds fluctuate. Man sits there slumped over
-            staring at a computer screen watching each file segment's
-            progress on utorrent hoping somehow his DVD rip of the Dark
-            Knight from aXXo will download faster because he's willing it to
-            happen. Friend walks in and asks. "looking at porn??" Man
-            replies "no, just watching paint dry" Friend says "really should
-            be looking at porn."
-            <div className="box-tools">
-              <span className="btn-box-tool">
-                <em>Author : Justice Ndou</em>
-              </span>
-              <br />
-              <span className="btn-box-tool">
-                <em>Date Posted: 02,August,2019</em>
-              </span>
-            </div>
-          </div>
-          <div className="box-footer">
-            <button
-              type="button"
-              className="btn btn-box-tool btn-outline-dark"
-              onClick={e => ReadMore(e)}
-            >
-              <i className="fa fa-hashtag"> </i>
-              Read More...
-            </button>
-          </div>
-        </div>
-      </Fragment>
-    );
-}
 
-
-export default function Blog (){
-  
-  
-    return (
-      <Fragment>
-        <div className="box box-body">
+        <div className="box box-footer">
           <div className="box box-header">
             <h3 className="box-title">
               <strong>
                 {" "}
-                <i className="fa fa-book"> </i> Blog{" "}
+                <i className="fa fa-files-o"> </i> {title}{" "}
               </strong>
             </h3>
-
-            <div className="box-tools">
-              <button
-                type="button"
-                className="btn btn-box-tool"
-                name="pages"
-              >
-                <strong>
-                  {" "}
-                  <i className="fa fa-folder"> </i> Pages{" "}
-                </strong>
-              </button>
-              <button
-                type="button"
-                className="btn btn-box-tool"
-                name="posts"
-              >
-                <strong>
-                  {" "}
-                  <i className="fa fa-file"> </i> Posts{" "}
-                </strong>
-              </button>
-              <button
-                type="button"
-                className="btn btn-box-tool"
-                name="categories"
-              >
-                <strong>
-                  {" "}
-                  <i className="fa fa-folder-open"> </i> Categories{" "}
-                </strong>
-              </button>
-            </div>
           </div>
-
-          <BlogHome />
+          {posts.map((post, index) => {
+            return <BlogPost post_data={post} key={index} />;
+          })}
         </div>
-      </Fragment>
-    );
+      </div>
+    </Fragment>
+  );
 }

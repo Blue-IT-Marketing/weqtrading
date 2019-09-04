@@ -17,40 +17,22 @@ import {Utils} from '../../utilities';
 
 function AddProduct() {
   const [product, setProduct] = useState(products_init);
-  const [uploaded, setUploaded] = useState({
-    image: "",
-    url: "",
-    size: 0,
-    filename: "",
-    progress: 0
-  });
+  const [uploaded, setUploaded] = useState({image: "",url: "",size: 0,filename: "",progress: 0});
 
   const [categories, setCategories] = useState([]);
 
   const doUpload = async e => {
     const { image } = uploaded;
 
-    const uploadTask = firebase.storage
-      .ref(`products/${product.sub_category}/${image.name}`)
-      .put(image);
+    const uploadTask = firebase.storage.ref(`products/${product.sub_category}/${image.name}`).put(image);
         await uploadTask.on("state_changed",snapshot => {
             //progress
-            const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
+            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
             setUploaded({...uploaded,progress});
-      },
-      error => {
-        //error function
-        console.log(error.message);
-      },
-      () => {
+      },error => {
+          console.log(error.message);},() => {
         // complete function
-        firebase.storage
-          .ref(`products/${product.sub_category}`)
-          .child(image.name)
-          .getDownloadURL()
-          .then(url => {
+        firebase.storage.ref(`products/${product.sub_category}`).child(image.name).getDownloadURL().then(url => {
             console.log(url);
             setProduct({
               ...product,
@@ -168,8 +150,7 @@ function AddProduct() {
               type="button"
               className="btn btn-bitbucket"
               name="upload-product-art"
-              onClick={e => doUpload(e)}
-            >
+              onClick={e => doUpload(e)}>
               <strong>
                 <i className="fa fa-cloud-upload"> </i> Upload Product Art
               </strong>
@@ -179,11 +160,10 @@ function AddProduct() {
           <div className="form-group">
             <div className="polaroid">
               <img
-                className="pola-image"
+                
                 height="300"
                 width="300"
-                src={product.product_art || placeholder}
-              />
+                src={product.product_art || placeholder}/>
             </div>
           </div>
 
@@ -191,8 +171,7 @@ function AddProduct() {
             <button
               className="btn btn-success"
               name="save-product"
-              onClick={e => doSaveProduct(e)}
-            >
+              onClick={e => doSaveProduct(e)}>
               <strong>
                 <i className="fa fa-save"> </i> Add Product
               </strong>
@@ -266,12 +245,11 @@ function AddService() {
           <div className="form-group">
             <div className="polaroid">
               <img
-                className="pola-image"
+                
                 height="300"
                 width="300"
                 src={
-                  service.service_art ||
-                  "https://via.placeholder.com/300/09f/fff.png"
+                  service.service_art || "https://via.placeholder.com/300/09f/fff.png"
                 }
               />
             </div>
@@ -318,9 +296,7 @@ function AddCategories() {
   const doUpload = async e => {
     const { image } = uploaded;
 
-    const uploadTask = firebase.storage
-      .ref(`categories/${image.name}`)
-      .put(image);
+    const uploadTask = firebase.storage.ref(`categories/${image.name}`).put(image);
         await uploadTask.on(
         "state_changed",
         snapshot => {
@@ -356,13 +332,12 @@ function AddCategories() {
 
 
   const doAddCategory = async e => {
-        e.preventDefault();
+        // e.preventDefault();
         let my_category = Object.assign({},category);
         my_category.uid = firebase.auth.currentUser.uid;
         my_category = JSON.stringify(my_category);
         console.log("CATEGORY", my_category);
-        RequestsAPI.saveCategory(my_category)
-          .then(results => {
+        RequestsAPI.saveCategory(my_category).then(results => {
             setCategory(results);
             setCategories({ categories: categories.push(results) });
             setInline({ message: "successfully created new category" });
@@ -375,7 +350,7 @@ function AddCategories() {
 
 
   const checkErrors = async e => {
-        e.preventDefault();
+        // e.preventDefault();
         let isError = false;
         const check_category_name = () => {
             if(Utils.isEmpty(category.category_name)){
@@ -476,10 +451,9 @@ function AddCategories() {
               value={category.category_type}
               onChange={e =>
                 setCategory({ ...category, [e.target.name]: e.target.value })
-              }
-            >
-              <option value="products">Products</option>
-              <option value="services">Services</option>
+              }>
+                <option value="products">Products</option>
+                <option value="services">Services</option>
             </select>
             {errors.category_type_error ? <InlineError message={errors.category_type_error} /> : ''}
           </div>
@@ -491,9 +465,7 @@ function AddCategories() {
                 name='sub_category'
                 placeholder='Sub Category...'
                 value={category.sub_category}
-                onChange={e =>
-                    setCategory({ ...category, [e.target.name]: e.target.value })
-                }
+                onChange={e =>setCategory({ ...category, [e.target.name]: e.target.value })}
             />
             {errors.sub_category_error ? <InlineError message={errors.sub_category_error} /> : ''}
           </div>
@@ -562,7 +534,7 @@ function AddCategories() {
           <div className="form-group">
             <div className="polaroid">
               <img
-                className="pola-image"
+                
                 height="300"
                 width="300"
                 src={category.category_art || placeholder}
@@ -584,7 +556,6 @@ function AddCategories() {
                 <i className="fa fa-save"> </i> Save Category
               </strong>
             </button>
-
             <button
               type="button"
               className="btn btn-warning"
@@ -667,7 +638,6 @@ export default function MyMarket() {
               >
                 <i className="fa fa-bookmark"> </i> Add Categories
               </button>
-
               <button
                 type="button"
                 className="btn btn-box-tool"
@@ -693,9 +663,7 @@ export default function MyMarket() {
       <div className="box box-body">
         {my_header()}  
         {display === "add-products" ? <AddProduct /> : ""}
-
         {display === "add-services" ? <AddService /> : ""}
-
         {display === "add-categories" ? <AddCategories /> : ""}
       </div>
     </Fragment>
