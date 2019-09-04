@@ -533,8 +533,7 @@ function AddCategories() {
           </div>
           <div className="form-group">
             <div className="polaroid">
-              <img
-                
+              <img                
                 height="300"
                 width="300"
                 src={category.category_art || placeholder}
