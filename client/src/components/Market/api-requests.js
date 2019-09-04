@@ -65,7 +65,7 @@ export const fetchCategories = async () => {
 export const saveCategory = async (category) => {
     let results = [];
 
-    await axios.post(routes.api_categories_endpoint,category).then(result => {
+    await axios.post(routes.api_categories_endpoint,'&data='+category).then(result => {
         if (result.status === 200){
             return result.data;
         }else{

@@ -374,14 +374,6 @@ function AddCategories() {
 
 
 
-    // category_id : '',
-    // category_name : '',
-    // description : '',
-    // notes : '',
-    // category_type : '',
-    // sub_category : '',
-    // category_art : '',
-
   const checkErrors = async e => {
         e.preventDefault();
         let isError = false;
