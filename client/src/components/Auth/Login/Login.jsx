@@ -46,16 +46,25 @@ export default function Login() {
           <div className="box box-body">
             <div className="box-header">
               <h3 className="box-title">
-                
                 <strong>
                   <i className="fa fa-sign-in"> </i> Login User
                 </strong>
               </h3>
+
+              <div className="box-tools">
+                <Link to={routes.forget_password_page}>
+                  <button type="button" className="btn btn-box-tool">
+                    <strong>
+                      <i className="fa fa-unlock"> </i> Forget Password
+                    </strong>
+                  </button>
+                </Link>
+              </div>
             </div>
             <div className="box-footer">
               <form
                 className="form-horizontal"
-                onSubmit={e => doLogin(username,password)}
+                onSubmit={e => doLogin(username, password)}
               >
                 <div className="form-group">
                   <Input
@@ -66,7 +75,6 @@ export default function Login() {
                     ref={usernameRef}
                     value={values.username}
                     onChange={e => handleChange(e)}
-                    
                   />
                 </div>
                 <div className="form-group">
@@ -86,30 +94,23 @@ export default function Login() {
                     className="btn btn-success btn-lg"
                     ref={submitRef}
                     onClick={e => {
-                      doLogin(username,password);
+                      doLogin(username, password);
                       //navigate("/", true);
-                    }
-                    }
+                    }}
                   >
                     <strong>
                       <i className="fa fa-sign-in"> </i> Login
                     </strong>
                   </button>
-                  <button type="reset" className="btn btn-primary btn-lg">
+                  <button 
+                    type="button" 
+                    className="btn btn-warning btn-lg"
+                    onClick={e => {return setValues({username:'',password:''})}}
+                    >
                     <strong>
-                      <i className="fa fa-eraser"> </i> Cancel
+                      <i className="fa fa-eraser"> </i> Reset
                     </strong>
                   </button>
-                  <Link to={routes.forget_password_page}>
-                    <button
-                      type="button"
-                      className="btn btn-warning btn-lg"
-                    >
-                      <strong>
-                        <i className="fa fa-unlock"> </i> Forget Password
-                      </strong>
-                    </button>
-                  </Link>
                 </div>
               </form>
             </div>

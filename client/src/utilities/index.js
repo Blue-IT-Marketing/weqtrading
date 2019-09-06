@@ -64,6 +64,10 @@ class Utilities {
     return n !== undefined ? typeof n !== "boolean" && !isNaN(n) : false;
   };
 
+  isMoney = n => {
+    return this.isNumber(n) ? true : false;
+  };
+
   isCell = n => {
     return this.isNumber(n)
       ? n.length === 10 || n.length === 11 || n.length === 12 || n.length === 13

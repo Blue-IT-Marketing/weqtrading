@@ -3,7 +3,8 @@ import webapp2
 import jinja2
 from google.appengine.ext import ndb
 from google.appengine.api import users
-import logging,json
+import json
+import logging
 from contact import Contact
 from categories import Categories
 from products import Products
@@ -43,9 +44,9 @@ class APIRouterHandler(webapp2.RequestHandler):
         status_int = 200
 
         if 'contact' in route:
-            data = self.request.get('data')
-            json_data = json.loads(data)
-            logging.info(data)
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
+
             this_contact = Contact()
 
             this_contact.contact_id = this_contact.create_id()
@@ -57,13 +58,14 @@ class APIRouterHandler(webapp2.RequestHandler):
             this_contact.put()
 
         elif 'categories' in route:
-            data = self.request.get('data')
-            json_data = json.loads(data)
-            logging.info(data)
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
+            
+            
 
             this_category = Categories();
 
-            category_requests = Categories.query(Categories.category_name == json_data['category_name'] and Categories.sub_category == json_data['sub_category'])
+            category_requests = Categories.query((Categories.category_name == json_data['category_name']) and (Categories.sub_category == json_data['sub_category']))
             categories_list = category_requests.fetch()
             response_data = '';
             if len(categories_list) > 0:
@@ -83,9 +85,8 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = this_category.to_dict()
 
         elif 'products' in route:
-            data = self.request.get('data')
-            json_data = json.loads(data)
-            logging.info(data)
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
 
             this_products = Products()
 
@@ -112,8 +113,8 @@ class APIRouterHandler(webapp2.RequestHandler):
 
         elif 'services' in route:
             
-            data = self.request.get('data')
-            json_data = json.loads(data)
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
             logging.info(data)
 
             service_request = Services(Services.service_name == json_data['service_name'])            

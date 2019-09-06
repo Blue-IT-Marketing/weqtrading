@@ -44,7 +44,7 @@ export const fetchServicesAPI = async () => {
   return results;
 };
 
-export const fetchCategories = async () => {
+export const fetchCategories = async (category_type) => {
     let results = [];
 
     await axios.get(routes.api_categories_endpoint).then(result => {
@@ -54,18 +54,22 @@ export const fetchCategories = async () => {
             throw new Error('there was an error fetching product categories');
         }
     }).then(categories => {
-        results = categories;
+        categories.forEach(category => {
+          if(category.category_type === category_type){
+            results.push(category)
+          }
+        })
     }).catch(error => {
         console.log('Categories Error : ',error.message);
     })
-
+    
     return results;
 };
 
 export const saveCategory = async (category) => {
     let results = [];
 
-    await axios.post(routes.api_categories_endpoint,'&data='+category).then(result => {
+    await axios.post(routes.api_categories_endpoint,category).then(result => {
         if (result.status === 200){
             return result.data;
         }else{
@@ -79,3 +83,48 @@ export const saveCategory = async (category) => {
 
     return results;
 };
+
+
+export const saveProduct = async(product) => {
+  let results = {status : true,payload:{},error:{}};
+   
+
+  await axios.post(routes.api_products_endpoint,product).then(result => {
+      if(result.status === 200){
+        return result.data;
+      }else{
+        throw new Error('there was an error saving new product');
+      }
+  }).then(product => {
+    results.status = true;
+    results.payload = product;
+
+  }).catch(error => {
+    console.log('Save product error',error.message);
+    results.status = false;
+    results.error = error;
+  });
+
+  return results;
+};
+
+
+export const doAddService = async(service) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.post(routes.api_services_endpoint,service).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error saving new service');
+    }
+  }).then(service => {
+    results.status = true;
+    results.payload = service;
+  }).catch(error => {
+    results.status = false;
+    results.error = error;
+  });
+
+  return results;
+}

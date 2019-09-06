@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Products from "./Products/Products";
-import Service from "./Service/Service";
+import Services from "./Service/Services";
 import axios from "axios";
 import { routes } from "../../constants";
 import * as apiRequests from './api-requests';
@@ -8,11 +8,13 @@ import * as apiRequests from './api-requests';
 
 export default function Market() {
   const [products, setProducts] = useState([]);
-
   const [services, setServices] = useState([]);
 
-  useEffect(() => {
+  const[display,setDisplay] = useState('products');
 
+
+
+  useEffect(() => {
     apiRequests.fetchProductsAPI().then(result => {
       setProducts(result);
     });
@@ -61,12 +63,36 @@ export default function Market() {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-lg-3">
-            {products.map(product => {
-              return <Products product={product} />;
-            })}
+        <div className="box box-footer">
+          <div className="box box-header">
+            <h3 className="box-title">
+              <strong>
+                <i className="fa fa-bookmark-o"> </i> Weq Trading &amp; Projects
+              </strong>
+            </h3>
+            <div className="box-tools">
+              <button
+                type="button"
+                className="btn btn-box-tool btn-outline-dark"
+                name="products"
+                onClick={e => setDisplay("products")}
+              >
+                Products
+              </button>
+              <button
+                type="button"
+                className="btn btn-box-tool btn-outline-dark"
+                name="services"
+                onClick={e => setDisplay("services")}
+              >
+                Services
+              </button>
+            </div>
           </div>
+
+          {display === "products" ? <Products products={products} /> : ""}
+
+          {display === "services" ? <Services services={services} /> : ""}
         </div>
       </div>
     </Fragment>

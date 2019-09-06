@@ -1,7 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import {
   products_init,
+  products_errors_init,
   service_init,
+  service_errors_init,
   category_init,
   category_errors_init
 } from "./market-constants";
@@ -18,29 +20,52 @@ import {Utils} from '../../utilities';
 function AddProduct() {
   const [product, setProduct] = useState(products_init);
   const [uploaded, setUploaded] = useState({image: "",url: "",size: 0,filename: "",progress: 0});
-
+  const [inline,setInline] = useState({message : '', message_type:'info'});
+  const [errors,setErrors] = useState(products_errors_init)
   const [categories, setCategories] = useState([]);
 
   const doUpload = async e => {
     const { image } = uploaded;
+    try {
+      let category = categories.find(
+        category => category.category_id === product.category_id
+      );
 
-    const uploadTask = firebase.storage.ref(`products/${product.sub_category}/${image.name}`).put(image);
-        await uploadTask.on("state_changed",snapshot => {
-            //progress
-            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            setUploaded({...uploaded,progress});
-      },error => {
-          console.log(error.message);},() => {
-        // complete function
-        firebase.storage.ref(`products/${product.sub_category}`).child(image.name).getDownloadURL().then(url => {
-            console.log(url);
-            setProduct({
-              ...product,
-              product_art: url
+      const uploadTask = firebase.storage
+        .ref(`products/${category.sub_category}/${image.name}`)
+        .put(image);
+      await uploadTask.on(
+        "state_changed",
+        snapshot => {
+          //progress
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setUploaded({ ...uploaded, progress });
+        },
+        error => {
+          console.log(error.message);
+        },
+        () => {
+          // complete function
+          firebase.storage
+            .ref(`products/${category.sub_category}`)
+            .child(image.name)
+            .getDownloadURL()
+            .then(url => {
+              console.log(url);
+              setProduct({
+                ...product,
+                product_art: url
+              });
             });
-          });
-      }
-    );
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      setInline({ message: error.message, message_type: "error" });
+    }
+
   };
 
   const FileArtChange = async e => {
@@ -62,14 +87,90 @@ function AddProduct() {
     product_to_save.uid = firebase.auth.currentUser.uid;
     console.log("Product to Save", product_to_save);
     const product_data = JSON.stringify(product);
+    RequestsAPI.saveProduct(product).then(results => {
+        if(results.status){
+          setProduct(results.payload);
+          setInline({ message: 'successfully saved product', message_type: "info" });
+        }else{
+          setInline({ message: results.error.message, message_type: "error" });
+        }              
+    }).catch(error => {
+        setInline({ message: error.message, message_type: "error" });
+    });
+
+    return true;
   };
 
+
+  const checkErrors = async e => {
+    let isError = false;
+
+    const check_product_name = () => {
+      if(Utils.isEmpty(product.product_name)){
+        setErrors({
+          ...errors,
+          product_name_error : 'product name field cannot be empty'
+        });
+        return true;
+      }
+      return false;
+    }
+
+    const check_product_description = () => {
+      if(Utils.isEmpty(product.description)){
+        setErrors({...errors,description_error : 'product description cannot be empty'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_price = () => {
+      if(Utils.isMoney(product.price)){
+        setErrors({...errors,price_error: 'product price is invalid'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_product_art = () => {
+      if(Utils.isEmpty(product.product_art)){
+        setErrors({...errors,product_art_error : 'product art is not valid'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_category_id = () => {
+      if(Utils.isEmpty(product.category_id)){
+        setErrors({...errors,category_id_error : 'please select main category type'});
+      }
+    }
+
+    const do_check_errors = () => {
+        check_product_name() ? isError = true : isError = isError;
+        check_product_description() ? (isError = true) : (isError = isError);
+        check_price() ? (isError = true) : (isError = isError);
+        check_product_art() ? (isError = true) : (isError = isError);
+        check_category_id() ? (isError = true) : (isError = isError);
+        return isError;
+    }
+
+
+    return await do_check_errors();     
+  };
+
+
   useEffect(() => {
-    RequestsAPI.fetchCategories(results => setCategories(results));
+    let category_type = 'products';
+    RequestsAPI.fetchCategories(category_type).then(results => {
+      console.log('Category results',results);
+      setCategories(results);
+    });
     return () => {
       setCategories([]);
     };
   }, []);
+
   const placeholder = "https://via.placeholder.com/300/09f/fff.png";
   return (
     <Fragment>
@@ -92,10 +193,15 @@ function AddProduct() {
                 setProduct({ ...product, [e.target.name]: e.target.value })
               }
             />
+            {errors.product_name_error ? (
+              <InlineError message={errors.product_name_error} />
+            ) : (
+              ""
+            )}
           </div>
           <div className="form-group">
-            <input
-              type="text"
+            <textarea
+              
               className="form-control"
               name="description"
               placeholder="Product Description..."
@@ -104,9 +210,14 @@ function AddProduct() {
                 setProduct({ ...product, [e.target.name]: e.target.value })
               }
             />
+            {errors.description_error ? (
+              <InlineError message={errors.description_error} />
+            ) : (
+              ""
+            )}
           </div>
           <div className="form-group">
-            <label>Select Product Categories</label>
+            <label>Product Categories</label>
             <select
               name="category_id"
               className="form-control"
@@ -114,13 +225,22 @@ function AddProduct() {
                 setProduct({ ...product, [e.target.name]: e.target.value })
               }
             >
-              {categories.map(category => (
-                <option value={category.category_id}>
-                  {" "}
-                  {category.category_name}
-                </option>
-              ))}
+              <option value={null}>Select Product Category</option>
+              {categories.map(category => {
+                console.log("What the hell", category);
+                return (
+                  <option value={category.category_id}>
+                    {" "}
+                    {category.sub_category} - {category.category_name}{" "}
+                  </option>
+                );
+              })}
             </select>
+            {errors.category_id_error ? (
+              <InlineError message={errors.category_id_error} />
+            ) : (
+              ""
+            )}
           </div>
           <div className="form-group">
             <input
@@ -133,6 +253,11 @@ function AddProduct() {
                 setProduct({ ...product, [e.target.name]: e.target.value })
               }
             />
+            {errors.price_error ? (
+              <InlineError message={errors.price_error} />
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="form-group">
@@ -143,14 +268,20 @@ function AddProduct() {
               name="product_art"
               onChange={e => FileArtChange(e)}
             />
+            {errors.product_art_error ? (
+              <InlineError message={errors.product_art_error} />
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="form-group">
             <button
               type="button"
-              className="btn btn-bitbucket"
+              className="btn btn-bitbucket btn-lg"
               name="upload-product-art"
-              onClick={e => doUpload(e)}>
+              onClick={e => doUpload(e)}
+            >
               <strong>
                 <i className="fa fa-cloud-upload"> </i> Upload Product Art
               </strong>
@@ -160,27 +291,60 @@ function AddProduct() {
           <div className="form-group">
             <div className="polaroid">
               <img
-                
                 height="300"
                 width="300"
-                src={product.product_art || placeholder}/>
+                src={product.product_art || placeholder}
+              />
             </div>
           </div>
 
           <div className="form-group">
             <button
-              className="btn btn-success"
+              type="button"
+              className="btn btn-success btn-lg"
               name="save-product"
-              onClick={e => doSaveProduct(e)}>
+              onClick={e =>
+                checkErrors(e).then(isError => {
+                  if (isError) {
+                    doSaveProduct(e).then(result => {
+                      console.log("Product saved");
+                    });
+                  } else {
+                    setInline({
+                      message: "there was an error processing form",
+                      message_type: "error"
+                    });
+                  }
+                })
+              }
+            >
               <strong>
                 <i className="fa fa-save"> </i> Add Product
               </strong>
             </button>
-            <button className="btn btn-warning">
+            <button
+              type="button"
+              className="btn btn-warning btn-lg"
+              onClick={e => {
+                setErrors(products_errors_init);
+                setInline({ message: "", message_type: "info" });
+                setProduct(products_init);
+              }}
+            >
               <strong>
                 <i className="fa fa-eraser"> </i> Reset
               </strong>
             </button>
+          </div>
+          <div className="form-group">
+            {inline.message ? (
+              <InlineMessage
+                message={inline.message}
+                message_type={inline.message_type}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </form>
       </div>
@@ -190,7 +354,167 @@ function AddProduct() {
 
 function AddService() {
   const [service, setService] = useState(service_init);
+  const [errors,setErrors] = useState(service_errors_init);
+  const [inline,setInline] = useState({message:'',message_type:'info'});
+  const [categories,setCategories] = useState([]);
+  const [uploaded, setUploaded] = useState({
+    image: "",
+    url: "",
+    size: 0,
+    filename: "",
+    progress: 0
+  });
+
   const placeholder = "https://via.placeholder.com/300/09f/fff.png";
+
+  const doUpload = async e => {
+    const { image } = uploaded;
+    try {
+      let category = categories.find(
+        category => category.category_id === service.category_id
+      );
+      const uploadTask = firebase.storage
+        .ref(`services/${category.sub_category}/${image.name}`)
+        .put(image);
+      await uploadTask.on(
+        "state_changed",
+        snapshot => {
+          //progress
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setUploaded({ ...uploaded, progress });
+        },
+        error => {
+          console.log(error.message);
+        },
+        () => {
+          // complete function
+          firebase.storage
+            .ref(`services/${category.sub_category}`)
+            .child(image.name)
+            .getDownloadURL()
+            .then(url => {
+              console.log(url);
+              setService({
+                ...service,
+                service_art: url
+              });
+            });
+        }
+      );
+    } catch (error) {
+      console.log(error)
+      setInline({message:'please fill in the form correctly before you upload service art',message_type:'error'});
+    }
+
+  };
+
+  const fileArtChange = async e => {
+    if (e.target.files[0]) {
+      const image = e.target.files[0];
+      console.log(image);
+      setUploaded({
+        ...uploaded,
+        image: image
+      });
+      return true;
+    }
+    return false;
+  };
+
+
+  const checkErrors = async e => {
+    let isError = false;
+
+    const check_service_name = () => {
+      if(Utils.isEmpty(service.service_name)){
+        setErrors({...errors,service_name_error : 'service name field cannot be empty'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_service_description = e => {
+      if(Utils.isEmpty(service.description)){
+        setErrors({...errors,description_error : 'service description field cannot be empty'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_service_art = e => {
+      if(Utils.isEmpty(service.service_art)){
+        setErrors({...errors,service_art_error : 'service art cannot be empty'});
+        return true;
+      }
+      return false;
+    }
+
+    const check_price = e => {
+      
+        if(Utils.isMoney(service.price)){
+          setErrors({...errors,price_error:'invalid service price'});
+          return true;
+        }
+        return false;
+    }
+
+
+    const check_service_category = e => {
+      if(Utils.isEmpty(service.category_id)){
+        setErrors({...errors,category_id_error : 'please select service category'});
+        return true;
+      }
+      return false;
+    }
+
+    const do_check =  e => {
+      check_service_name() ? isError = true : isError = false;
+      check_service_description() ? isError = true : isError = false;
+      check_service_art() ? isError = true : isError = false;
+      check_price() ? isError = true : isError = false;
+      check_service_category() ? isError = true : isError = false;
+
+      return isError;
+      
+    } 
+
+
+    return await do_check();
+    
+  }
+
+
+  const addService = async e => {
+      let my_service = Object.assign({},service);
+      my_service.uid = firebase.auth.currentUser.uid;
+      RequestsAPI.doAddService(JSON.stringify(my_service)).then(results => {
+          if(results.status){
+            setService(results.payload);
+            setInline({message:'successfully saved service',message_type:'info'});
+          }else{
+            setInline({message:results.error.message,message_type:'error'});
+          }
+      }).catch(error => {
+        setInline({message:error.message,message_type:'error'});
+      });
+
+      return true;
+  }
+  
+
+  useEffect(() => {
+    let category_type = "services";
+    RequestsAPI.fetchCategories(category_type).then(results => {
+      console.log("Category results", results);
+      setCategories(results);
+    });
+    return () => {
+      setCategories([]);
+    };
+  }, []);
+
   return (
     <Fragment>
       <div className="box box-body">
@@ -211,10 +535,10 @@ function AddService() {
                 setService({ ...service, [e.target.name]: e.target.value })
               }
             />
+            {errors.service_name_error ? <InlineError message={errors.service_name_error} /> : ''}
           </div>
           <div className="form-group">
-            <input
-              type="text"
+            <textarea
               className="form-control"
               name="description"
               placeholder="Service Description..."
@@ -223,7 +547,36 @@ function AddService() {
                 setService({ ...service, [e.target.name]: e.target.value })
               }
             />
+            {errors.description_error ? <InlineError message={errors.description_error} /> : ''}
           </div>
+
+          <div className="form-group">
+            <label>Service Categories</label>
+            <select
+              name="category_id"
+              className="form-control"
+              onChange={e =>
+                setService({ ...service, [e.target.name]: e.target.value })
+              }
+            >
+              <option value={null}>Select Service Category</option>
+              {categories.map(category => {
+                console.log("What the hell", category);
+                return (
+                  <option value={category.category_id}>
+                    {" "}
+                    {category.sub_category} - {category.category_name}{" "}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.category_id_error ? (
+              <InlineError message={errors.category_id_error} />
+            ) : (
+              ""
+            )}
+          </div>
+
           <div className="form-group">
             <input
               type="text"
@@ -235,33 +588,69 @@ function AddService() {
                 setService({ ...service, [e.target.name]: e.target.value })
               }
             />
+            {errors.price_error ? <InlineError message={errors.price_error} />  : ''}
           </div>
 
           <div className="form-group">
             <label>Service Art</label>
-            <input type="file" className="form-control" name="service_art" />
+            <input
+              type="file"
+              className="form-control"
+              name="service_art"
+              onChange={e => fileArtChange(e)}
+            />
+            {errors.service_art_error ? <InlineError message={errors.service_art_error} /> : ''}
+          </div>
+          <div className="form-group">
+            <button
+              type="button"
+              className="btn btn-bitbucket btn-lg"
+              onClick={e => doUpload(e).then(results => {console.log(results)})}
+            >
+              <strong>
+                <i className="fa fa-cloud-upload"> </i> Upload Service Art
+              </strong>
+            </button>
           </div>
 
           <div className="form-group">
             <div className="polaroid">
               <img
-                
                 height="300"
                 width="300"
                 src={
-                  service.service_art || "https://via.placeholder.com/300/09f/fff.png"
+                  service.service_art ||
+                  "https://via.placeholder.com/300/09f/fff.png"
                 }
               />
             </div>
           </div>
 
           <div className="form-group">
-            <button className="btn btn-success">
+            <button 
+            typoe='button'
+            className="btn btn-success btn-lg"
+            onClick={e => checkErrors(e).then(isError => {
+              isError ?
+                setInline({message:'there was an error processing form'})
+              : AddService(e).then(results => {
+                    console.log(results);
+              })
+            })}
+            
+            >
               <strong>
                 <i className="fa fa-save"> </i> Add Service
               </strong>
             </button>
-            <button className="btn btn-warning">
+            <button
+              type='button'
+              className="btn btn-warning btn-lg"
+              onClick={e => {
+                setService(service_init);
+                setErrors(service_errors_init);
+                setInline({message:'',message_type:'info'});
+              }}>
               <strong>
                 <i className="fa fa-eraser"> </i> Reset
               </strong>
@@ -330,7 +719,6 @@ function AddCategories() {
     );
   };
 
-
   const doAddCategory = async e => {
         // e.preventDefault();
         let my_category = Object.assign({},category);
@@ -346,8 +734,6 @@ function AddCategories() {
             setInline({ message: error.message, message_type: "error" });
           });
   };
-
-
 
   const checkErrors = async e => {
         // e.preventDefault();
@@ -452,6 +838,7 @@ function AddCategories() {
               onChange={e =>
                 setCategory({ ...category, [e.target.name]: e.target.value })
               }>
+                <option value={null}>Select Product or Service Category Type</option>
                 <option value="products">Products</option>
                 <option value="services">Services</option>
             </select>
@@ -484,8 +871,8 @@ function AddCategories() {
             {errors.category_name_error ? <InlineError message={errors.category_name_error} /> : ''}
           </div>
           <div className="form-group">
-            <input
-              type="text"
+            <textarea
+              
               className="form-control"
               name="description"
               placeholder="Description..."
@@ -522,7 +909,7 @@ function AddCategories() {
           <div className="form-group">
             <button
               type="button"
-              className="btn btn-bitbucket"
+              className="btn btn-bitbucket btn-lg"
               name="upload-category-art"
               onClick={e => doUpload(e)}
             >
@@ -544,7 +931,7 @@ function AddCategories() {
           <div className="form-group">
             <button
               type="button"
-              className="btn btn-success"
+              className="btn btn-success btn-lg"
               name="save-category"
               onClick={e => checkErrors(e).then(isError => {
                   isError ? setInline({message: 'there was an error processing form ', message_type:'error'}) 
@@ -557,8 +944,13 @@ function AddCategories() {
             </button>
             <button
               type="button"
-              className="btn btn-warning"
+              className="btn btn-warning btn-lg"
               name="reset-category"
+              onClick = {e => {
+                setCategory(category_init);
+                setErrors(category_errors_init);
+                setInline({message:'',message_type:'info'});
+              }}              
             >
               <strong>
                 <i className="fa fa-save"> </i> Reset
@@ -581,7 +973,7 @@ export default function MyMarket() {
   
   let my_header;
   Utils.isMobile()
-    ?  my_header = () => 
+    ? (my_header = () => (
         <div className="box-header">
           <h3 className="box-title">
             <strong>
@@ -601,7 +993,7 @@ export default function MyMarket() {
 
             <button
               type="button"
-              className="btn btn-box-tool"
+              className="btn btn-box-tool btn-outline-dark"
               name="add-products"
               onClick={e => setDisplay(e.target.name)}
             >
@@ -609,7 +1001,7 @@ export default function MyMarket() {
             </button>
             <button
               type="button"
-              className="btn btn-box-tool"
+              className="btn btn-box-tool btn-outline-dark"
               name="add-services"
               onClick={e => setDisplay(e.target.name)}
             >
@@ -617,8 +1009,8 @@ export default function MyMarket() {
             </button>
           </div>
         </div>
-      
-    : my_header = () => 
+      ))
+    : (my_header = () => (
         <Fragment>
           <div className="box-header">
             <h3 className="box-title">
@@ -639,7 +1031,7 @@ export default function MyMarket() {
               </button>
               <button
                 type="button"
-                className="btn btn-box-tool"
+                className="btn btn-box-tool btn-outline-dark"
                 name="add-products"
                 onClick={e => setDisplay(e.target.name)}
               >
@@ -647,15 +1039,16 @@ export default function MyMarket() {
               </button>
               <button
                 type="button"
-                className="btn btn-box-tool"
+                className="btn btn-box-tool btn-outline-dark"
                 name="add-services"
                 onClick={e => setDisplay(e.target.name)}
               >
                 <i className="fa fa-shopping-cart"> </i> Add Services
               </button>
-            </div>   
-            </div>       
-        </Fragment>;
+            </div>
+          </div>
+        </Fragment>
+      ));
    
   return (
     <Fragment>

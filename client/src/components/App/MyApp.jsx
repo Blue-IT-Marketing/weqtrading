@@ -20,7 +20,8 @@ import UserAccountContextProvider from '../../context/UserAccount/userAccountCon
 import Dashboard from '../Dashboard/Dashboard';
 import Blog from '../Blog/Blog';
 import Account from '../Account/Account';
-import Shopping from '../Shopping/Basket';
+
+import CheckOut from '../Market/CheckOut/CheckOut';
 
 export default function App () {
 	
@@ -52,11 +53,8 @@ export default function App () {
                 <Route path={routes.blog_page} component={Blog} />
                 <Route path={routes.dashboard_page} component={Dashboard} />
                 <Route exact path={routes.admin_page} component={Account} />
-                <Route
-                  exact
-                  path={routes.shopping_basket_page}
-                  component={Shopping}
-                />
+
+                <Route exact path={routes.check_out_page} component={CheckOut} />
                 <Route
                   path={routes.my_market_products}
                   component={MyMarket}

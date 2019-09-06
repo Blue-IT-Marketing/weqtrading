@@ -17,6 +17,8 @@ export const admin_page = '/admin-user/'; // + userid
 export const shopping_basket_page = '/admin-user-shopping-basket';
 export const my_market_products = '/admin-user-market';
 
+export const check_out_page = '/market-check-out';
+
 export const dashboard_page = '/dashboard'; // site owner and administrator only
 
 
