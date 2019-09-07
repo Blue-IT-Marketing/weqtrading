@@ -29,6 +29,25 @@ class APIRouterHandler(webapp2.RequestHandler):
             for category in categories_list:
                 response_data.append(category.to_dict())
 
+
+        elif 'products' in route:
+
+            products_requests = Products.query()
+            products_list = products_requests.fetch()
+            
+            response_data = []
+            for product in products_list:
+                response_data.append(product.to_dict())
+
+        elif 'services' in route:
+
+            services_requests = Services.query()
+            services_list = services_requests.fetch()
+
+            response_data = []
+            for service in services_list:
+                response_data.append(service.to_dict())
+
         elif 'physical-address' in route:
 
             uid = route[len(route) - 1]

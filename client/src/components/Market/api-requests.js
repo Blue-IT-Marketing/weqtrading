@@ -14,6 +14,7 @@ export const fetchProductsAPI = async () => {
       }
     })
     .then(products => {
+      console.log('Fetch Products API', products);
       results = [...products];
     })
     .catch(error => {
