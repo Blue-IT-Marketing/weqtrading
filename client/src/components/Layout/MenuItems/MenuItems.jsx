@@ -37,9 +37,9 @@ const SideBarMenuAuth = () => {
             </Link>{" "}
           </li>
           <li>
-            <Link to={routes.shopping_basket_page} title="Shopping Basket">
+            <Link to={routes.check_out_page} title="Check Out">
               <i className="fa fa-shopping-cart"> </i>{" "}
-              <strong> Shopping Cart</strong>{" "}
+              <strong> CheckOut</strong>{" "}
             </Link>{" "}
           </li>
           <li>

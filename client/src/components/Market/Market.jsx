@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Products from "./Products/Products";
 import Services from "./Service/Services";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { routes } from "../../constants";
 import * as apiRequests from './api-requests';
@@ -87,6 +88,16 @@ export default function Market() {
               >
                 Services
               </button>
+              <Link to={routes.check_out_page}>
+                {" "}
+                <button
+                  type="button"
+                  className="btn btn-box-tool btn-outline-dark"
+                  name="check_out"
+                >
+                  <i className="fa fa-shopping-cart"> </i> Check Out
+                </button>
+              </Link>
             </div>
           </div>
 

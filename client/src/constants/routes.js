@@ -32,3 +32,7 @@ export const dashboard_page = '/dashboard'; // site owner and administrator only
 
 
  export const api_categories_endpoint = '/api/categories';
+
+ export const api_physical_endpoint = '/api/physical-address';
+
+ export const api_contact_endpoint = '/api/contact-details';

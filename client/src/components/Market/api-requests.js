@@ -127,4 +127,85 @@ export const doAddService = async(service) => {
   });
 
   return results;
+};
+
+
+export const savePhysicalAddress = async(physical_address) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.post(routes.api_physical_endpoint,physical_address).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error saving new physical address');
+    }
+  }).then(physical => {
+    results.status = true;
+    results.payload = physical;
+  }).catch(error => {
+    results.status = false;
+    results.error = error;
+  });
+
+  return results;
+};
+
+export const fetchPhysicalAddress =async (seed,stateKey) => {
+    let response = {};
+    let request_data = {
+      uid: seed
+    };
+
+    await axios.get(routes.api_physical_endpoint + `/${seed}`).then(results => {
+      if (results.status === 200){
+        return results.data;
+      }else{
+        throw new Error('there was an error loading physical address');
+      }
+    }).then(physical => {
+      response = {...physical};
+    }).catch(error => {
+      console.log(error.message);
+    });
+
+    return response;
+};
+
+
+export const saveContactDetails = async(contact_details) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.post(routes.api_contact_endpoint, contact_details).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error saving contact details')
+    }
+  }).then(contact => {
+    results.status = true;
+    results.payload = contact;
+  }).catch(error => {
+    results.status = false;
+    results.error = error;
+  });
+  return results;
+};
+
+
+export const fetchContactDetails = async (seed,stateKey) => {
+    let response = {};
+    await axios.get(routes.api_contact_endpoint + `/${seed}`).then(result => {
+      if(result.status === 200){
+        return result.data;
+      }else{
+        throw new Error('there was an error loading contact details');
+      }
+    }).then(contact => {
+      response = {...contact};
+
+    }).catch(error => {
+      console.log(error.message);
+    });
+
+    return response;
 }

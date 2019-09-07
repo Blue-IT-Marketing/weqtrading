@@ -9,6 +9,8 @@ from contact import Contact
 from categories import Categories
 from products import Products
 from services import Services
+from physical import PhysicalAddress
+
 class APIRouterHandler(webapp2.RequestHandler):
 
     def get(self):
@@ -26,6 +28,22 @@ class APIRouterHandler(webapp2.RequestHandler):
 
             for category in categories_list:
                 response_data.append(category.to_dict())
+
+        elif 'physical-address' in route:
+
+            uid = route[len(route) - 1]
+
+            physical_request = PhysicalAddress.query(PhysicalAddress.uid == uid)
+            physical_list = physical_request.fetch()
+
+            if (len(physical_list) > 0):
+                physical_address = physical_list[0]
+                response_data = physical_address.to_dict()
+            else:
+                status_int = 403
+                response_data ={message:'physical address not found'}
+
+            
 
         else:
             status_int = 400
@@ -115,7 +133,7 @@ class APIRouterHandler(webapp2.RequestHandler):
             
             json_data = json.loads(self.request.body)
             logging.info(json_data)
-            logging.info(data)
+            
 
             service_request = Services(Services.service_name == json_data['service_name'])            
             service_list = service_request.fetch()
@@ -137,8 +155,32 @@ class APIRouterHandler(webapp2.RequestHandler):
 
                 this_service.put() 
                 response_data = this_service.to_dict()
-                
 
+        elif 'physical-address' in route:
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
+            
+
+            physical_request = PhysicalAddress.query(PhysicalAddress.uid == json_data['uid'])
+            physical_list = physical_request.fetch()
+
+            status_int = 200
+            if len(physical_list) > 0:
+                physical_address = physical_list[0]
+            else:
+                physical_address = PhysicalAddress()
+
+            physical_address.uid = json_data['uid']
+            physical_address.deliver_to = json_data['deliver_to']
+            physical_address.stand = json_data['stand']
+            physical_address.street_name = json_data['street_name']
+            physical_address.city = json_data['city']
+            physical_address.province = json_data['province']
+            physical_address.country = json_data['country']
+            physical_address.postal_code = json_data['postal_code']
+            physical_address.put()
+
+            response_data = physical_address.to_dict()
 
         else:
             status_int = 400
@@ -150,10 +192,6 @@ class APIRouterHandler(webapp2.RequestHandler):
         self.response.status_int = status_int
         json_data = json.dumps(response_data)
         self.response.write(json_data)
-
-
-
-
 
 
 app = webapp2.WSGIApplication([

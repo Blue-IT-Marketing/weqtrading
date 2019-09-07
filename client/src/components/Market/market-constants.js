@@ -61,6 +61,7 @@ export const service_errors_init = {
 
 export const physical_address_init = {
     uid: '',
+    deliver_to : '',
     stand: '',
     street_name: '',
     city: '',
@@ -70,10 +71,30 @@ export const physical_address_init = {
 };
 
 export const physical_address_errors_init = {
+    deliver_to_error : '',
     stand_error : '',
     street_name_error : '',
     city_error : '',
     province_error : '',
     country_error : '',
-    postal_code_errror : ''
+    postal_code_error : ''
+};
+
+
+export const contact_details_init = {
+    uid: "",
+    tel: "",
+    cell: "",
+    email: "",
+    fax: "",
+    website: ""
+};
+
+
+export const contact_details_errors_init = {
+    tel_error : '',
+    cell_error : '',
+    email_error : '',
+    fax_error : '',
+    website_error : ''
 };
