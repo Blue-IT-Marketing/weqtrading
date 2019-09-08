@@ -3,19 +3,30 @@ import webapp2
 import jinja2
 from google.appengine.ext import ndb
 from google.appengine.api import users
-import json
-import logging
+import json,logging
 from contact import Contact
 from categories import Categories
 from products import Products
 from services import Services
 from physical import PhysicalAddress
+from clientcontactdetails import ContactDetails
+from cart import Cart,Items
+from datetime import datetime
+from coupons import Coupons
+def authorize (uid):
+    # take in a user id and check if the user has permissions to access 
+    # the resource he or she is asking for
+
+    pass
 
 class APIRouterHandler(webapp2.RequestHandler):
-
+        
     def get(self):
         url_route = self.request.uri
         route = url_route.split("/")
+
+        logging.info('ROUTE INFORMATION')
+        logging.info(route)
         
         status_int = 200
 
@@ -32,21 +43,51 @@ class APIRouterHandler(webapp2.RequestHandler):
 
         elif 'products' in route:
 
-            products_requests = Products.query()
-            products_list = products_requests.fetch()
-            
-            response_data = []
-            for product in products_list:
-                response_data.append(product.to_dict())
+            product_id = str(route[len(route) - 1])
+            logging.info('PRODUCT ID')
+            logging.info(product_id)
+
+            if product_id == 'products':
+
+                products_requests = Products.query()
+                products_list = products_requests.fetch()
+                
+                response_data = []
+                for product in products_list:
+                    response_data.append(product.to_dict())
+            else:
+                products_requests = Products.query(Products.id == product_id)
+                products_list = products_requests.fetch()
+
+                if len(products_list) > 0:
+                    product = products_list[0]
+
+                    response_data = product.to_dict()
+                else:
+                    status_int = 403
+                    response_data = {'message':'product not found'}
 
         elif 'services' in route:
+            service_id = str(route[len(route) - 1])
+            if service_id == 'services':
+                services_requests = Services.query()
+                services_list = services_requests.fetch()
 
-            services_requests = Services.query()
-            services_list = services_requests.fetch()
+                response_data = []
+                for service in services_list:
+                    response_data.append(service.to_dict())
+            else:
+                services_requests = Services.query(Services.id == service_id)
+                services_list = services_requests.fetch()
 
-            response_data = []
-            for service in services_list:
-                response_data.append(service.to_dict())
+                if len(services_list) > 0:
+                    service = services_list[0]
+
+                    response_data = service.to_dict()
+                else:
+                    status_int = 403
+                    response_data = {'message':'service not found'}
+
 
         elif 'physical-address' in route:
 
@@ -60,9 +101,53 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = physical_address.to_dict()
             else:
                 status_int = 403
-                response_data ={message:'physical address not found'}
+                response_data ={'message':'physical address not found'}
 
-            
+        elif 'contact-details' in route:
+
+            uid = route[len(route) - 1]
+
+            contact_details_request = ContactDetails.query(ContactDetails.uid == uid)
+            contact_details_list = contact_details_request.fetch()
+
+            if (len(contact_details_list) > 0):
+                contact_details = contact_details_list[0]
+                response_data = contact_details.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'contact details not found'}
+
+        elif 'cart' in route:
+            uid = route[len(route) - 1]
+
+            cart_request = Cart.query(Cart.uid == uid)
+            cart_list = cart_request.fetch()
+
+            if len(cart_list) > 0:
+                cart = cart_list[0]                
+                items_request = Items.query(Items.cart_id == cart.cart_id)
+                items_list = items_request.fetch()
+                cart_items = []
+                for item in items_list:
+                    cart_items.append(item.to_dict())
+                cart = cart.to_dict()
+                
+                # let results = {status : true, cart_items : [], cart : {}, error: {} };
+                response_data = {
+                    'status': True,
+                    'cart_items': cart_items,
+                    'cart': cart,
+                    'error': {}
+                }
+
+            else:
+                status_int = 403
+                response_data = {
+                    'status': False,
+                    'cart_items': [],
+                    'cart': {},
+                    'error': {'message':'cart items not found'}
+                }
 
         else:
             status_int = 400
@@ -72,8 +157,6 @@ class APIRouterHandler(webapp2.RequestHandler):
         self.response.status_int = status_int
         json_data = json.dumps(response_data)
         self.response.write(json_data)
-
-
 
     def post(self):
         url = self.request.uri
@@ -85,128 +168,208 @@ class APIRouterHandler(webapp2.RequestHandler):
             logging.info(json_data)
 
             this_contact = Contact()
+            contact_key = this_contact.new_contact(contact=json_data)
 
-            this_contact.contact_id = this_contact.create_id()
-            this_contact.names = json_data['names']
-            this_contact.cell = json_data['cell']
-            this_contact.email = json_data['email']
-            this_contact.subject = json_data['subject']
-            this_contact.message = json_data['message']
-            this_contact.put()
+            if contact_key != None:
+                response_data = {'message': 'Thank you ' + str(json_data['names']) + ' for sending us this message we will be responding to you through this email ' + str(json_data['email']) }
+            else:
+                response_data = {'message' : 'Unfortunately we cannot process any more contact messages from you'}
 
         elif 'categories' in route:
-            json_data = json.loads(self.request.body)
-            logging.info(json_data)
-            
-            
-
+            json_data = json.loads(self.request.body)                            
             this_category = Categories();
+            this_category = this_category.addCategory(category=json_data)
 
-            category_requests = Categories.query((Categories.category_name == json_data['category_name']) and (Categories.sub_category == json_data['sub_category']))
-            categories_list = category_requests.fetch()
-            response_data = '';
-            if len(categories_list) > 0:
-                response_data = {'message':'duplicate category'}
+            if this_category == '':
                 status_int = 403
+                response_data={'message':'error category already exist'}
             else:
-
-                this_category.category_id = this_category.create_id()
-                this_category.category_type = json_data['category_type']
-                this_category.sub_category = json_data['sub_category']
-                this_category.category_name = json_data['category_name']
-                this_category.description = json_data['description']
-                this_category.notes = json_data['notes']
-                this_category.category_art = json_data['category_art']
-                this_category.put()
-
                 response_data = this_category.to_dict()
 
         elif 'products' in route:
-            json_data = json.loads(self.request.body)
-            logging.info(json_data)
-
+            json_data = json.loads(self.request.body)            
             this_products = Products()
-
-            products_request = Products.query(Products.product_name == json_data['product_name'])
-            products_list = products_request.fetch()
-
-            response_data = ''
-            if len(products_list) > 0:
-                response_data = {'message':'duplicate product'}
-                status_int = 403
+            this_products = this_products.addProduct(product=json_data)
+            logging.info(this_products)            
+            if this_products != None:
+                response_data = {'message': 'product successfully added'}
             else:
+                response_data = {'message': 'duplicate product error'}
 
-                this_products.id = this_products.create_id()
-                this_products.category_id = json_data['category_id']
-                this_products.product_name = json_data['product_name']
-                this_products.description = json_data['description']
-                this_products.price = json_data['price']
-                this_products.product_art = json_data['product_art']
-                this_products.uid = json_data['uid']
+        elif 'services' in route:            
+            json_data = json.loads(self.request.body)                    
+            this_service = Services()
+            this_service = this_service.addService(service=json_data)
 
-                this_products.put()
-
-                response_data = this_products.to_dict()
-
-        elif 'services' in route:
-            
-            json_data = json.loads(self.request.body)
-            logging.info(json_data)
-            
-
-            service_request = Services(Services.service_name == json_data['service_name'])            
-            service_list = service_request.fetch()
-
-            response_data = ''
-            if len(service_list) > 0:
-                response_data = {'message': 'duplicate service'}
-                status_int = 403
-            else:
-
-
-                this_service = Services()
-                this_service.id = this_service.create_id()
-                this_service.category_id = json_data['category_id']
-                this_service.service_name = json_data['service_name']
-                this_service.service_art = json_data['service_art']
-                this_service.price  = json_data['price']
-                this_service.uid = json_data['uid']
-
-                this_service.put() 
+            if this_service != '':    
                 response_data = this_service.to_dict()
+            else:
+                status_int = 403
+                response_data = { 'message':'duplicate service'}
 
         elif 'physical-address' in route:
-            json_data = json.loads(self.request.body)
-            logging.info(json_data)
-            
-
-            physical_request = PhysicalAddress.query(PhysicalAddress.uid == json_data['uid'])
-            physical_list = physical_request.fetch()
-
-            status_int = 200
-            if len(physical_list) > 0:
-                physical_address = physical_list[0]
-            else:
-                physical_address = PhysicalAddress()
-
-            physical_address.uid = json_data['uid']
-            physical_address.deliver_to = json_data['deliver_to']
-            physical_address.stand = json_data['stand']
-            physical_address.street_name = json_data['street_name']
-            physical_address.city = json_data['city']
-            physical_address.province = json_data['province']
-            physical_address.country = json_data['country']
-            physical_address.postal_code = json_data['postal_code']
-            physical_address.put()
-
+            json_data = json.loads(self.request.body)                        
+            physical_address = PhysicalAddress()
+            physical_address = physical_address.addPhysicalAddress(physical=json_data)
             response_data = physical_address.to_dict()
+
+        elif 'contact-details' in route:
+            json_data = json.loads(self.request.body)
+            contact_details = ContactDetails()
+            contact_details = contact_details.addContactDetails(contact=json_data)
+            response_data = contact_details.to_dict()
+
+
+        elif 'cart' in route:            
+            
+            json_data = json.loads(self.request.body)
+
+            cart_owner_id = json_data['uid']
+            item =  json_data['item']
+            logging.info(item)
+
+            cart_request = Cart.query(Cart.uid == cart_owner_id)
+            cart_list = cart_request.fetch()
+
+            if len(cart_list) > 0 :
+                cart = cart_list[0]
+            else:
+                cart = Cart()
+                cart.uid = cart_owner_id
+                cart.cart_id = cart.create_cart_id()
+                cart.is_active = True
+                today = datetime.now()
+                today = today.strftime("%d-%b-%Y")
+                cart.date_created = today
+                cart.total_items = str(0)                
+                cart.sub_total = str(0)
+                cart.tax = str(0)
+                cart.total = str(0)
+
+            items = Items()
+            try:
+                product_name = item['product_name']
+                items.item_type = 'products'
+            except:
+                items.item_type = 'services'
+
+            items.item_id = items.create_item_id()
+
+            items.id_service_product = item['id']
+            items.cart_id = cart.cart_id
+            items.price = item['price']
+            items.quantity = str(1)
+            items.sub_total = str(float(items.price) * int(items.quantity))
+
+            cart.sub_total = str(float(cart.sub_total) + float(items.sub_total))
+            cart.tax = str(0)
+            cart.total = str(float(cart.sub_total) + float(cart.tax))
+
+
+            cart.total_items = str(int(cart.total_items) + 1)
+
+            cart.put() 
+            items.put() 
+
+            items_request = Items.query(Items.cart_id == cart.cart_id)
+            items_list = items_request.fetch()
+            ser_items = []
+            for item in items_list:
+                ser_items.append(item.to_dict())
+            cart = cart.to_dict()
+            # let results = {status : true, cart_items : [], cart : {}, error: {} };
+            response_data = {
+                    'status' : 'True' , 
+                    'cart_items': ser_items,
+                    'cart' : cart,
+                    'error' : {}
+                    }
 
         else:
             status_int = 400
-
             response_data = {'message': 'the server cannot process this request'}
 
 
+        self.response.headers['Content-Type'] = "application/json"
+        self.response.status_int = status_int
+        json_data = json.dumps(response_data)
+        self.response.write(json_data)
+
+    def delete(self):
+        url = self.request.uri
+        route = url.split('/')
+        status_int = 200
+
+        if 'cart' in route:
+            uid = route[len(route) - 1]
+            cart = Cart()
+            items = Items()
+
+            cart_id = cart.removeCart(uid=uid)
+            if cart_id != '':
+                items.removeItems(cart_id=cart_id)
+
+                response_data = {
+                    'message': 'successfully deleted cart',
+                    'cart': {}
+                }
+            else:
+                response_data = {
+                    'message': 'cart not found',
+                    'cart': {}
+                }
+        else:
+            status_int = 403
+            response_data = {
+                'message' : 'error resource not found'
+            }
+
+
+        self.response.headers['Content-Type'] = "application/json"
+        self.response.status_int = status_int
+        json_data = json.dumps(response_data)
+        self.response.write(json_data)
+
+    def put(self):
+
+        url = self.request.uri
+        route = url.split('/')
+        status_int = 200
+
+        logging.info('ARE WE THERE YET')
+
+        if 'coupons' in route:
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
+
+
+            coupons_request = Coupons.query(Coupons.code == json_data['code'] and Coupons.valid == True)
+            coupons_list = coupons_request.fetch();
+
+            cart_request = Cart.query(Cart.uid == json_data['uid'])
+            cart_list = cart_request.fetch()
+
+
+
+            if ((len(coupons_list) > 0) and (len(cart_list > 0))):
+                coupon = coupons_list[0]
+                coupon_code = coupon.to_dict()
+                response_data = {
+                    'succeed' : True,
+                    'coupon'  : coupon_code,
+                    'message' : 'coupon code valid'
+                }
+
+            else:
+                response_data = {
+                    'succeed': False,
+                    'coupon' : {},
+                    'message':'cannot find coupon or your cart is empty'
+                }
+        else:
+            status_int = 401
+            response_data = {'message': 'you are not allowed to access that method'}
+            
         self.response.headers['Content-Type'] = "application/json"
         self.response.status_int = status_int
         json_data = json.dumps(response_data)

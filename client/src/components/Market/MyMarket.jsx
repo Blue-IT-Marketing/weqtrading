@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect,useContext } from "react";
 import {
   products_init,
   products_errors_init,
@@ -14,8 +14,8 @@ import axios from "axios";
 import InlineMessage from '../Forms/InlineMessage';
 import InlineError from '../Forms/InlineError';
 
-
 import {Utils} from '../../utilities';
+import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
 
 function AddProduct() {
   const [product, setProduct] = useState(products_init);
@@ -23,7 +23,7 @@ function AddProduct() {
   const [inline,setInline] = useState({message : '', message_type:'info'});
   const [errors,setErrors] = useState(products_errors_init)
   const [categories, setCategories] = useState([]);
-
+  const { user_account_state, doLogin } = useContext(UserAccountContext);
   const doUpload = async e => {
     const { image } = uploaded;
     try {
@@ -32,7 +32,7 @@ function AddProduct() {
       );
 
       const uploadTask = firebase.storage
-        .ref(`products/${category.sub_category}/${image.name}`)
+        .ref(`products/${user_account_state.user_account.uid}/${category.sub_category}/${image.name}`)
         .put(image);
       await uploadTask.on(
         "state_changed",
@@ -49,7 +49,7 @@ function AddProduct() {
         () => {
           // complete function
           firebase.storage
-            .ref(`products/${category.sub_category}`)
+            .ref(`products/${user_account_state.user_account.uid}/${category.sub_category}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
@@ -84,19 +84,24 @@ function AddProduct() {
   const doSaveProduct = async e => {
     e.preventDefault();
     let product_to_save = Object.assign({}, product);
-    product_to_save.uid = firebase.auth.currentUser.uid;
+    product_to_save.uid = user_account_state.user_account.uid;
     console.log("Product to Save", product_to_save);
-    const product_data = JSON.stringify(product);
-    RequestsAPI.saveProduct(product).then(results => {
-        if(results.status){
+    product_to_save = JSON.stringify(product_to_save);
+    RequestsAPI.saveProduct(product_to_save)
+      .then(results => {
+        if (results.status) {
           setProduct(results.payload);
-          setInline({ message: 'successfully saved product', message_type: "info" });
-        }else{
+          setInline({
+            message: "successfully saved product",
+            message_type: "info"
+          });
+        } else {
           setInline({ message: results.error.message, message_type: "error" });
-        }              
-    }).catch(error => {
+        }
+      })
+      .catch(error => {
         setInline({ message: error.message, message_type: "error" });
-    });
+      });
 
     return true;
   };
@@ -365,6 +370,8 @@ function AddService() {
     progress: 0
   });
 
+  const { user_account_state, doLogin } = useContext(UserAccountContext);
+
   const placeholder = "https://via.placeholder.com/300/09f/fff.png";
 
   const doUpload = async e => {
@@ -374,7 +381,7 @@ function AddService() {
         category => category.category_id === service.category_id
       );
       const uploadTask = firebase.storage
-        .ref(`services/${category.sub_category}/${image.name}`)
+        .ref(`services/${user_account_state.user_account.uid}/${category.sub_category}/${image.name}`)
         .put(image);
       await uploadTask.on(
         "state_changed",
@@ -391,7 +398,7 @@ function AddService() {
         () => {
           // complete function
           firebase.storage
-            .ref(`services/${category.sub_category}`)
+            .ref(`services/${user_account_state.user_account.uid}/${category.sub_category}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
@@ -453,7 +460,7 @@ function AddService() {
 
     const check_price = e => {
       
-        if(Utils.isMoney(service.price)){
+        if(Utils.isMoney(service.price) === false){
           setErrors({...errors,price_error:'invalid service price'});
           return true;
         }
@@ -488,8 +495,8 @@ function AddService() {
 
   const addService = async e => {
       let my_service = Object.assign({},service);
-      my_service.uid = firebase.auth.currentUser.uid;
-      RequestsAPI.doAddService(JSON.stringify(my_service)).then(results => {
+      my_service.uid = user_account_state.user_account.uid;
+      await RequestsAPI.doAddService(JSON.stringify(my_service)).then(results => {
           if(results.status){
             setService(results.payload);
             setInline({message:'successfully saved service',message_type:'info'});
@@ -628,14 +635,17 @@ function AddService() {
 
           <div className="form-group">
             <button 
-            typoe='button'
+            type='button'
             className="btn btn-success btn-lg"
             onClick={e => checkErrors(e).then(isError => {
               isError ?
                 setInline({message:'there was an error processing form'})
-              : AddService(e).then(results => {
+              : addService(e).then(results => {
                     console.log(results);
-              })
+                    setInline({message:''})
+                }).catch(error => {
+                  setInline({message:error.message,message_type:'error'});
+                });
             })}
             
             >
@@ -668,6 +678,7 @@ function AddCategories() {
   const [uploaded, setUploaded] = useState({image: "",url: "",size: 0,filename: "",progress: 0});
   const [inline,setInline] = useState({message:'',message_type:'info'});
   const [errors, setErrors] = useState(category_errors_init);
+  const { user_account_state, doLogin } = useContext(UserAccountContext);
 
   const CategoryArtFileChange = e => {
     if (e.target.files[0]) {
@@ -685,7 +696,7 @@ function AddCategories() {
   const doUpload = async e => {
     const { image } = uploaded;
 
-    const uploadTask = firebase.storage.ref(`categories/${image.name}`).put(image);
+    const uploadTask = firebase.storage.ref(`categories/${user_account_state.user_account.uid}/${image.name}`).put(image);
         await uploadTask.on(
         "state_changed",
         snapshot => {
@@ -722,7 +733,7 @@ function AddCategories() {
   const doAddCategory = async e => {
         // e.preventDefault();
         let my_category = Object.assign({},category);
-        my_category.uid = firebase.auth.currentUser.uid;
+        my_category.uid = user_account_state.user_account.uid;
         my_category = JSON.stringify(my_category);
         console.log("CATEGORY", my_category);
         RequestsAPI.saveCategory(my_category).then(results => {

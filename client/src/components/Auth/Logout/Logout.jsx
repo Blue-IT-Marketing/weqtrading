@@ -16,6 +16,25 @@ export default function Logout() {
                   <h3 className="box-title">
                     <i className="fa fa-sign-out"> </i> Logout
                   </h3>
+
+                  <div className="box-tools">
+                    <Link to={routes.home_page}>
+                      <button
+                        type="button"
+                        className="btn btn-box-tool btn-outline-dark"
+                      >
+                        <i className="fa fa-home"> </i>{' '} Home
+                      </button>
+                    </Link>
+                    <Link to={routes.login_page}>
+                      <button
+                        type="button"
+                        className="btn btn-box-tool btn-outline-dark"
+                      >
+                        <i className="fa fa-sign-in"> </i>{' '} Login
+                      </button>
+                    </Link>
+                  </div>
                 </div>
 
                 <form className="form-horizontal">

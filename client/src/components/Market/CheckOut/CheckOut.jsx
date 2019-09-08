@@ -1,4 +1,4 @@
-import React,{Fragment,useState,useEffect} from 'react';
+import React,{Fragment,useState,useEffect,useContext} from 'react';
 import {Link} from 'react-router-dom';
 import InlineError from '../../Forms/InlineError';
 import InlineMessage from '../../Forms/InlineMessage';
@@ -8,7 +8,11 @@ import {
   physical_address_init,
   physical_address_errors_init,
   contact_details_init,
-  contact_details_errors_init
+  contact_details_errors_init,
+  products_init,
+  service_init,
+  cart_init,
+  coupon_init
 } from "../market-constants";
 
 
@@ -18,22 +22,126 @@ import { Utils } from '../../../utilities';
 
 import * as settings from '../../../constants';
 
+import { UserAccountContext } from "../../../context/UserAccount/userAccountContext";
+
 
 const BasketItem = ({item}) => {
-    return(<li className='list-group-item'></li>)
+  console.log('Returning Items',item);
+  const[product,setProduct] = useState(products_init);
+  const[service,setService] = useState(service_init);
+
+  useEffect(() => {
+    const fetchAPI = async () => {   
+        if (item.item_type === 'products'){
+          await APIRequests.fetchProductAPI(item.id_service_product).then(results => {
+              setProduct(results);
+          });
+        }else{
+          await APIRequests.fetchServiceAPI(item.id_service_product).then(results => {
+              setService(results);
+          });
+        }
+        return true;
+    };
+    fetchAPI().then(result => {
+      console.log(result);
+    })
+    return () => {
+      setProduct(products_init);
+      setService(service_init);
+    };
+  }, [])
+    let description = '';
+    product.description
+      ? (description = product.description)
+      : (description = service.description);
+    return (
+      <tr>
+        <td title={description}>
+          {
+            item.item_type === 'products' ?
+              product.product_name : service.service_name
+          }
+        </td>
+        <td>{item.item_type}</td>
+        <td>{item.quantity}</td>
+        <td>{item.price}</td>
+        <td>{item.sub_total}</td>
+      </tr>
+    );
 }
 
 const ShoppingBasket = () => {
     const[basket,setBasket] = useState([]);
-    const[coupons,setCoupons] = useState({
-      code_id : '',
-      discount_percentage : 0,
-      code : '',
-      valid : false
+    const[coupons,setCoupons] = useState(coupon_init);
+    const[errors,setErrors] = useState({
+      coupon_code_error : ''
     });
-
+    const [cart, setCart] = useState(cart_init);
     const[inline,setInline] = useState({message:'',message_type:'info'});
+    const { user_account_state, doLogin } = useContext(UserAccountContext);
+    
+    const applyCouponCode = e => {
+        /**
+         * compile code information from state
+         * send coupon to back end
+         * backend server must find out if the code there matches 
+         * the ones in the database, if it does then apply discounts 
+         * appropriately
+         */
+        if (coupons.code){
+            let coupon = {...coupons};
+            try{
+                coupon.uid = user_account_state.user_account.uid;
+                coupon = JSON.stringify(coupon);
+                APIRequests.applyCouponCode(coupon).then(results => {
+                  console.log('coupon code results : ', results);
+                  if (results.status){
+                    // activate the discount only on the total amount
+                    // the app will then send the total amount into
+                    // the payment record and then save it back to server
+                    
+                  }else{
+                    setInline({message:results.error.message,message_type:'error'});
+                    console.log(results.error.message);
+                  }
+                });
 
+              }catch(error){
+                console.log(error);
+                setInline({message:error.message,message_type:'error'});
+              }              
+            
+        }else{
+          setErrors({...errors, coupon_code_error : 'coupon code cannot be empty'});
+          setInline({message:'error applying coupon code'});
+        }
+            
+
+    };
+
+    useEffect(() => {
+      const apiFetch = async () => {
+        let uid = user_account_state.user_account.uid;
+
+        APIRequests.retrieveCart(uid).then(Response => {
+          console.log("Cart Items :", Response.cart_items);
+          setBasket(Response.cart_items);
+          setCart(Response.cart);
+        }); 
+
+      };
+
+      apiFetch().then(results => {
+
+      });
+
+      return () => {
+        setBasket([]);
+      };
+    }, []);
+
+  
     return (
       <Fragment>
         <div className="box box-body">
@@ -44,85 +152,166 @@ const ShoppingBasket = () => {
           </div>
 
           <div className="box box-warning">
-            <div className='row'>
-                <div className='box box-footer col-md-8'>
-                    <div className='box box-header'>
-                        <h3 className='box-title'>
-                          <i className='fa fa-shopping-cart'> </i>{' '}
-                           Shopping Items</h3>
+            <div className="row">
+              <div className="box box-footer col-md-8">
+                <div className="box box-header">
+                  <h3 className="box-title">
+                    <i className="fa fa-shopping-cart"> </i> Shopping Items
+                  </h3>
 
-                        <div className='box-tools'>
-                            <button
-                              type='button'
-                              className='btn btn-box-tool btn-outline-danger'
-                              name='clear_items'
-                            >
-                              <i className='fa fa-eraser'>{' '}</i>{' '}
-                              Clear Items
-                            </button>
-                        </div>
-                    </div>
-                    <ul className="list-group">
-                        {
-                          basket.length > 0 ?
-                          (
-                          basket.map((item,index) => {
-                            return(<BasketItem item={item} key={index} /> : '')
-                          })
-                        ):(
-                          <span
-                            className='box box-warning'
-                          >There are not items in your shopping list</span>
-                        )
-                        
-                        }
-                    </ul>
-
-                </div>    
-                <div className='box box-footer col-md-4'>
-                    <div className='box box-header'>
-                        <h3 className='box-title'>
-                          <i className='fa fa-shopping-bag'> </i>{' '}
-                           Check Out </h3>
-                    </div>
-
-                    <ul className='list-group'>
-                      <li className='list-group-item'>Sub Totals : </li>
-                      <li className='list-group-item'> Tax : </li>
-                      <li className='list-group-item'> Total : </li> 
-                      <li className='list-group-item'>
-                        <input 
-                            type='text'  
-                            className='form-control'
-                            name='coupon_code'
-                            placeholder='Coupon Code...'
-                            value={coupons.code}
-                            onChange={e => setCoupons({...coupons,[e.target.name]: e.target.value})}
-                          />
-                      </li>  
-                      <li className='list-group-item'>
-                          <button
-                            type='button'
-                            className='btn btn-danger margin'
-                            name='applycode'
-                          >
-                            <i className='fa fa-money'> </i>{' '}
-                            Apply Code
-                          </button>  
-                          <button
-                            type='button'
-                            className='btn btn-success margin'
-                            name='checkout'
-                          >
-                           <i className='fa fa-shopping-bag'> </i>{' '}  
-                           Checkout
-                          </button>
-                      </li>                 
-                    </ul>
+                  <div className="box-tools">
+                    <button
+                      type="button"
+                      className="btn btn-box-tool btn-outline-danger"
+                      name="clear_items"
+                      onClick={e =>
+                        APIRequests.deleteCart(
+                          firebase.auth.currentUser.uid
+                        ).then(results => {
+                          console.log(results);
+                          if (results.status === true) {
+                            setCart(cart_init);
+                            setBasket([]);
+                            setInline({
+                              message: "cart items cleared",
+                              message_type: "error"
+                            });
+                          }
+                        })
+                      }
+                    >
+                      <i className="fa fa-eraser"> </i> Clear Items
+                    </button>
+                  </div>
                 </div>
-          </div>
-        </div>
+                <table className="table table-responsive">
+                  <thead>
+                    <tr>
+                      <td>
+                        <strong>
+                          <em>Item Name</em>
+                        </strong>
+                      </td>
+                      <td>
+                        <strong>
+                          <em>Item Type</em>
+                        </strong>
+                      </td>
+                      <td>
+                        <strong>
+                          <em>Quantity</em>
+                        </strong>
+                      </td>
+                      <td>
+                        <strong>
+                          <em>Price</em>
+                        </strong>
+                      </td>
+                      <td>
+                        <strong>
+                          <em>Sub Total</em>
+                        </strong>
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {basket.length > 0 ? (
+                      basket.map((item, index) => {
+                        return (<BasketItem item={item} key={index} />: "");
+                      })
+                    ) : (
+                      <span className="box box-warning">
+                        There are not items in your shopping list
+                      </span>
+                    )}
+                  </tbody>
+                </table>
+                {inline.message ? (
+                  <InlineMessage
+                    message={inline.message}
+                    message_type={inline.message_type}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="box box-footer col-md-4">
+                <div className="box box-header">
+                  <h3 className="box-title">
+                    <i className="fa fa-shopping-bag"> </i> Check Out{" "}
+                  </h3>
+                </div>
 
+                <ul className="list-group">
+                  <li className="list-group-item">
+                    Sub Totals : R {cart.sub_total}0
+                  </li>
+                  <li className="list-group-item"> Tax : R {cart.tax}.00</li>
+                  <li className="list-group-item"> Total : R {cart.total}0</li>
+                  <li className="list-group-item">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="code"
+                      placeholder="Coupon Code..."
+                      value={coupons.code}
+                      onChange={e =>
+                        setCoupons({
+                          ...coupons,
+                          [e.target.name]: e.target.value
+                        })
+                      }
+                    />
+                    {errors.coupon_code_error ? (
+                      <InlineError message={errors.coupon_code_error} />
+                    ) : (
+                      ""
+                    )}
+                  </li>
+                  <li className="list-group-item">
+                    <button
+                      type="button"
+                      className="btn btn-danger margin"
+                      name="applycode"
+                      onClick={e => applyCouponCode(e)}
+                    >
+                      <i className="fa fa-money"> </i> Apply Code
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-warning'
+                      name='reset'
+                      onClick={ e => {
+                        setCoupons(coupon_init);
+                        setErrors({ coupon_code_error: "" });
+                        setInline({message:'',message_type:'info'});
+                        }}
+                    ><i className='fa fa-eraser'> </i>{' '}
+                    Reset Code
+                    </button>
+                  </li>
+                  <li className="list-group-item">
+                    <button
+                      type="button"
+                      className="btn btn-success margin"
+                      name="checkout"
+                      title='Send Invoice and Pay Via EFT or Make a Deposit'
+                    >
+                      <i className="fa fa-shopping-bag"> </i> Checkout
+                    </button>
+                    <button
+                      type='button'
+                      className='btn btn-success'
+                      name='paypal'
+                      title='Pay Online via your PayPal Account or Credit Card'
+                    >
+                      <i className='fa fa-paypal'> </i> PayPal
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </Fragment>
     );
@@ -132,6 +321,7 @@ const PhysicalAddress = () => {
     const [physical,setPhysical] = useState(physical_address_init);
     const [errors,setErrors] = useState(physical_address_errors_init);
     const [inline,setInline] = useState({message: '',message_type:'info'});
+    const { user_account_state, doLogin } = useContext(UserAccountContext);
 
     const checkErrors = async e => {
       let isError = false;
@@ -226,7 +416,7 @@ const PhysicalAddress = () => {
     const addPhysicalAddress = async e => {
       
       let physical_address = Object.assign({},physical);
-      physical_address.uid = firebase.auth.currentUser.uid;
+      physical_address.uid = user_account_state.user_account.uid;
       physical_address = JSON.stringify(physical_address);
 
       await APIRequests.savePhysicalAddress(physical_address).then(response => {
@@ -254,7 +444,7 @@ const PhysicalAddress = () => {
       // load physical address for this user
       const loadPhysicalAddress = async () => {
 
-        let seed = firebase.auth.currentUser.uid;        
+        let seed = user_account_state.user_account.uid;        
         let stateKey = settings.settings.localStorageKey + 'physical-address-' + seed + '-';
 
         await APIRequests.fetchPhysicalAddress(seed,stateKey).then(physical => {
@@ -432,7 +622,7 @@ const ContactDetails = () => {
     const [contact,setContact] = useState(contact_details_init);
     const [errors,setErrors] = useState(contact_details_errors_init);
     const [inline,setInline] = useState({message:'',message_type:'info'});
-
+    const { user_account_state, doLogin } = useContext(UserAccountContext);
 
     const checkErrors = async e  => {
       let isError = false;
@@ -448,7 +638,7 @@ const ContactDetails = () => {
         }
         return false;
       }
-      return true;
+      return false;
       }
 
       const check_cell = () => {
@@ -473,7 +663,7 @@ const ContactDetails = () => {
           }
           return false;
         }
-        return true;
+        return false;
       }
 
       const check_email = () => {
@@ -498,7 +688,7 @@ const ContactDetails = () => {
           }
           return false;
         }
-        return true;
+        return false;
       }
 
       const do_check = () => {
@@ -515,7 +705,7 @@ const ContactDetails = () => {
 
     const onAddContactDetails = async e => {
       let contact_details = Object.assign({},contact);
-      contact_details.uid = firebase.auth.currentUser.uid;
+      contact_details.uid = user_account_state.user_account.uid;
       contact_details = JSON.stringify(contact_details);
 
       APIRequests.saveContactDetails(contact_details).then(response => {
@@ -530,11 +720,12 @@ const ContactDetails = () => {
       });
 
       return true;
-    }
+    };
 
     useEffect(() => {
+
       const fetchContacts = async () => {
-        let seed = firebase.auth.currentUser.uid;
+        let seed = user_account_state.user_account.uid;
         let stateKey = settings.settings.localStorageKey + 'contact-details-' + seed + '-';
 
         await APIRequests.fetchContactDetails(seed, stateKey).then(response => {
@@ -669,6 +860,7 @@ const ContactDetails = () => {
 }
 
 const PaymentDetails = () => {
+  const { user_account_state, doLogin } = useContext(UserAccountContext);
   return(
     <Fragment>
       <div className='box box-body'>
@@ -683,6 +875,7 @@ const PaymentDetails = () => {
 
 const CheckOut = () => {
     const [display,setDisplay] = useState('physical_address');
+    const { user_account_state, doLogin } = useContext(UserAccountContext);
     return (
         <Fragment>
             <div className='box box-body'>

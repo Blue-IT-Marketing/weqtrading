@@ -45,7 +45,13 @@ const SideBarMenuAuth = () => {
           <li>
             <Link to={routes.my_market_products} title="Shopping Basket">
               <i className="fa fa-shopping-basket"> </i>{" "}
-              <strong> My Products / Services </strong>{" "}
+              <strong> My Products &amp; Services </strong>{" "}
+            </Link>{" "}
+          </li>
+          <li>
+            <Link to={routes.manage_my_shop} title="manage my shop">
+              <i className="fa fa-stethoscope"> </i>{" "}
+              <strong>My Store Manager</strong> { " "}
             </Link>{" "}
           </li>
         </ul>

@@ -10,13 +10,14 @@
 import * as store from '../../../localstorage';
 
 
-const storeProducts = async (seed,stateKey,products) => {
+export const storeProducts = async (seed,stateKey,products) => {
     let states = [...products];
     let results = [];
-
-    await states.forEach((state,index) => {
+    let index = 0;
+    await states.forEach(state => {
         store.myStore.setState(seed, stateKey+index, state).then(result => {
                 results.push(result);
+                index++;
         });
     });
 
@@ -24,28 +25,36 @@ const storeProducts = async (seed,stateKey,products) => {
 };
 
 
-const retrieveProducts = async (seed,stateKey) => {
+export const retrieveProducts = async (seed,stateKey) => {
+    
     let results = [];
-    index = 0;
+    let index = 0;
     let result = 1;
+
     while (result !== undefined){
+
         store.myStore.getState(seed, stateKey+index).then(state => {
             state !== undefined ? results.push(state) : result = state;
             index = index + 1;
-        })
+        });
+        
+        if (index === 100){
+            result = undefined;
+        }
     }
     
     return results;    
 };
 
 
-const storeServices = (seed, stateKey, services) => {
+export const storeServices = (seed, stateKey, services) => {
     let states = [...services];
     let results = [];
-
-    states.forEach((state, index) => {
+    let index = 0;
+    states.forEach(state => {
         store.myStore.setState(seed, stateKey + index, state).then(result => {
             results.push(result);
+            index++;
         });
     });
 
@@ -53,9 +62,9 @@ const storeServices = (seed, stateKey, services) => {
 };
 
 
-const retrieveServices = async (seed,stateKey) => {
+export const retrieveServices = async (seed,stateKey) => {
     let results = [];
-    index = 0;
+    let index = 0;
     let result = 1;
     while (result !== undefined){
         store.myStore.getState(seed, stateKey+index).then(state => {

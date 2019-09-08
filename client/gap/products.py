@@ -22,3 +22,21 @@ class Products (ndb.Expando):
     
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
+
+
+    def addProduct(self,product):
+        products_request = Products.query(Products.product_name == product['product_name'])
+        products_list = products_request.fetch()
+        
+        if len(products_list) > 0:
+            return ''
+        else:
+            self.id = self.create_id()
+            self.category_id = product['category_id']
+            self.product_name = product['product_name']
+            self.description = product['description']
+            self.price = product['price']
+            self.product_art = product['product_art']
+            self.uid = product['uid']
+            
+            return self.put()

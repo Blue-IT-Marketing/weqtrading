@@ -98,3 +98,21 @@ export const contact_details_errors_init = {
     fax_error : '',
     website_error : ''
 };
+
+
+export const cart_init = {
+    cart_id :'',  // # unique id for this cart instance
+    uid :'',
+    total_items : '0',
+    date_created : '',
+    is_active : true,
+    sub_total :'0',
+    tax : '0',
+    total : '0'
+};
+
+export const coupon_init = {
+    uid: '',    
+    code: '',
+    validated : false    
+};

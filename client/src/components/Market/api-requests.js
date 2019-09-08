@@ -24,6 +24,29 @@ export const fetchProductsAPI = async () => {
   return results;
 };
 
+
+export const fetchProductAPI = async product_id => {
+  let results = [];
+  await axios
+    .get(routes.api_products_endpoint + `/${product_id}`)
+    .then(result => {
+      if (result.status === 200) {
+        return result.data;
+      } else {
+        throw new Error("there was an error fetching products");
+      }
+    })
+    .then(products => {
+      console.log("Fetch Products API", products);
+      results = {...products};
+    })
+    .catch(error => {
+      console.log(error.message);
+    });
+
+  return results;
+};
+
 export const fetchServicesAPI = async () => {
   let results = [];
   await axios
@@ -44,6 +67,30 @@ export const fetchServicesAPI = async () => {
 
   return results;
 };
+
+export const fetchServiceAPI = async service_id => {
+  let results = [];
+  await axios
+    .get(routes.api_services_endpoint + `/${service_id}`)
+    .then(result => {
+      if (result.status === 200) {
+        return result.data;
+      } else {
+        throw new Error("there was an error fetching products");
+      }
+    })
+    .then(products => {
+      console.log("Fetch Products API", products);
+      results = { ...products };
+    })
+    .catch(error => {
+      console.log(error.message);
+    });
+
+  return results;
+
+};
+
 
 export const fetchCategories = async (category_type) => {
     let results = [];
@@ -209,4 +256,101 @@ export const fetchContactDetails = async (seed,stateKey) => {
     });
 
     return response;
+};
+
+
+
+export const addToCart = async cart_item => {
+    let results = { status: true, payload: {}, error: {} };
+
+    await axios.post(routes.api_cart_endpoint, cart_item)
+      .then(result => {
+        if (result.status === 200) {
+          return result.data;
+        } else {
+          throw new Error("there was an error adding cart item");
+        }
+      })
+      .then(cart_items => {
+        results.status = true;
+        results.payload = [...cart_items];
+      })
+      .catch(error => {
+        results.status = false;
+        results.error = { ...error };
+      });
+    console.log("Add to cart results : ", results);
+    return results;
+};
+
+
+
+export const retrieveCart = async uid => {
+  let results = {status : true, cart_items : [], cart : {}, error: {} };
+
+  await axios.get(routes.api_cart_endpoint + `/${uid}`).then(result => {
+      if(result.status === 200){
+        return result.data;
+      }else{
+        throw new Error('there was an error fetching cart');
+      }
+  }).then(Response => {
+      results.status = true;
+      results.cart = Response.cart;
+      results.cart_items = Response.cart_items;
+  }).catch(error => {
+      results.status = false;
+      results.error = {...error};
+  });
+
+  return results;
+};
+
+
+export const deleteCart = async uid => {
+  let results = { status: true, cart_items: [], cart: {}, error: {} };
+  await axios.delete(routes.api_cart_endpoint + `/${uid}`).then(response => {
+      if (response.status === 200){
+        return response.data
+      }else{
+        throw new Error('there was an error removing cart');
+      }
+  }).then(cart => {
+    results.status = true;
+    results.cart_items = [];
+    results.cart = {};
+  }).catch(error => {
+    results.status = false;
+    results.error = {...error};
+  });
+
+  return results;
+};
+
+
+export const applyCouponCode = async coupon => {
+  let results = { status: true, coupon_code: {}, error: {} };
+
+  await axios.put(routes.api_coupons_endpoint,coupon).then(response => {
+    if (response.status === 200){
+      return response.data;
+    }else{
+      throw new Error('error on server or coupon code not found',response.data);
+    }
+  }).then(response => {
+    if (response.succeed){
+      results.status = response.succeed;
+      results.coupon_code = { ...response.coupon };    
+    }else{
+      results.status = response.succeed;
+      results.error.message = response.message;    
+    }
+  }).catch(error => {
+    console.log('coupon code error ',error.message);
+    results.status = false;
+    results.error = {...error};
+  });
+
+  return results;
+
 }

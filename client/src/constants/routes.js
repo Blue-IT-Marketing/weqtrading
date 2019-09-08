@@ -16,6 +16,7 @@ export const market_page = '/market';
 export const admin_page = '/admin-user/'; // + userid
 export const shopping_basket_page = '/admin-user-shopping-basket';
 export const my_market_products = '/admin-user-market';
+export const manage_my_shop = '/admin-store-manager';
 
 export const check_out_page = '/market-check-out';
 
@@ -36,3 +37,8 @@ export const dashboard_page = '/dashboard'; // site owner and administrator only
  export const api_physical_endpoint = '/api/physical-address';
 
  export const api_contact_endpoint = '/api/contact-details';
+
+
+ export const api_cart_endpoint = '/api/cart';
+
+ export const api_coupons_endpoint = '/api/coupons';
