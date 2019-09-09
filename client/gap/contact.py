@@ -41,3 +41,15 @@ class Contact(ndb.Expando):
             return self.put()
         else:
             return ''
+
+
+    def remove_contact(self,contact_id):
+
+        contact_query = Contact.query(Contact.contact_id == contact_id)
+        contact_list = contact_query.fetch()
+
+        for contact in contact_list:
+            contact.key.delete()
+
+        return True
+        

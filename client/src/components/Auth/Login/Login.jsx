@@ -1,34 +1,59 @@
 import React, { Fragment, useEffect, useContext, useRef,useState } from "react";
 import { Link,Redirect ,navigate} from "react-router-dom";
 import { routes } from "../../../constants";
-
+import {user_init,user_errors_init, inline_init} from '../auth-constants';
 
 import {UserAccountContext} from '../../../context/UserAccount/userAccountContext';
 
 import Input from '../../Input/Input';
+import InlineError from "../../Forms/InlineError";
+import { Utils } from "../../../utilities";
+import InlineMessage from "../../Forms/InlineMessage";
 
 export default function Login() {
 
-	const [values,setValues] = useState({username:'',password:''})
+  const [values,setValues] = useState(user_init);
+  const [errors,setErrors] = useState(user_errors_init);
+  const [inline,setInline] = useState(inline_init);
 
   	const usernameRef = useRef(null);
   	const passwordRef = useRef(null);
   	const submitRef = useRef(null);
 
-  	let handleChange = e => {
-		const {name,value} = e.target;	
-		console.log('Name : ',name,' Value : ',value)  
-	  	setValues({
-		  ...values,
-		  [name]:value
-		  });
-		  
-		  console.log(values);
-  	};
+  	const handleChange = e => {
+        setValues({...values,[e.target.name]:e.target.value})
+    };
+    
+    const checkErrors = async e => {
+      let isError = false;
+      const check_username = () => {
+        if(Utils.validateEmail(values.username) === false){
+            setErrors({...errors, username_error: 'invalid username'});
+            return true;
+        }
+          return false;      
+      };
+
+      const check_password = () => {
+        if(Utils.isEmpty(values.password)){
+          setErrors({...errors,password_error:'password field cannot be empty'});
+          return true;
+        }
+        return false;
+      };
+
+      const do_check = () => {
+        check_username() ? isError = true : isError = isError;
+        check_password() ? isError = true : isError = isError;
+
+        return isError
+      };
+      return await do_check()
+    };
 
   useEffect(() => {
-	usernameRef.current.focus();  
-    console.log("Login page loaded");
+	  usernameRef.current.focus();  
+      
   }, []);
 
   return (
@@ -59,6 +84,13 @@ export default function Login() {
                     </strong>
                   </button>
                 </Link>
+                <Link to={routes.signup_page}>
+                  <button type="button" className="btn btn-box-tool">
+                    <strong>
+                      <i className="fa fa-sign-in"> </i> Subscribe
+                    </strong>
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="box-footer">
@@ -76,6 +108,11 @@ export default function Login() {
                     value={values.username}
                     onChange={e => handleChange(e)}
                   />
+                  {errors.username_error ? (
+                    <InlineError message={errors.username_error} />
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className="form-group">
                   <Input
@@ -87,30 +124,55 @@ export default function Login() {
                     value={values.password}
                     onChange={e => handleChange(e)}
                   />
+                  {errors.password_error ? (
+                    <InlineError message={errors.password_error} />
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className="form-group">
                   <button
                     type="button"
                     className="btn btn-success btn-lg"
                     ref={submitRef}
-                    onClick={e => {
-                      doLogin(username, password);
-                      //navigate("/", true);
-                    }}
+                    onClick={e =>
+                      checkErrors(e).then(isError => {
+                        isError
+                          ? setInline({
+                              message: "error processing login ",
+                              message_type: "error"
+                            })
+                          : doLogin(username, password);
+                      })
+                    }
                   >
                     <strong>
                       <i className="fa fa-sign-in"> </i> Login
                     </strong>
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="btn btn-warning btn-lg"
-                    onClick={e => {return setValues({username:'',password:''})}}
-                    >
+                    onClick={e => {
+                      setValues(user_init);
+                      setErrors(user_errors_init);
+                      setInline(inline_init);
+                    }}
+                  >
                     <strong>
                       <i className="fa fa-eraser"> </i> Reset
                     </strong>
                   </button>
+                </div>
+                <div className="form-group">
+                  {inline.message ? (
+                    <InlineMessage
+                      message={inline.message}
+                      message_type={inline.message_type}
+                    />
+                  ) : (
+                    ""
+                  )}
                 </div>
               </form>
             </div>

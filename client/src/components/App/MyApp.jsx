@@ -8,7 +8,7 @@ import Contact from '../Contact/Contact';
 import Profile from '../Profile/Profile';
 import Login from '../Auth/Login/Login';
 import Logout from '../Auth/Logout/Logout';
-import Signup from '../Auth/Signup/Signup';
+import SignUp from "../Auth/Signup/Signup";
 import SideBar from '../Layout/SideBar/SideBar';
 import Footer from '../Layout/Footer/Footer';
 import Forget from '../Auth/Forget/Forget';
@@ -44,7 +44,7 @@ export default function App () {
                 <Route exact path={routes.contact_page} component={Contact} />
                 <Route path={routes.login_page} component={Login} />
                 <Route path={routes.logout_page} component={Logout} />
-                <Route path={routes.signup_page} component={Signup} />
+                <Route path={routes.signup_page} component={SignUp} />
                 <Route
                   path={routes.forget_password_page}
                   component={Forget}

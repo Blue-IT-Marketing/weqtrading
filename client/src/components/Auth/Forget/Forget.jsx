@@ -1,14 +1,21 @@
 import React, { Fragment,useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import * as routes from '../../../constants/routes';
+import { inline_init } from '../auth-constants';
+import InlineMessage from '../../Forms/InlineMessage';
 
 export default function Forget(){
-	const [email,setEmail] = useState({email:''});
+  const [email,setEmail] = useState({email:''});
+  const [errors,setErrors] = useState({email_error : ''});
+  const [inline,setInline] = useState(inline_init);
+
 
 	function sendRecoveryEmail  (e) {
 		e.preventDefault();
-		console.log('Sending Recovery Email');      
-
+    console.log('Sending Recovery Email');      
+    setInline({message:'sending recovery email',message_type:'info'});
+    // TODO create a backend firebase function to send recovery email and trigger through https
+    // actually call a firebase function that sends a recovery email from firebase
 	}
 
 	return (
@@ -68,13 +75,20 @@ export default function Forget(){
 				<button 
 					type="button" 
 					className="btn btn-warning btn-lg"
-					onClick={e => setEmail({email:''})}
+					onClick={e =>{
+            setErrors({email_error : ''});
+            setEmail({ email: "" });
+            setInline(inline_init);
+          }  }
 				>
                   <strong>
                     {" "}
                     <i className="fa fa-eraser"> </i> Reset{" "}
                   </strong>
                 </button>              
+            </div>
+            <div className='form-group'>
+              {inline.message ? <InlineMessage message={inline.message} message_type={inline.message_type} /> : ''}
             </div>
           </form>
         </div>
