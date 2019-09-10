@@ -8,25 +8,7 @@ import { extended_user, extended_user_error, inline_init, user_init, user_errors
 import InlineError from '../../Forms/InlineError';
 import InlineMessage from '../../Forms/InlineMessage';
 import { Utils } from '../../../utilities';
-
-    // onSubmit = event => {
-    //   const { username, email, passwordOne } = this.state;
-
-    //   const { history } = this.props;
-
-    //   auth
-    //     .doCreateUserWithEmailAndPassword(email, passwordOne)
-    //     .then(authUser => {
-    //       this.setState({ ...Initial_State });
-    //       //history.push(routes.home_page);
-    //     })
-    //     .catch(error => {
-    //       this.setState(byPropKey("error", error));
-    //     });
-
-    //   event.preventDefault();
-    // };
-
+import * as apiRequests from '../auth-api';
 
 
 const SignUp = () => {
@@ -38,7 +20,21 @@ const SignUp = () => {
     const createUser = async e => {
             await auth.doCreateUserWithEmailAndPassword(user.email,user.password).then(authUser => {
                 console.log(authUser);
-                setInline({message:'user successfully created', message_type:'info'});
+                let sent_user = {...user};
+                sent_user.uid = user_account_state.user_account.uid;
+                sent_user = JSON.stringify(sent_user);
+
+                apiRequests.addUser(sent_user).then(result => {
+                    if (result.status){
+                        setInline({message:'user successfully created',message_type:'info'});
+                        setUser(result.payload);
+                    }else{
+                        setInline({message:'user not created successfully try adding user details later',message_type:'error'});
+                    }
+                }).catch(error => {
+                    setInline({message:error.message,message_type:'error'});
+                });
+
             }).catch(error => {
                 setInline({message:error.message,message_type:'error'});
             });

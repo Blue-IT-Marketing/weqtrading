@@ -13,6 +13,7 @@ from clientcontactdetails import ContactDetails
 from cart import Cart,Items
 from datetime import datetime
 from coupons import Coupons
+from user import User
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
     # the resource he or she is asking for
@@ -39,8 +40,6 @@ class APIRouterHandler(webapp2.RequestHandler):
 
             for category in categories_list:
                 response_data.append(category.to_dict())
-
-
         elif 'products' in route:
 
             product_id = str(route[len(route) - 1])
@@ -66,7 +65,6 @@ class APIRouterHandler(webapp2.RequestHandler):
                 else:
                     status_int = 403
                     response_data = {'message':'product not found'}
-
         elif 'services' in route:
             service_id = str(route[len(route) - 1])
             if service_id == 'services':
@@ -87,8 +85,6 @@ class APIRouterHandler(webapp2.RequestHandler):
                 else:
                     status_int = 403
                     response_data = {'message':'service not found'}
-
-
         elif 'physical-address' in route:
 
             uid = route[len(route) - 1]
@@ -148,6 +144,18 @@ class APIRouterHandler(webapp2.RequestHandler):
                     'cart': {},
                     'error': {'message':'cart items not found'}
                 }
+
+        elif 'user' in route:
+            uid = route[len(route) - 1]
+
+            this_user = User()
+            this_user = this_user.getUser(uid=uid)
+            if this_user != '':
+                response_data = this_user.to_dict()
+            else:
+                status_int = 400
+                response_data = {'message': 'user not found in the system'}
+
 
         else:
             status_int = 400
@@ -219,7 +227,6 @@ class APIRouterHandler(webapp2.RequestHandler):
             contact_details = contact_details.addContactDetails(contact=json_data)
             response_data = contact_details.to_dict()
 
-
         elif 'cart' in route:            
             
             json_data = json.loads(self.request.body)
@@ -284,6 +291,19 @@ class APIRouterHandler(webapp2.RequestHandler):
                     'cart' : cart,
                     'error' : {}
                     }
+
+        elif 'user' in route:
+            json_data = json.loads(self.request.body)
+            logging.info('User Data')
+            logging.info(json_data)
+
+            this_user = User()
+            this_user = this_user.addUser(json_user=json_data)
+            if this_user != '':
+                response_data = this_user.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'user not found'}
 
         else:
             status_int = 400
@@ -366,6 +386,21 @@ class APIRouterHandler(webapp2.RequestHandler):
                     'coupon' : {},
                     'message':'cannot find coupon or your cart is empty'
                 }
+
+        elif 'user' in route:
+            json_data = json.loads(self.request.body)
+            logging.info(json_data)
+
+            this_user = User();
+            this_user = this_user.updateUser(json_user=json_data)
+
+            if this_user != '':
+                response_data = this_user.to_dict()
+            else:
+                status_int = 403
+                response_data={'message':'user not found'}
+
+
         else:
             status_int = 401
             response_data = {'message': 'you are not allowed to access that method'}

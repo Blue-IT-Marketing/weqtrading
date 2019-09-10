@@ -1,6 +1,7 @@
 import React,{Fragment,useState,useEffect,useContext} from 'react';
 import Switch from 'react-switch';
-
+import {extended_user, extended_user_error} from '../Auth/auth-constants';
+import * as apiRequests from '../Auth/auth-api';
 
 import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
 
@@ -157,7 +158,6 @@ function Verifications({ user_account, doSendEmailVerification }) {
   );
 }
 
-
 function AccountSettings(){
 
     const[accountSettings,setAccountSettings] = useState({
@@ -300,49 +300,57 @@ function AccountSettings(){
     );
 }
 
-
-	// uid : '',
-	// displayName : '',
-	// photoURL : '',
-	// email : '',
-	// password : '',
-	// emailVerified : false,
-	// phoneNumber : '',
-	// isAnonymous : false,
-	// providerId : 'password',
-
 function PersonalDetails({user_account}){
-    const [personalDetails, setPersonalDetails] = useState({
-      userid: user_account.uid,
-      names: "",
-      surname: "",
-      cell: user_account.phoneNumber,
-      email: user_account.email
-    });
+    const [user, setUser] = useState(extended_user);
+    const [errors,setErrors] = useState(extended_user_error);
+    const [inline,setInline] = useState({message:'',message_type:'info'});
+    const {user_account_state} = useContext(UserAccountContext);
 
-    const{
-      userid,
-      names,
-      surname,
-      cell,
-      email
-    } = personalDetails;
+    let onChangeHandler = e => setUser({...user,[e.target.name]:e.target.value});    
 
-    let onChangeHandler = e => {
-      setPersonalDetails({
-        ...personalDetails,
-        [e.target.name]:e.target.value
-      });
+    let onUpdatePersonalDetails = async e => {
+        let sent_user = {...user};
+        sent_user.uid = user_account_state.user_account.uid;
+        sent_user = JSON.stringify(sent_user)
+        console.log('Updating User with ', sent_user);
+
+        await apiRequests.updateUser(sent_user).then(results => {
+          if (results.status){
+            setUser(results.payload);
+            setInline({message:'successfully update personal details'});
+          }else{
+            setInline({message:'there was an error updating personal details',message_type:'error'});
+          }
+        }).catch(error => {
+          setInline({message:error.message,message_type:'error'});
+        });
     };
 
-    let onUpdatePersonalDetails = e => {
-        console.log('Updating personal details');
-        // check for errors if found indicate the errors and exit
-        // save personal details on localStorage. then save on backend
-    };
+    useEffect(() => {
+        const fetchAPI = async () => {
+          let uid = user_account_state.user_account.uid;
+          await apiRequests.fetchUser(uid).then(results => {
+            if(results.status){
+              setUser(results.payload);
+            }
+          }).catch(error => {
+            console.log(error.message);
+          });
 
-    console.log('USER ACCOUNT',userid);
+          return true;
+        };
 
+        fetchAPI().then(results => {
+          console.log('Fetch API exected')
+        });
+
+
+      return () => {
+        setUser(extended_user);
+        setInline({message:'',message_type:'info'});
+        setErrors(extended_user_error);
+      };
+    }, [user_account_state])
     return (
       <div className="box box-body">
         <div className="box-header">
@@ -364,7 +372,7 @@ function PersonalDetails({user_account}){
                 className="form-control"
                 name="names"
                 placeholder="Names..."
-                value={names}
+                value={user.names}
                 onChange={e => onChangeHandler(e)}
               />
             </div>
@@ -374,7 +382,7 @@ function PersonalDetails({user_account}){
                 className="form-control"
                 name="surname"
                 placeholder="Surname..."
-                value={surname}
+                value={user.surname}
                 onChange={e => onChangeHandler(e)}
               />
             </div>
@@ -384,7 +392,7 @@ function PersonalDetails({user_account}){
                 className="form-control"
                 name="cell"
                 placeholder="Cell..."
-                value={cell}
+                value={user.cell}
                 onChange={e => onChangeHandler(e)}
               />
             </div>
@@ -394,7 +402,7 @@ function PersonalDetails({user_account}){
                 className="form-control"
                 name="email"
                 placeholder="Email..."
-                value={email}
+                value={user.email}
                 onChange={e => onChangeHandler(e)}
               />
             </div>

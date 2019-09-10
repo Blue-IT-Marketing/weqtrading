@@ -1,10 +1,38 @@
-import React, {Component, useState } from 'react';
+import React, {Component, useState,useContext,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {routes} from '../../../constants';
 import {firebase,auth} from '../../../firebase';
 import { UserAccountContext } from "../../../context/UserAccount/userAccountContext";
+import { extended_user } from '../../Auth/auth-constants';
+import * as apiRequests from '../../Auth/auth-api';
+
 const SideBarMenuAuth = () => {
+  const[user,setUser] = useState(extended_user);
+  const {user_account_state} = useContext(UserAccountContext);
+
+  useEffect(() => {
+    const fetchAPI = async () => {
+      let uid = user_account_state.user_account.uid;
+      await apiRequests.fetchUser(uid).then(results => {
+        if(results.status){
+          setUser(results.payload);
+        }
+      }).catch(error => {
+        console.log(error.message);
+      });
+      return true;
+    }
+
+    fetchAPI().then(result => {
+      console.log(result);
+    });
+
+    return () => {
+      setUser(extended_user);
+    };
+  }, [user_account_state]);
+  
 	return (
     <ul className="sidebar-menu">
       <li className="header">W-Trading</li>
@@ -66,11 +94,14 @@ const SideBarMenuAuth = () => {
           <i className="fa fa-book"> </i> <strong>Blog</strong>
         </Link>
       </li>
-      <li>
-        <Link to={routes.dashboard_page} title="Dashboard">
-          <i className="fa fa-dashboard"> </i> <strong>Dashboard</strong>
-        </Link>
-      </li>
+      {
+        user.is_admin ?
+          <li>
+            <Link to={routes.dashboard_page} title="Dashboard">
+              <i className="fa fa-dashboard"> </i> <strong>Dashboard</strong>
+            </Link>
+          </li>: ''
+      }
       <li>
         <Link to={routes.logout_page} title="Logout">
           <i className="fa fa-sign-out"> </i> <strong> Logout </strong>

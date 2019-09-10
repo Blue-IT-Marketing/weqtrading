@@ -6,11 +6,7 @@ from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging
 import datetime
-template_env = jinja2.Environment(
-loader=jinja2.FileSystemLoader(os.getcwd()))
-import plivohelper
-import plivo
-from twilio import *
+
 
 
 class SMS(ndb.Expando):

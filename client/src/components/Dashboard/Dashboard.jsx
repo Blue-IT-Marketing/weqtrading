@@ -1,29 +1,45 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment,useContext,useState,useEffect } from 'react'
 import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
 import { routes } from "../../constants";
+import axios from 'axios';
+import InlineMessage from '../Forms/InlineMessage';
+import InlineError from '../Forms/InlineError';
 
 
-export default class Dashboard extends Component {
-	state = {
-		dashboard_user : {}
-	}
 
-	componentWillMount = e => {
-		console.log('Console log ', e);
-		// request from backend the uid of user allowed to access dashboard
-		// if user uid is the same as the loggedin user please proceed otherwise 
-		// display message indicating that the user is not authorized to access dashboard
 
-	}
-	render() {
-		return (
-      <UserAccountContext.Consumer>{(context) => {
-		  const {
-			  user_account_state
-		  } = context;
+const Dashboard = () => {
+  
+    const[admins,setAdmins] = useState([]);
+    const[present_user,setPresentUser] = useState({
+      uid : '',
+      is_admin: false
+    })
+    const [inline,setInline] = useState({message:'',message_type:'info'});
 
-		  if (user_account_state.user_account.uid === this.state.dashboard_user.uid){
-		  return (
+    const{user_account_state} = useContext(UserAccountContext);
+
+    useEffect(() => {
+      const fetchPresentUser = async () => {
+        let uid = user_account_state.user_account.uid;
+        await axios.get(routes.api_user_endpoint + `/${uid}`).then(response => {
+          if (response.status === 200){
+            return response.data
+          }
+        }).then(present_user => {
+          setPresentUser(present_user);          
+        }).catch(error => {
+          setInline({message:'you are not authorized to access our dashboard'});
+        });
+      }
+      return () => {
+        setPresentUser({uid:'',is_admin:false });
+      };
+    }, [])
+
+  return (
+    <Fragment>
+      {present_user.is_admin ? (
         <Fragment>
           <div className="box box-body">
             <div className="box box-header">
@@ -46,32 +62,31 @@ export default class Dashboard extends Component {
             </div>
           </div>
         </Fragment>
-      )}else{
-			  return (
-          <Fragment>
-            <div className="box box-danger">
-              <div className="box box-header">
-                <h3 className="box-title">
-                  <strong>
-                    {" "}
-                    <i className="fa fa-dashboard"> </i> Dashboard{" "}
-                  </strong>
-                  <hr />
-                </h3>
-                <div className="box box-warning">
-                  <span className="error-content">
-                    <em>
-                      Unfortunately you are not authorized to access
-                      dashboard page
-                    </em>
-                  </span>
-                </div>
+      ) : (
+        <Fragment>
+          <div className="box box-danger">
+            <div className="box box-header">
+              <h3 className="box-title">
+                <strong>
+                  {" "}
+                  <i className="fa fa-dashboard"> </i> Dashboard{" "}
+                </strong>
+                <hr />
+              </h3>
+              <div className="box box-warning">
+                <span className="error-content">
+                  <em>you are not authorized to access our dashboard</em>
+                </span>
               </div>
             </div>
-          </Fragment>
-        );}
-	  }}
-      </UserAccountContext.Consumer>
-    );
-	}
+          </div>
+        </Fragment>
+      )}
+    </Fragment>
+  );
 }
+
+
+export default Dashboard;
+
+

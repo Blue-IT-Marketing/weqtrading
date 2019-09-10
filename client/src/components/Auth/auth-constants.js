@@ -19,12 +19,14 @@ export const inline_init = {
 
 
 export const extended_user = {
-    names: "",
-    surname: "",
-    cell: "",
-    email: "",
-    password: "",
-    repeatpassword: ""
+    uid : '',
+    names: '',
+    surname: '',
+    cell: '',
+    email: '',
+    password: '',
+    repeatpassword: '',
+    is_admin : false
 };
 
 export const extended_user_error = {
