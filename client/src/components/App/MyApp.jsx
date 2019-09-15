@@ -5,7 +5,7 @@ import Header from '../Layout/Header/Header';
 import Home from '../Home/Home';
 import About from '../About/About';
 import Contact from '../Contact/Contact';
-import Profile from '../Profile/Profile';
+
 import Login from '../Auth/Login/Login';
 import Logout from '../Auth/Logout/Logout';
 import SignUp from "../Auth/Signup/Signup";
@@ -13,7 +13,12 @@ import SideBar from '../Layout/SideBar/SideBar';
 import Footer from '../Layout/Footer/Footer';
 import Forget from '../Auth/Forget/Forget';
 import Market from '../Market/Market';
+import Market_Products from '../Market/Products/Products';
+import Market_Services from '../Market/Service/Services';
+
+
 import MyMarket from '../Market/MyMarket';
+
 
 
 import UserAccountContextProvider from '../../context/UserAccount/userAccountContext';
@@ -22,6 +27,12 @@ import Blog from '../Blog/Blog';
 import Account from '../Account/Account';
 
 import CheckOut from '../Market/CheckOut/CheckOut';
+import StoreManager from '../Market/StoreManager/StoreManager';
+import Products from '../Market/StoreManager/ProductsManager';
+import Services from '../Market/StoreManager/ServiceManager';
+
+import Payments from '../Market/Transactions/Transactions';
+
 
 export default function App () {
 	
@@ -50,11 +61,19 @@ export default function App () {
                   component={Forget}
                 />
                 <Route path={routes.market_page} component={Market} />
+                <Route path={routes.market_products_page} component={Market_Products} />
+                <Route path={routes.market_services_page} component={Market_Services} />
+
+
                 <Route path={routes.blog_page} component={Blog} />
                 <Route path={routes.dashboard_page} component={Dashboard} />
                 <Route exact path={routes.admin_page} component={Account} />
 
                 <Route exact path={routes.check_out_page} component={CheckOut} />
+                <Route exact path={routes.manage_my_shop} component={StoreManager} />
+                <Route exact path={routes.store_manager_products} component={Products} />
+                <Route exact path={routes.store_manager_services} component={Services} />
+                <Route exact path={routes.transactions_page} component={Payments} />
                 <Route
                   path={routes.my_market_products}
                   component={MyMarket}

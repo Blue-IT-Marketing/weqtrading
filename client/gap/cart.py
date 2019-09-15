@@ -7,6 +7,67 @@ import logging
 import json
 import random
 import string
+import datetime
+
+
+class ProductRequests(ndb.Expando):
+    id = ndb.StringProperty() # id of this request
+    product_id = ndb.StringProperty() # the same as the product id in the product table
+    client_uid = ndb.StringProperty() # user id of the client who requested the product
+    total_requested = ndb.StringProperty(default='1')
+    date_requested = ndb.StringProperty()
+    products_sent = ndb.BooleanProperty(default=False)
+    date_sent = ndb.StringProperty()
+
+    def create_product_request_id(self, size=64, chars=string.ascii_lowercase + string.digits):
+        return ''.join(random.choice(chars) for x in range(size))
+
+    def addProduct(self,product,uid,total):
+
+        this_product_requests = ProductRequests()
+        this_product_requests.id = this_product_requests.create_product_request_id()
+        this_product_requests.product_id = product['id']
+        this_product_requests.client_uid = uid
+        this_product_requests.total_requested = total
+        today = datetime.datetime.now()
+
+        this_product_requests.date_requested = str(datetime.date(year=today.year,month=today.month,day=today.day))
+        this_product_requests.total_requested = str(total)
+
+        this_product_requests.put()
+        return this_product_requests
+
+
+
+class ServiceRequests(ndb.Expando):
+    id = ndb.StringProperty()  # id of this request
+    # the same as the product id in the product table
+    service_id = ndb.StringProperty()
+    # user id of the client who requested the product
+    client_uid = ndb.StringProperty()
+    total_requested = ndb.StringProperty(default='1')
+    date_requested = ndb.StringProperty()
+    products_sent = ndb.BooleanProperty(default=False)
+    date_sent = ndb.StringProperty()
+
+    def create_service_request_id(self, size=64, chars=string.ascii_lowercase + string.digits):
+        return ''.join(random.choice(chars) for x in range(size))
+
+    def addService(self, service, uid, total):
+
+        this_service_requests = ServiceRequests()
+        this_service_requests.id = this_service_requests.create_service_request_id()
+        this_service_requests.product_id = service['id']
+        this_service_requests.client_uid = uid
+        this_service_requests.total_requested = total
+        today = datetime.datetime.now()
+
+        this_service_requests.date_requested = str(datetime.date(
+            year=today.year, month=today.month, day=today.day))
+        this_service_requests.total_requested = str(total)
+
+        this_service_requests.put()
+        return this_service_requests
 
 
 class Cart(ndb.Expando):
@@ -20,7 +81,6 @@ class Cart(ndb.Expando):
     total = ndb.StringProperty(default=0)
 
     
-
     def create_cart_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
 
@@ -36,7 +96,8 @@ class Cart(ndb.Expando):
         
         return cart_id
     
-    
+
+        
 class Items(ndb.Expando):        
     item_id = ndb.StringProperty() # unique value for the item 
     cart_id = ndb.StringProperty() # to identify the cart where the item is attached

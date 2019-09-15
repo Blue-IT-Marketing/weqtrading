@@ -79,6 +79,8 @@ const ShoppingBasket = () => {
     });
     const [cart, setCart] = useState(cart_init);
     const[inline,setInline] = useState({message:'',message_type:'info'});
+    
+    const[display,setDisplay] = useState('shopping-basket');
     const { user_account_state, doLogin } = useContext(UserAccountContext);
     
     const applyCouponCode = e => {
@@ -162,7 +164,7 @@ const ShoppingBasket = () => {
                   <div className="box-tools">
                     <button
                       type="button"
-                      className="btn btn-box-tool btn-outline-danger"
+                      className="btn btn-box-tool"
                       name="clear_items"
                       onClick={e =>
                         APIRequests.deleteCart(
@@ -278,16 +280,16 @@ const ShoppingBasket = () => {
                       <i className="fa fa-money"> </i> Apply Code
                     </button>
                     <button
-                      type='button'
-                      className='btn btn-warning'
-                      name='reset'
-                      onClick={ e => {
+                      type="button"
+                      className="btn btn-warning"
+                      name="reset"
+                      onClick={e => {
                         setCoupons(coupon_init);
                         setErrors({ coupon_code_error: "" });
-                        setInline({message:'',message_type:'info'});
-                        }}
-                    ><i className='fa fa-eraser'> </i>{' '}
-                    Reset Code
+                        setInline({ message: "", message_type: "info" });
+                      }}
+                    >
+                      <i className="fa fa-eraser"> </i> Reset Code
                     </button>
                   </li>
                   <li className="list-group-item">
@@ -295,17 +297,19 @@ const ShoppingBasket = () => {
                       type="button"
                       className="btn btn-success margin"
                       name="checkout"
-                      title='Send Invoice and Pay Via EFT or Make a Deposit'
+                      title="Send Invoice and Pay Via EFT or Make a Deposit"
+                      onClick={e => setDisplay(e)}
                     >
                       <i className="fa fa-shopping-bag"> </i> Checkout
                     </button>
                     <button
-                      type='button'
-                      className='btn btn-success'
-                      name='paypal'
-                      title='Pay Online via your PayPal Account or Credit Card'
+                      type="button"
+                      className="btn btn-success"
+                      name="paypal"
+                      title="Pay Online via your PayPal Account or Credit Card"
+                      onClick={e => setDisplay(e)}
                     >
-                      <i className='fa fa-paypal'> </i> PayPal
+                      <i className="fa fa-paypal"> </i> PayPal
                     </button>
                   </li>
                 </ul>
@@ -876,61 +880,68 @@ const PaymentDetails = () => {
 const CheckOut = () => {
     const [display,setDisplay] = useState('physical_address');
     const { user_account_state, doLogin } = useContext(UserAccountContext);
+    const [displayMenu,setMenu] = useState({menu:false});
+    const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
+
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
+
     return (
-        <Fragment>
-            <div className='box box-body'>
-                <div className='box box-header'>
-                    <h3 className='box-title'>
-                        <i className='fa fa-shopping-cart'> </i>{' '}
-                        Check Out
-                    </h3>
-                    <div className='box-tools'>
-                        <button
-                            type='button'
-                            className='btn btn-box-tool btn-outline-dark'
-                            name='physical_address'
-                            onClick={e => setDisplay(e.target.name)}
-                        >
-                            <i className='fa fa-map-pin'> </i> {' '}
-                            Physical Address
-                        </button>
-
-                        <button
-                            type='button'
-                            className='btn btn-box-tool btn-outline-dark'
-                            name='contact_details'
-                            onClick={e => setDisplay(e.target.name)}
-                        >
-                            <i className='fa fa-mobile-phone'> </i> {' '}
-                            Contact Details
-                        </button>
-
-                        <button
-                            type='button'
-                            className='btn btn-box-tool btn-outline-dark'
-                            name='shopping_basket'
-                            onClick={e => setDisplay(e.target.name)}
-                        >
-                            <i className='fa fa-shopping-basket'> </i> {' '}
-                            Shopping Basket
-                        </button>
-                    </div>
-                </div>
-
-                {
-                    display === 'physical_address' ? 
-                        <PhysicalAddress /> :''
-                }
-                {
-                    display === 'contact_details' ? 
-                        <ContactDetails /> : ''
-                }
-                {
-                    display === 'shopping_basket' ? 
-                        <ShoppingBasket /> : ''
-                }
+      <Fragment>
+        <div className="box box-body">
+          <div className="box box-header">
+            <h3 className="box-title">
+              <i className="fa fa-shopping-cart"> </i> Check Out
+            </h3>
+            <div className="box-tools">
+              <div className="dropdown">
+                <button
+                  type="button"
+                  className="btn btn-box-tool dropdown-toggle"
+                  onClick={e => showDropdownMenu(e)}
+                >
+                  Check Out{" "}
+                </button>
+                {displayMenu.menu ? (
+                  <ul className="dropmenu">
+                    <li
+                      className="btn btn-block droplink"
+                      name="physical_address"
+                      onClick={e => setDisplay("physical_address")}
+                    >
+                      Physical Address
+                    </li>
+                    <li
+                      className="btn btn-block droplink"
+                      name="contact_details"
+                      onClick={e => setDisplay("contact_details")}
+                    >
+                      <i className="fa fa-mobile-phone"> </i> Contact Details
+                    </li>
+                    <li
+                      className="btn btn-block droplink"
+                      name="shopping_basket"
+                      onClick={e => setDisplay("shopping_basket")}
+                    >
+                      <i className="fa fa-shopping-basket"> </i> Shopping Basket
+                    </li>
+                  </ul>
+                ) : null}
+              </div>
             </div>
-        </Fragment>                    
+          </div>
+
+          {display === "physical_address" ? <PhysicalAddress /> : ""}
+          {display === "contact_details" ? <ContactDetails /> : ""}
+          {display === "shopping_basket" ? <ShoppingBasket /> : ""}
+        </div>
+      </Fragment>
     );
 }
 

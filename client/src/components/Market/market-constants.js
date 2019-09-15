@@ -26,7 +26,8 @@ export const products_init = {
          description: '',
          product_art: '',
          price: '',
-         currency: 'zar'
+         currency: 'zar',
+         active : true
 };
 
 export const products_errors_init = {
@@ -115,4 +116,43 @@ export const coupon_init = {
     uid: '',    
     code: '',
     validated : false    
+};
+
+
+export const store_init = {
+         uid: "",
+         store_name: "",
+         company_name: "",
+         description: "",
+         physical_address: "",
+         tel: "",
+         cell: "",
+         email: "",
+         website: ""
+};
+
+export const store_errors_init = {
+    store_name_error : '',
+    company_name_error : '',
+    description_error : '',
+    physical_address_error : '',
+    tel_error : '',
+    cell_error : '',
+    email_error : '',
+    website_error : ''
+};
+
+
+export const payment_init = {
+    uid: "",
+    id: "",
+    date: "",
+    amount: "",
+    processed : false,
+    transaction_type: "deposit"
+};
+
+export const payment_errors_init = {
+    amount_error  : '',
+    transaction_type_error : ''
 };

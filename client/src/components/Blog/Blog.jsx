@@ -4,6 +4,7 @@ import Axios from 'axios';
 import './Blog.css';
 import {useForceUpdate} from '../hooks/forceUpdate';
 import {get_blog_articles} from './articles';
+
 let blog_posts = '';
 
 
@@ -33,7 +34,8 @@ function BlogPost({ post_data }) {
 						<button
 							type='button'
 							className='btn btn-primary'
-							onClick={e => {}}
+              onClick={e => {}}
+              // when clicked display the entire article
 						>
 							<i className='fa fa-file-pdf-o'> </i>{' '}
               Read more...
@@ -43,25 +45,46 @@ function BlogPost({ post_data }) {
 			</div>
 		</Fragment>
 	);
-}
+};
 
-export default function Blog() {
+
+const Blog = () => {
 	const[category,setCategory] = useState('entertainment');
-	const [posts, setPosts] = useState([]);
-	const forceUpdate = useForceUpdate();
+  const [posts, setPosts] = useState([]);
+  const [displayMenu,setMenu] = useState({menu:false});
+	
+
+  
+
+const showDropdownMenu = e => {
+    e.preventDefault();
+    setMenu({menu:true});
+    document.addEventListener('click', hideDropdownMenu);    
+  }
+
+  const hideDropdownMenu = () => {
+    setMenu({menu:false});
+    document.removeEventListener('click', hideDropdownMenu);    
+  }
+
+  const title = `${category[0].toUpperCase()}${category.slice(1)} News`;
 
 	useEffect(() => {
-		async function fetchData() {
-			let blog_posts = await get_blog_articles(category);			
-			setPosts(blog_posts);
-		}
-		fetchData();    
-		forceUpdate();
-		console.log('Force update called');
-
-	}, [category]);
-  
-  const title = `${category[0].toUpperCase()}${category.slice(1)} News`;
+    async function fetchData() {
+      try{
+        let blog_posts = await get_blog_articles(category);
+        console.dir(blog_posts);
+        setPosts(blog_posts);
+        return true;
+      }catch(error){
+        console.log(error);
+        return false;
+      }            
+    }
+    fetchData().then(result => {
+      console.log(result);
+    })
+  }, [category]);
 
 	return (
     <Fragment>
@@ -75,58 +98,65 @@ export default function Blog() {
           </h3>
 
           <div className="box-tools">
-            <button
-              type="button"
-              className="btn btn-box-tool"
-              name="pages"
-              onClick={() => setCategory("entertainment")}
-            >
-              <i className="fa fa-folder"> </i> Entertainment{" "}
-            </button>
+            <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-box-tool dropdown-toggle"
+                onClick={e => showDropdownMenu(e)}
+              >
+                Topics{" "}
+              </button>
+              {displayMenu.menu ? (
+                <ul className="dropmenu">
+                  <li
+                    className="btn btn-block droplink"
+                    name="entertainment"
+                    onClick={() => setCategory("entertainment")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Entertainment{" "}
+                  </li>
 
-            <button
-              type="button"
-              className="btn btn-box-tool"
-              name="posts"
-              onClick={() => setCategory("sports")}
-            >
-              <i className="fa fa-folder"> </i> Sports{" "}
-            </button>
-            <button
-              type="button"
-              className="btn btn-box-tool"
-              name="categories"
-              onClick={() => setCategory("business")}
-            >
-              {" "}
-              <i className="fa fa-folder"> </i> Business{" "}
-            </button>
-            <button
-              type="button"
-              className="btn btn-box-tool"
-              name="categories"
-              onClick={() => setCategory("tech")}
-            >
-              {" "}
-              <i className="fa fa-folder"> </i> Tech{" "}
-            </button>
-            <button
-              type="button"
-              className="btn btn-box-tool"
-              name="categories"
-              onClick={() => setCategory("science")}
-            >
-              {" "}
-              <i className="fa fa-folder"> </i> Science{" "}
-            </button>
-            <button
-              type="button"
-              className='btn btn-box-tool'
-              name='categories'
-              onClick={() => setCategory("health")}
-            >{" "} <i className='fa fa-folder'> </i> Health
+                  <li
+                    className="btn btn-block droplink"
+                    name="sports"
+                    onClick={() => setCategory("sports")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Sports{" "}
+                  </li>
 
-            </button>
+                  <li
+                    className="btn btn-block droplink"
+                    name="business"
+                    onClick={() => setCategory("business")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Business{" "}
+                  </li>
+
+                  <li
+                    className="btn btn-block droplink"
+                    name="tech"
+                    onClick={() => setCategory("tech")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Tech{" "}
+                  </li>
+
+                  <li
+                    className="btn btn-block droplink"
+                    name="science"
+                    onClick={() => setCategory("science")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Science{" "}
+                  </li>
+                  <li
+                    className="btn btn-block droplink"
+                    name="health"
+                    onClick={() => setCategory("health")}
+                  >
+                    <i className="fa fa-folder-open"> </i> Health
+                  </li>
+                </ul>
+              ) : null}
+            </div>
           </div>
         </div>
 
@@ -139,11 +169,15 @@ export default function Blog() {
               </strong>
             </h3>
           </div>
-          {posts.map((post, index) => {
-            return <BlogPost post_data={post} key={index} />;
-          })}
+          {posts &&
+            posts.map((post, index) => {
+              return <BlogPost post_data={post} key={index} />;
+            })}
         </div>
       </div>
     </Fragment>
   );
 }
+
+
+export default Blog;

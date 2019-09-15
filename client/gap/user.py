@@ -1,11 +1,6 @@
 
-import os
-import webapp2
-import jinja2
+import os,logging,datetime
 from google.appengine.ext import ndb
-from google.appengine.api import users
-import logging
-import datetime
 
 
 class User(ndb.Expando):

@@ -11,6 +11,47 @@ const SideBarMenuAuth = () => {
   const[user,setUser] = useState(extended_user);
   const {user_account_state} = useContext(UserAccountContext);
 
+  const openClientMenu = (e,id) => {    
+    e.preventDefault();      
+
+    let thisNode = document.getElementById(id);
+    if ((thisNode.className === "treeview")) {
+      thisNode.className = "active treeview";
+    }else{
+      thisNode.className = "treeview";
+    } 
+
+  };
+
+  function closeStoreMenu(thisNode) {
+    thisNode.className = "treeview";
+    document.removeEventListener('click',closeStoreMenu);
+  };
+
+  const openStoreMenu = (e, id) => {
+    e.preventDefault();
+    let thisNode = document.getElementById(id);
+      if ((thisNode.className === "treeview")) {
+        thisNode.className = "active treeview";
+      } else {
+        thisNode.className = "treeview";
+      } 
+  };
+
+  const openMarketMenu = (e, id) => {
+    e.preventDefault();
+
+    let thisNode = document.getElementById(id);
+    if ((thisNode.className === "treeview")) {
+      thisNode.className = "active treeview";
+    } else {
+      thisNode.className = "treeview";
+    } 
+  };
+
+  
+
+
   useEffect(() => {
     const fetchAPI = async () => {
       let uid = user_account_state.user_account.uid;
@@ -30,8 +71,13 @@ const SideBarMenuAuth = () => {
 
     return () => {
       setUser(extended_user);
+      try{
+      document.removeEventListener("click", closeStoreMenu);
+      }catch(error){
+
+      }
     };
-  }, [user_account_state]);
+  }, []);
   
 	return (
     <ul className="sidebar-menu">
@@ -51,19 +97,108 @@ const SideBarMenuAuth = () => {
           <i className="fa fa-envelope" /> <strong>Contact</strong>
         </Link>
       </li>
-      <li className="active treeview">
+      <li
+        id="clientarea"
+        className="treeview"
+        onClick={e => {
+          let id = "clientarea";
+          return openClientMenu(e, id);
+        }}
+      >
         <Link to="#">
           <i className="fa fa-user-md" /> <span>Client Area</span>
           <span className="pull-right-container">
             <i className="fa fa-angle-left pull-right" />
           </span>
         </Link>
-        <ul className="treeview-menu">
+        <ul className="treeview-menu" onClick={e => e.stopPropagation()}>
           <li>
             <Link to={routes.admin_page} title="manage your Account">
               <i className="fa fa-sign-in"> </i> <strong> Account</strong>{" "}
             </Link>{" "}
           </li>
+          <li
+            id="store"
+            className="treeview"
+            onClick={e => {
+              let id = "store";
+              return openStoreMenu(e, id);
+            }}
+          >
+            <Link to="#">
+              <i className="fa fa-user-md" /> <span>Store</span>
+              <span className="pull-right-container">
+                <i
+                  className="fa fa-angle-left pull-right"
+                  onClick={e => {
+                    if (e.target.className === "fa fa-angle-left pull-right") {
+                      e.target.className = "fa fa-angle-right pull-right";
+                    } else {
+                      e.target.className = "fa fa-angle-left pull-right";
+                    }
+                  }}
+                />
+              </span>
+            </Link>
+            <ul className="treeview-menu" onClick={e => e.stopPropagation()}>
+              <li>
+                <Link to={routes.manage_my_shop} title="manage my shop">
+                  <i className="fa fa-dashboard"> </i>{" "}
+                  <strong>Store Manager</strong>{" "}
+                </Link>{" "}
+              </li>
+              <li>
+                <Link to={routes.my_market_products} title="Shopping Basket">
+                  <i className="fa fa-shopping-basket"> </i>{" "}
+                  <strong> Add to Store </strong>{" "}
+                </Link>{" "}
+              </li>
+              <li>
+                <Link to={routes.store_manager_products} title="transactions">
+                  <i className="fa fa-shopping-cart"> </i>{" "}
+                  <strong>Products</strong>{" "}
+                </Link>{" "}
+              </li>
+              <li>
+                <Link to={routes.store_manager_services} title="transactions">
+                  <i className="fa fa-shopping-basket"> </i>{" "}
+                  <strong>Services</strong>{" "}
+                </Link>{" "}
+              </li>
+              <li>
+                <Link to={routes.transactions_page} title="transactions">
+                  <i className="fa fa-credit-card"> </i>{" "}
+                  <strong>Transactions</strong>{" "}
+                </Link>{" "}
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li
+        id="marketplace"
+        className="treeview"
+        onClick={e => {
+          let id = "marketplace";
+          openMarketMenu(e, id);
+        }}
+      >
+        <Link to="#">
+          <i className="fa fa-user-md" /> <span>Market Place</span>
+          <span className="pull-right-container">
+            <i
+              className="fa fa-angle-left pull-right"
+              onClick={e => {
+                if (e.target.className === "fa fa-angle-left pull-right") {
+                  e.target.className = "fa fa-angle-right pull-right";
+                } else {
+                  e.target.className = "fa fa-angle-left pull-right";
+                }
+              }}
+            />
+          </span>
+        </Link>
+        <ul className="treeview-menu" onClick={e => e.stopPropagation()}>
           <li>
             <Link to={routes.check_out_page} title="Check Out">
               <i className="fa fa-shopping-cart"> </i>{" "}
@@ -71,37 +206,32 @@ const SideBarMenuAuth = () => {
             </Link>{" "}
           </li>
           <li>
-            <Link to={routes.my_market_products} title="Shopping Basket">
-              <i className="fa fa-shopping-basket"> </i>{" "}
-              <strong> My Products &amp; Services </strong>{" "}
-            </Link>{" "}
+            <Link to={routes.market_products_page} title="Market">
+              <i className="fa fa-shopping-basket" /> Products
+            </Link>
           </li>
           <li>
-            <Link to={routes.manage_my_shop} title="manage my shop">
-              <i className="fa fa-stethoscope"> </i>{" "}
-              <strong>My Store Manager</strong> { " "}
-            </Link>{" "}
+            <Link to={routes.market_services_page} title="Market">
+              <i className="fa fa-shopping-basket" /> Services
+            </Link>
           </li>
         </ul>
       </li>
-      <li>
-        <Link to={routes.market_page} title="Market">
-          <i className="fa fa-shopping-basket" /> Market Place
-        </Link>
-      </li>
+
       <li>
         <Link to={routes.blog_page} title="Weq Trading Blog">
           <i className="fa fa-book"> </i> <strong>Blog</strong>
         </Link>
       </li>
-      {
-        user.is_admin ?
-          <li>
-            <Link to={routes.dashboard_page} title="Dashboard">
-              <i className="fa fa-dashboard"> </i> <strong>Dashboard</strong>
-            </Link>
-          </li>: ''
-      }
+      {user.is_admin ? (
+        <li>
+          <Link to={routes.dashboard_page} title="Dashboard">
+            <i className="fa fa-dashboard"> </i> <strong>Dashboard</strong>
+          </Link>
+        </li>
+      ) : (
+        ""
+      )}
       <li>
         <Link to={routes.logout_page} title="Logout">
           <i className="fa fa-sign-out"> </i> <strong> Logout </strong>

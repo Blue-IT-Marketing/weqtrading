@@ -3,7 +3,7 @@ import {products_init,category_init} from '../market-constants';
 import { routes,settings } from '../../../constants';
 import * as apiRequests from '../api-requests';
 import * as productStore from '../CheckOut/store-basket';
-
+import "bootstrap/dist/css/bootstrap.min.css";
 import InlineMessage from '../../Forms/InlineMessage';
 
 import { UserAccountContext } from "../../../context/UserAccount/userAccountContext";
@@ -100,14 +100,30 @@ const Product = ({product,addProductToBasket}) => {
 }
 
 
-export default function Products({products}) {
-
+export default function Products() {
+    const [products,setProducts] = useState([]);
     const [categories,setCategories] = useState([]);
     const [sub_categories,setSubCategories] = useState([]);
     const [show_products, setShowProducts] = useState([]);
 
     const [shoppingBasket,setShoppingBasket] = useState([]);
+    const [displayMenu,setMenu] = useState({menu:false});
+    const [title,setTitle] = useState('All Categories');
+
     const { user_account_state, doLogin } = useContext(UserAccountContext);
+
+
+    const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
+
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
+
 
     const addProductToBasket = async product => {   
         let results = { status: true, payload: {}, error: {} };     
@@ -128,10 +144,10 @@ export default function Products({products}) {
     };
 
 
-    const createSubCategories = (response) => {
+    const createSubCategories = async (response) => {
         let subCategoryList = [];
 
-        response.forEach(category => {
+       await response.forEach(category => {
           if (!subCategoryList.includes(category.sub_category)) {
             subCategoryList.push(category.sub_category);
           }
@@ -141,16 +157,18 @@ export default function Products({products}) {
     };
 
 
-    const onCategoryClick = (category) => {
+    const onCategoryClick = cat => {
+      console.log("Cliked category", cat);
+      
+      let expanded_category = categories.find(expanded_category => expanded_category.sub_category === cat);
 
-      let expanded_category = categories.find(expanded_category => expanded_category.sub_category === category);
+      let filtered_products = products.filter(product => product.category_id === expanded_category.category_id);
 
-      let filtered_products = products.filter(product => {
-        return product.category_id === expanded_category.category_id;
-      });
       console.log('Filtered Products ', filtered_products);
       setShowProducts(filtered_products);
+      setTitle(cat);
     };
+
 
 
     useEffect(() => {
@@ -162,6 +180,7 @@ export default function Products({products}) {
 
         await apiRequests.fetchCategories(category_type).then(categories => {
             response = categories;
+            console.log('This Categirues',categories);
             setCategories(categories);
         }).catch(error => {
           console.log(error);
@@ -183,13 +202,15 @@ export default function Products({products}) {
     }, []);
 
     useEffect(() => {
-      console.log('All Products',products);
-      setShowProducts(products);
+      apiRequests.fetchProductsAPI().then(result => {
+        setProducts(result);
+        setShowProducts(result);
+      });
       return () => {
+        setProducts([]);
         setShowProducts([]);
       };
-    }, [products]);
-
+    }, [categories]);
 
 
     return (
@@ -197,38 +218,63 @@ export default function Products({products}) {
         <div className="box box-body">
           <div className="box box-header">
             <h3 className="box-title">
-              <i className='fa fa-product-hunt'> </i>{' '}
-                Products
+              <i className="fa fa-product-hunt"> </i> Products
             </h3>
 
             <div className="box-tools">
-              {sub_categories.map(sub => {
-                return (
-                  <button
-                    type="button"
-                    className="btn btn-box-tool btn-outline-dark"
-                    name={sub}
-                    onClick={e => onCategoryClick(e.target.name)}
-                    >
-                    {sub}
-                  </button>
-                );
-              })}
+              <div className="dropdown">
+                <button
+                  type="button"
+                  className="btn btn-box-tool dropdown-toggle"
+                  onClick={e => showDropdownMenu(e)}
+                >
+                  Products Categories{" "}
+                </button>
+                {displayMenu.menu ? (
+                  <ul className="dropmenu">
+                    {sub_categories.map(sub => {
+                      console.log("Sub Categories", sub);
+                      return (
+                        <li
+                          className="btn btn-block droplink"
+                          name={sub}
+                          key={sub}
+                          onClick={e => {
+                            let cat = sub;
+                            onCategoryClick(cat);
+                          }}
+                        >
+                          <i className="fa fa-folder-open"> </i> {sub}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           </div>
-
-              {
-                show_products.map(product => {
-                  if(product.product_name && product.product_art && product.description && product.price){
-                    return (
-                      <Product
-                        product={product}
-                        key={product.id}
-                        addProductToBasket={addProductToBasket}
-                      />
-                    )}                  
-                })
+          <div className="box box-footer">
+            <div className='box box-header'>
+                <h3 className='box-title'>{title}</h3>
+            </div>
+            {show_products.map(product => {
+              if (
+                product.product_name &&
+                product.product_art &&
+                product.description &&
+                product.price &&
+                product.active
+              ) {
+                return (
+                  <Product
+                    product={product}
+                    key={product.id}
+                    addProductToBasket={addProductToBasket}
+                  />
+                );
               }
+            })}
+          </div>
         </div>
       </Fragment>
     );

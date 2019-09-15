@@ -47,6 +47,42 @@ export const fetchProductAPI = async product_id => {
   return results;
 };
 
+
+export const fetchUserProductsAPI = async uid => {
+  let results = [];
+  await axios.get(routes.api_products_endpoint + `/user/${uid}`).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error fetching user products');
+    }
+  }).then(products => {
+    results = [...products];
+  }).catch(error => {
+    console.log(error.message);
+  });
+
+  return results;
+};
+
+
+export const fetchUserServicesAPI = async uid => {
+  let results = [];
+  await axios.get(routes.api_services_endpoint + `/user/${uid}`).then(result => {
+    if(result.status){
+      return result.data;
+    }else{
+      throw new Error('there was an error fetching user services');
+    }
+  }).then(services => {
+    results = [...services];
+  }).catch(error => {
+    console.log(error.message);
+  });
+  return results;
+}
+
+
 export const fetchServicesAPI = async () => {
   let results = [];
   await axios
@@ -156,6 +192,24 @@ export const saveProduct = async(product) => {
   return results;
 };
 
+export const onDeleteProduct = async(product) => {
+    let results = { status: true, payload: {}, error: {} };
+
+    await axios.delete(routes.api_products_endpoint + `/${product.uid}/${product.id}`).then(result => {
+        if (result.status === 200){
+          return result.data;
+        }
+    }).then(product => {
+      results.status = true;
+      results.payload = {...product};
+    
+    }).catch(error => {
+      results.status = false;
+      results.error = {...error};      
+    });
+    return results;
+};
+
 
 export const doAddService = async(service) => {
   let results = { status: true, payload: {}, error: {} };
@@ -177,6 +231,95 @@ export const doAddService = async(service) => {
   return results;
 };
 
+
+export const updateService = async(service) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.put(routes.api_services_endpoint,service).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error updating service');
+    }
+  }).then(service => {
+    results.status = true;
+    results.payload = {...service};
+    results.error = {}
+
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error};
+  });
+  return results;
+};
+
+
+export const updateProduct = async(product) => {
+  let results = {status : true, payload: {}, error : {}};
+
+  await axios.put(routes.api_products_endpoint,product).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error updating product');
+    }
+  }).then(product => {
+    results.status = true;
+    results.payload ={...product};
+    results.error = {};
+
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error}
+  });
+  return results;
+};
+
+
+export const fetchProductRequests = async(uid,id) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.get(routes.api_products_endpoint + `/requests/${uid}/${id}`).then(result => {
+    if (result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('error fetching product requests');
+    }
+  }).then(requests => {
+    results.status = true;
+    results.payload = {...requests};
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error};
+  });
+  return results;
+};
+
+
+export const onDeleteService = async(service) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.delete(routes.api_services_endpoint,service).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error deleting service');
+    }
+  }).then(service => {
+    results.status = true;
+    results.payload = {...service};
+    results.error ={}
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error};
+  });
+  return results;
+};
 
 export const savePhysicalAddress = async(physical_address) => {
   let results = { status: true, payload: {}, error: {} };
@@ -353,4 +496,134 @@ export const applyCouponCode = async coupon => {
 
   return results;
 
+};
+
+
+export const fetchStore = async uid => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.get(routes.api_store_endpoint + `/${uid}`).then(response => {
+      if(response.status === 200){
+        return response.data;
+      }else{
+        throw new Error('error fetching store');
+      }
+  }).then(store => {
+    results.status = true;
+    results.payload = {...store};
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.error = {...error};
+    results.payload = {};
+  });
+
+  return results;
+};
+
+
+export const addStore = async (client_store) => {
+  let results = { status: true, payload: {}, error: {} };
+  await axios.post(routes.api_store_endpoint,client_store).then(response => {
+      if(response.status === 200){
+          return response.data;
+      }else{
+        throw new Error('there was an error adding store');
+      }
+  }).then(store => {
+    results.status = true;
+    results.payload = {...store};
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.error = {...error};
+    results.payload = {};
+  });
+  return results;
+}
+
+
+
+export const fetchTransactions = async(uid) => {
+  let results = { status: true, payload: [], error: {} };
+
+  await axios.get(routes.api_transactions_endpoint+`/${uid}`).then(response => {
+    if(response.status === 200){
+      return response.data;
+    }else{
+      throw new Error('there was an error fetching transactions');
+    }
+  }).then(transactions => {
+    results.status = true;
+    results.payload = [...transactions];
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.error = {...error};
+    results.payload = {};
+  });
+  return results;
+};
+
+export const createTransaction = async client_transaction => {
+  let results = { status: true, payload: {}, error: {} };
+  await axios.post(routes.api_transactions_endpoint,client_transaction).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('there was an error creating transaction');
+    }
+  }).then(transaction => {
+      results.status = true;
+      results.payload = {...transaction};
+      results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error};
+  });
+  return results;
+};
+
+
+export const removeTransaction = async (id,uid) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.delete(routes.api_transactions_endpoint+`/${uid}/${id}`).then(result => {
+    if(results.status === 200){
+      return results.data;
+    }else{
+      throw new Error('there was an error removing transanction');
+    }
+  }).then(transactions => {
+    results.status = true;
+    results.payload = [...transactions];
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.payload = [];
+    results.error = {...error};
+  });
+  return results;
+};
+
+
+export const fetchUserByID = async (uid) => {
+  let results = { status: true, payload: {}, error: {} };
+  
+  await axios.get(routes.api_user_endpoint + `/${uid}`).then(result => {
+      if(result.status === 200){
+        return result.data;
+      }else{
+      }
+  }).then(user => {
+    results.status = true;
+    results.payload = {...user};
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.payload = {};
+    results.error = {...error};
+  });
+  return results;
 }

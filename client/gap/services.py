@@ -1,14 +1,7 @@
 
 
-import os
-import webapp2
-import jinja2
+import os,logging,json,random,string
 from google.appengine.ext import ndb
-from google.appengine.api import users
-import logging
-import json
-import random
-import string
 
 
 class Services (ndb.Expando):
@@ -20,6 +13,7 @@ class Services (ndb.Expando):
     service_art = ndb.StringProperty()
     price = ndb.StringProperty()
     currency = ndb.StringProperty(default='zar')
+    active = ndb.BooleanProperty(default=True)
 
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
@@ -47,10 +41,30 @@ class Services (ndb.Expando):
 
     def removeService(self,uid,id):
 
-        services_request = Services.query((Services.uid == uid) and (Services.id == id))
+        services_request = Services.query(Services.uid == uid )
         services_list = services_request.fetch()
 
         for service in services_list:
-            service.key.delete()
+            if (service.id == id):
+                service.key.delete()
 
         return True
+
+    def updateService(self,service):
+
+        service_request = Services.query(Services.id == service['id'])
+        service_list = service_request.fetch()
+
+        for found_service in service_list:
+            if (found_service.uid == service['uid']):
+                found_service.category_id = service['category_id']
+                found_service.service_name = service['service_name']
+                found_service.description = service['description']
+                found_service.service_art = service['service_art']
+                found_service.price = service['price']
+                found_service.currency = service['currency']
+                found_service.put()
+                return found_service
+            else:
+                pass
+        return ''

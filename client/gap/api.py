@@ -10,10 +10,13 @@ from products import Products
 from services import Services
 from physical import PhysicalAddress
 from clientcontactdetails import ContactDetails
-from cart import Cart,Items
+from cart import Cart, Items, ProductRequests, ServiceRequests
 from datetime import datetime
 from coupons import Coupons
 from user import User
+from store import Store
+from transactions import Transactions
+
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
     # the resource he or she is asking for
@@ -40,13 +43,17 @@ class APIRouterHandler(webapp2.RequestHandler):
 
             for category in categories_list:
                 response_data.append(category.to_dict())
+
         elif 'products' in route:
+            
+            id = str(route[len(route) - 1])
+            router = str(route[len(route) - 2])
+            request = str(route[len(route) - 3])
 
-            product_id = str(route[len(route) - 1])
             logging.info('PRODUCT ID')
-            logging.info(product_id)
+            logging.info(id)
 
-            if product_id == 'products':
+            if id == 'products':
 
                 products_requests = Products.query()
                 products_list = products_requests.fetch()
@@ -54,8 +61,46 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = []
                 for product in products_list:
                     response_data.append(product.to_dict())
-            else:
-                products_requests = Products.query(Products.id == product_id)
+
+            elif router == 'user':
+
+                products_request = Products.query(Products.uid == id)
+                products_list = products_request.fetch()
+
+                response_data = []
+                for product in products_list:
+                    response_data.append(product.to_dict())
+
+            # requests here equals product requests
+            elif request == 'requests':
+                # /requests/${uid}/${id}
+                uid = router
+
+                # id in here is the same as product_id in productRequests 
+                this_query = ProductRequests.query(ProductRequests.product_id == id)
+                this_product_requests_list = this_query.fetch()
+
+                # check if the user owns the product from which he requests requests
+
+                this_products_query = Products.query(Products.uid == uid)
+                this_products_list = this_products_query.fetch()
+
+                product_found = ''
+                for product in this_products_list:
+                    if product.uid == uid:
+                        product_found = product
+                                
+                response_data = []
+
+                for product_request in this_product_requests_list:
+                    # this insures that it wont be possible to get product requests if you are not the owner of the product
+                    if product_found.id == product_request.product_id:
+                        response_data.append(product_request.to_dict())
+                    else:
+                        pass
+
+            else :
+                products_requests = Products.query(Products.id == id)
                 products_list = products_requests.fetch()
 
                 if len(products_list) > 0:
@@ -65,17 +110,32 @@ class APIRouterHandler(webapp2.RequestHandler):
                 else:
                     status_int = 403
                     response_data = {'message':'product not found'}
+
         elif 'services' in route:
-            service_id = str(route[len(route) - 1])
-            if service_id == 'services':
+            id = str(route[len(route) - 1])
+            router = str(route[len(route) - 2])
+
+            # fetch list of services
+            if id == 'services':
                 services_requests = Services.query()
                 services_list = services_requests.fetch()
 
                 response_data = []
                 for service in services_list:
                     response_data.append(service.to_dict())
+
+            elif router == 'user':
+                
+                services_request = Services.query(Services.uid == id)
+                services_list = services_request.fetch()
+
+                response_data = []
+                for service in services_list:
+                    response_data.append(service.to_dict())
+                    
             else:
-                services_requests = Services.query(Services.id == service_id)
+                # fetch a single service
+                services_requests = Services.query(Services.id == id)
                 services_list = services_requests.fetch()
 
                 if len(services_list) > 0:
@@ -85,6 +145,9 @@ class APIRouterHandler(webapp2.RequestHandler):
                 else:
                     status_int = 403
                     response_data = {'message':'service not found'}
+
+
+
         elif 'physical-address' in route:
 
             uid = route[len(route) - 1]
@@ -155,6 +218,27 @@ class APIRouterHandler(webapp2.RequestHandler):
             else:
                 status_int = 400
                 response_data = {'message': 'user not found in the system'}
+
+        elif 'store' in route:
+            uid = route[len(route) - 1]
+
+            this_store = Store()
+            this_store = this_store.getStore(uid)
+
+            if this_store != '':
+                response_data = this_store.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'store not found'}
+
+        elif 'transactions' in route:
+            uid = route[len(route) - 1]
+
+            this_transactions  = Transactions()
+            transactions_list = this_transactions.fetchTransactions(uid)
+            response_data = []
+            for transaction in transactions_list:
+                response_data.append(transaction.to_dict())
 
 
         else:
@@ -278,6 +362,16 @@ class APIRouterHandler(webapp2.RequestHandler):
             cart.put() 
             items.put() 
 
+            # add product to product requests and then add service to service requests
+
+            if items.item_type == 'products':
+                this_request = ProductRequests()
+                this_request = this_request.addProduct(product=item,uid=cart_owner_id,total=items.quantity)
+            else:
+                this_request = ServiceRequests() 
+                this_request = this_request.addService(service=item,uid=cart_owner_id,total=items.quantity)
+                
+
             items_request = Items.query(Items.cart_id == cart.cart_id)
             items_list = items_request.fetch()
             ser_items = []
@@ -304,6 +398,31 @@ class APIRouterHandler(webapp2.RequestHandler):
             else:
                 status_int = 403
                 response_data = {'message': 'user not found'}
+
+        elif 'store' in route:
+            json_data = json.loads(self.request.body)
+
+            this_store = Store()
+            this_store = this_store.addStore(store=json_data)
+            if(this_store != ''):
+                response_data = this_store.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'store not stored'}
+
+        elif 'transactions' in route:
+            json_data = json.loads(self.request.body)
+
+            this_transaction = Transactions()
+            result = this_transaction.addTransaction(transaction=json_data)
+            logging.info(this_transaction)
+
+            response_data = this_transaction.to_dict()
+
+
+
+            
+
 
         else:
             status_int = 400
@@ -338,11 +457,37 @@ class APIRouterHandler(webapp2.RequestHandler):
                     'message': 'cart not found',
                     'cart': {}
                 }
+
+        elif 'transactions' in route:
+            id = route[len(route) - 1]
+            uid = route[len(route) - 2]
+
+            this_transactions = Transactions()
+            transaction_list = this_transactions.removeTransaction(id=id,uid=uid)
+
+            response_data = []
+            for transaction in transaction_list:
+                response_data.append(transaction.to_dict())
+
+        elif 'products' in route:
+            id = route[len(route) - 1]
+            uid = route[len(route) - 2]
+
+            this_product = Products()
+            result = this_product.deleteProduct(uid=uid,id=id)
+            if result != '':
+                response_data = result.to_dict()
+            else:
+                status_int = 401
+                response_data = {'message':'product not found'}
+
         else:
             status_int = 403
             response_data = {
                 'message' : 'error resource not found'
             }
+
+            
 
 
         self.response.headers['Content-Type'] = "application/json"
@@ -400,6 +545,28 @@ class APIRouterHandler(webapp2.RequestHandler):
                 status_int = 403
                 response_data={'message':'user not found'}
 
+        elif 'services' in route:
+            json_data = json.loads(self.request.body)
+
+            this_service = Services()
+            this_service = this_service.updateService(service=json_data)
+            
+            if this_service != '':
+                response_data = this_service.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'error updating service'}
+
+        elif 'products' in route:
+            json_data = json.loads(self.request.body)
+
+            this_product = Products()
+            this_product = this_product.updateProduct(product=json_data)
+            if this_product != '':
+                response_data = this_product.to_dict()
+            else:
+                status_int = 403
+                response_data = {'message': 'error updating product'}
 
         else:
             status_int = 401

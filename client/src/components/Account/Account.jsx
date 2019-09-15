@@ -1,9 +1,11 @@
 import React,{Fragment,useState,useEffect,useContext} from 'react';
 import Switch from 'react-switch';
+import {Utils} from '../../utilities';
 import {extended_user, extended_user_error} from '../Auth/auth-constants';
 import * as apiRequests from '../Auth/auth-api';
-
 import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
+import InlineError from '../Forms/InlineError';
+import InlineMessage from '../Forms/InlineMessage';
 
 function Verifications({ user_account, doSendEmailVerification }) {
   const [verifications, setVerifications] = useState({
@@ -306,9 +308,9 @@ function PersonalDetails({user_account}){
     const [inline,setInline] = useState({message:'',message_type:'info'});
     const {user_account_state} = useContext(UserAccountContext);
 
-    let onChangeHandler = e => setUser({...user,[e.target.name]:e.target.value});    
+    const onChangeHandler = e => setUser({...user,[e.target.name]:e.target.value});    
 
-    let onUpdatePersonalDetails = async e => {
+    const onUpdatePersonalDetails = async e => {
         let sent_user = {...user};
         sent_user.uid = user_account_state.user_account.uid;
         sent_user = JSON.stringify(sent_user)
@@ -324,7 +326,75 @@ function PersonalDetails({user_account}){
         }).catch(error => {
           setInline({message:error.message,message_type:'error'});
         });
+        return true;
     };
+
+    const checkErrors = async e => {
+      let isError = false;
+
+      const check_names = () => {
+        if (Utils.isEmpty(user.names)) {
+          setErrors({ ...errors, names_error: "names field cannot be empty" });
+          return true;
+        }
+        return false;
+      };
+      const check_surname = () => {
+        if (Utils.isEmpty(user.surname)) {
+          setErrors({
+            ...errors,
+            surname_error: "surname field cannot be empty"
+          });
+          return true;
+        }
+        return false;
+      };
+      const check_cell = () => {
+        if (Utils.isCell(user.cell) === false) {
+          setErrors({ ...errors, cell_error: "cell field is invalid" });
+          return true;
+        }
+        return false;
+      };
+      const check_email = () => {
+        if (Utils.validateEmail(user.email) === false) {
+          setErrors({ ...errors, email_error: "email address is invalid" });
+          return true;
+        }
+        return false;
+      };
+      const check_password = () => {
+        if (Utils.isEmpty(user.password)) {
+          setErrors({
+            ...errors,
+            password_error: "password field cannot be empty"
+          });
+          return true;
+        }
+        return false;
+      };
+      const check_password_two = () => {
+        if (user.password !== user.repeatpassword) {
+          setErrors({
+            ...errors,
+            repeatpassword_error: "passwords do not match"
+          });
+          return true;
+        }
+        return false;
+      };
+
+      const do_check = () => {
+        check_names() ? (isError = true) : (isError = isError);
+        check_surname() ? (isError = true) : (isError = isError);
+        check_cell() ? (isError = true) : (isError = isError);
+        check_email() ? (isError = true) : (isError = isError);
+        return isError;
+      };
+
+      return await do_check();
+    };
+
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -375,6 +445,7 @@ function PersonalDetails({user_account}){
                 value={user.names}
                 onChange={e => onChangeHandler(e)}
               />
+              {errors.names_error ? <InlineError message={errors.names_error} /> : ''}
             </div>
             <div className="form-group">
               <input
@@ -385,6 +456,7 @@ function PersonalDetails({user_account}){
                 value={user.surname}
                 onChange={e => onChangeHandler(e)}
               />
+              {errors.surname_error ? <InlineError message={errors.surname_error} /> : ''}
             </div>
             <div className="form-group">
               <input
@@ -395,6 +467,7 @@ function PersonalDetails({user_account}){
                 value={user.cell}
                 onChange={e => onChangeHandler(e)}
               />
+              {errors.cell_error ? <InlineError message={errors.cell_error} /> : ''}
             </div>
             <div className="form-group">
               <input
@@ -405,13 +478,23 @@ function PersonalDetails({user_account}){
                 value={user.email}
                 onChange={e => onChangeHandler(e)}
               />
+              {errors.email_error ? <InlineError message={errors.email_error} /> : ''}
             </div>
             <div className="form-group">
               <button
                 type="button"
                 className="btn btn-success btn-lg"
                 name="update"
-                onClick={e => onUpdatePersonalDetails(e)}
+                onClick={e => checkErrors(e).then(isError => {
+                  isError
+                    ? setInline({
+                        message: "there was an error processing form",
+                        message_type: "error"
+                      })
+                    : onUpdatePersonalDetails(e).then(result => {
+                      console.log(result);
+                    })
+                }) }
               >
                 <strong>
                   <i className="fa fa-cloud-upload"> </i> Update
@@ -421,11 +504,19 @@ function PersonalDetails({user_account}){
                 type="button"
                 className="btn btn-warning btn-lg"
                 name="cancel"
+                onClick={e => {
+                  setUser(extended_user);
+                  setErrors(extended_user_error);
+                  setInline({message:'',message_type:'info'});
+                }}
               >
                 <strong>
-                  <i className="fa fa-cut"> </i> Cancel
+                  <i className="fa fa-eraser"> </i> Reset
                 </strong>
               </button>
+            </div>
+            <div className='form-group'>
+                {inline.message ? <InlineMessage message={inline.message} message_type={inline.message_type} /> : ''}
             </div>
           </form>
         </div>

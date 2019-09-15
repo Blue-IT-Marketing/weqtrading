@@ -15,6 +15,8 @@ class Coupons(ndb.Expando):
     code = ndb.StringProperty()
     valid = ndb.BooleanProperty(default=False)
 
+    def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
+        return ''.join(random.choice(chars) for x in range(size))
 
     def addCoupon(self,coupon):
 
@@ -22,17 +24,27 @@ class Coupons(ndb.Expando):
         coupons_list = coupons_query.fetch()
 
         if len(coupons_list) > 0:
-            return False
+            return ''
         else:
-            pass # finish this up later
+            this_coupon = Coupons()
+            this_coupon.code_id = this_coupon.create_id()
+            this_coupon.discount_percentage = coupon['discount_percentage']
+            this_coupon.code = coupon['code']
+            this_coupon.valid = True
+            this_coupon.put()
+            return this_coupon
+
     def removeCoupons(self,code):
         coupons_query = Coupons.query(Coupons.code == code)
         coupons_list = coupons_query.fetch()
 
         for coupon in coupons_list:
             coupon.key.delete()
+            return coupon
 
-        return True
+        return ''
+
+        
 
 
 

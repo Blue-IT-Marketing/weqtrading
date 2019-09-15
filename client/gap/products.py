@@ -1,14 +1,13 @@
 
 
 import os
-import webapp2
-import jinja2
 from google.appengine.ext import ndb
-from google.appengine.api import users
 import logging
 import json
 import random
 import string
+
+
 
 class Products (ndb.Expando):
     uid = ndb.StringProperty()
@@ -19,10 +18,10 @@ class Products (ndb.Expando):
     product_art = ndb.StringProperty()
     price = ndb.StringProperty()
     currency = ndb.StringProperty(default='zar')
+    active = ndb.BooleanProperty(default=True)
     
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
-
 
     def addProduct(self,product):
         products_request = Products.query(Products.product_name == product['product_name'])
@@ -40,3 +39,40 @@ class Products (ndb.Expando):
             self.uid = product['uid']
             
             return self.put()
+
+    def deleteProduct(self,uid,id):
+
+        products_requests = Products.query(Products.uid == uid)
+        products_list = products_requests.fetch()
+
+        for product in products_list:
+            if (product.id == id):
+                product.active = False
+                product.put()
+                return product
+            else:
+                pass
+        return ''
+
+    def updateProduct(self,product):
+
+        products_request = Products.query(Products.id == product['id'])
+        products_list = products_request.fetch() 
+
+        for found_product in products_list:
+            if found_product.uid == product['uid']:
+                found_product.category_id = product['category_id']
+                found_product.product_name = product['product_name']
+                found_product.description = product['description']
+                found_product.product_art = product['product_art']
+                found_product.price = product['price']
+                found_product.currency = product['currency']
+                found_product.active = product['active'] == 'true'
+                found_product.put()
+                return found_product
+            else:
+                pass
+
+        return ''
+
+

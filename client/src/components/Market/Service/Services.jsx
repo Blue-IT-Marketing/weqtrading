@@ -108,13 +108,14 @@ const Service = ({ service, addServiceToBasket }) => {
 };
 
 
-export default function Services({services}) {
+export default function Services() {
+
+    const[services,setServices] = useState([]);
     const [categories, setCategories] = useState([]);
     const [sub_categories, setSubCategories] = useState([]);
     const [show_services, setShowServices] = useState([]);
 
     const [shoppingBasket, setShoppingBasket] = useState([]);
-
     const { user_account_state, doLogin } = useContext(UserAccountContext);
   
     const addServiceToBasket = async service => {
@@ -191,12 +192,15 @@ export default function Services({services}) {
     }, []);
 
     useEffect(() => {
-      console.log("All Services", services);
-      setShowServices(services);
+      apiRequests.fetchServicesAPI().then(result => {
+        setServices(result);
+        setShowServices(result);
+      });
       return () => {
+        setServices([]);
         setShowServices([]);
       };
-    }, [services]);
+    }, []);
 
   
   return (
@@ -212,7 +216,7 @@ export default function Services({services}) {
               return (
                 <button
                   type="button"
-                  className="btn btn-box-tool btn-outline-dark"
+                  className="btn btn-box-tool"
                   name={sub}
                   onClick={e => onCategoryClick(e.target.name)}
                 >
@@ -226,8 +230,7 @@ export default function Services({services}) {
         {show_services.map(service => {
           if (
             service.service_name &&
-            service.service_art &&
-            service.description &&
+            service.service_art &&            
             service.price
           ) {
             return (

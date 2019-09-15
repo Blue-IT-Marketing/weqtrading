@@ -494,7 +494,7 @@ function AddService() {
 
 
   const addService = async e => {
-      let my_service = Object.assign({},service);
+      let my_service = {...service}; 
       my_service.uid = user_account_state.user_account.uid;
       await RequestsAPI.doAddService(JSON.stringify(my_service)).then(results => {
           if(results.status){
@@ -981,10 +981,22 @@ export default function MyMarket() {
   const [display, setDisplay] = useState("add-categories");
   const [product, setProduct] = useState(products_init);
   const [service, setService] = useState(service_init);
-  
-  let my_header;
-  Utils.isMobile()
-    ? (my_header = () => (
+  const [displayMenu,setMenu] = useState({menu:false});
+
+    const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
+
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
+
+  return (
+    <Fragment>
+      <div className="box box-body">
         <div className="box-header">
           <h3 className="box-title">
             <strong>
@@ -993,78 +1005,43 @@ export default function MyMarket() {
             </strong>
           </h3>
           <div className="box-tools">
-            <button
-              type="button"
-              className="btn btn-box-tool btn-outline-dark"
-              name="add-categories"
-              onClick={e => setDisplay(e.target.name)}
-            >
-              <i className="fa fa-bookmark"> </i> Categories
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-box-tool btn-outline-dark"
-              name="add-products"
-              onClick={e => setDisplay(e.target.name)}
-            >
-              <i className="fa fa-shopping-bag"> </i> Products
-            </button>
-            <button
-              type="button"
-              className="btn btn-box-tool btn-outline-dark"
-              name="add-services"
-              onClick={e => setDisplay(e.target.name)}
-            >
-              <i className="fa fa-shopping-cart"> </i> Services
-            </button>
-          </div>
-        </div>
-      ))
-    : (my_header = () => (
-        <Fragment>
-          <div className="box-header">
-            <h3 className="box-title">
-              <strong>
-                <i className="fa fa-shopping-basket"> </i> My Products &amp;
-                Services
-              </strong>
-            </h3>
-
-            <div className="box-tools">
+            <div className="dropdown">
               <button
                 type="button"
-                className="btn btn-box-tool btn-outline-dark"
-                name="add-categories"
-                onClick={e => setDisplay(e.target.name)}
+                className="btn btn-box-tool dropdown-toggle"
+                onClick={e => showDropdownMenu(e)}
               >
-                <i className="fa fa-bookmark"> </i> Add Categories
+                Create Store{" "}
               </button>
-              <button
-                type="button"
-                className="btn btn-box-tool btn-outline-dark"
-                name="add-products"
-                onClick={e => setDisplay(e.target.name)}
-              >
-                <i className="fa fa-shopping-bag"> </i> Add Products
-              </button>
-              <button
-                type="button"
-                className="btn btn-box-tool btn-outline-dark"
-                name="add-services"
-                onClick={e => setDisplay(e.target.name)}
-              >
-                <i className="fa fa-shopping-cart"> </i> Add Services
-              </button>
+              {displayMenu.menu ? (
+                <ul className="dropmenu">
+                  <li
+                    className="btn btn-block droplink"
+                    name="add-categories"
+                    onClick={e => setDisplay("add-categories")}
+                  >
+                    <i className="fa fa-bookmark"> </i> Categories
+                  </li>
+                  <li
+                    className="btn btn-block droplink"
+                    name="add-products"
+                    onClick={e => setDisplay("add-products")}
+                  >
+                    <i className="fa fa-shopping-bag"> </i> Products
+                  </li>
+                  <li
+                    className="btn btn-block droplink"
+                    name="add-services"
+                    onClick={e => setDisplay("add-services")}
+                  >
+                    <i className="fa fa-shopping-cart"> </i> Services
+                  </li>
+                </ul>
+              ) : null}
             </div>
           </div>
-        </Fragment>
-      ));
-   
-  return (
-    <Fragment>
-      <div className="box box-body">
-        {my_header()}  
+        </div>
+
         {display === "add-products" ? <AddProduct /> : ""}
         {display === "add-services" ? <AddService /> : ""}
         {display === "add-categories" ? <AddCategories /> : ""}
