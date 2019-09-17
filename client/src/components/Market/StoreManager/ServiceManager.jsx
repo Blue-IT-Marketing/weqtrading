@@ -10,6 +10,7 @@ import {
   products_errors_init,
   category_init,
   service_init
+  
 } from "../market-constants";
 import InlineError from "../../Forms/InlineError";
 import InlineMessage from "../../Forms/InlineMessage";
@@ -18,7 +19,7 @@ import * as apiRequests from "../api-requests";
 import { Utils } from "../../../utilities";
 import { api_products_endpoint } from "../../../constants/routes";
 
-
+import { extended_user } from "../../Auth/auth-constants";
 
 
 const ManageService = ({ service }) => {
@@ -212,6 +213,141 @@ const ManageService = ({ service }) => {
   );
 };
 
+
+const RequestItem = ({ request }) => {
+  const [client, setClient] = useState(extended_user);
+  const [inline, setInline] = useState({ message: "", message_type: "inf" });
+
+  const fetchUserByID = async uid => {
+    console.log('Fetching User',uid);
+    await apiRequests
+      .fetchUserByID(uid)
+      .then(results => {
+        if (results.status) {
+          setClient(results.payload);
+        } else {
+          setInline({
+            message: "there was an error fetching client details",
+            message_type: "error"
+          });
+          setClient(extended_user);
+        }
+      })
+      .catch(error => {
+        setInline({ message: error.message, message_type: "error" });
+        setClient(extended_user);
+      });
+    return true;
+  };
+
+  return (
+    <tr>
+      <td>
+        {fetchUserByID(request.client_uid).then(result => {
+          if (result) {
+            return (
+              <span title={client.cell}>
+                {" "}
+                {client.name} - {client.surname}{" "}
+              </span>
+            );
+          }
+        })}
+      </td>
+      <td>{request.total_requested}</td>
+      <td>{request.date_requested}</td>
+      <td>{request.products_sent ? "Yes" : "No"}</td>
+      <td>{request.date_sent}</td>
+    </tr>
+  );
+};
+
+const ServiceRequests =({service}) => {
+     const [requests, setRequests] = useState([]);
+     const [inline, setInline] = useState({ message: "", message_type: "inf" });
+     const { user_account_state } = useContext(UserAccountContext);
+
+     useEffect(() => {
+       const fetchRequestsAPI = async () => {
+         let uid = user_account_state.user_account.uid;
+         let id = service.id;
+
+         apiRequests
+           .fetchProductRequests(uid, id)
+           .then(results => {
+             if (results.status) {
+               setRequests(results.payload);
+             } else {
+               setRequests([]);
+             }
+           })
+           .catch(error => {
+             console.log(error.message);
+           });
+
+         return true;
+       };
+
+       fetchRequestsAPI().then(result => {
+         console.log(result);
+       });
+
+       return () => {
+         setInline({ message: "", message_type: "inf" });
+         setRequests([]);
+       };
+     }, []);
+
+
+    return (
+      <Fragment>
+        <div className="box box-body">
+          <div className="box box-header">
+            <h3 className="box-title"> Service Requests</h3>
+          </div>
+          <div className="box box-footer">
+            <div className="row">
+              
+                <ul className="list-group">
+                  <li className="list-group-item">
+                    {" "}
+                    Service Name : {service.service_name}
+                  </li>
+                  <li className="list-group-item">{" "} Service Price : R {service.price}.00</li>
+                  <li className="list-group-item">
+                    {" "}
+                    Description : {service.description}
+                  </li>
+                </ul>
+            </div>
+
+            <div className="row">
+                <table className="table table-responsive">
+                  <thead>
+                    <tr>
+                      <td>Client</td>
+                      <td>Requests</td>
+                      <td>Date Requested</td>
+                      <td>Sent</td>
+                      <td>Sent Date</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {requests.map(request => {
+                      return <RequestItem request={request} key={request.id} />;
+                    })}
+                  </tbody>
+                </table>
+            </div>
+
+
+            </div>
+          </div>
+        
+      </Fragment>
+    );
+};
+
 const ShowService = ({ service }) => {
   const [display, setDisplay] = useState("details");
 
@@ -259,7 +395,7 @@ const ShowService = ({ service }) => {
                   name="service-requests"
                   onClick={e => setDisplay("service-requests")}
                 >
-                  <i className="fa fa-inbox"> </i> service Requests
+                  <i className="fa fa-inbox"> </i> Service Requests
                 </button>
               </li>
 
@@ -293,6 +429,8 @@ const ShowService = ({ service }) => {
             {display === "manage-services" ? (
               <ManageService service={service} />
             ) : null}
+            {display === 'service-requests' ? 
+              <ServiceRequests service={service}/> : ''}
           </div>
         </div>
       </div>

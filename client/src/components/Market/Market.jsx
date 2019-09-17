@@ -16,8 +16,33 @@ export default function Market() {
   const [products, setProducts] = useState([]);
   const [services, setServices] = useState([]);
   const [display,setDisplay] = useState('products');
+  const [search,setSearch] = useState('');
+  const [search_results,setSearchResults] = useState([]);
+  const [inline,setInline] = useState({message:'',message_type:'inf'});
   const {user_account_state,doLogin } = useContext(UserAccountContext);
+
+
   
+
+  const onSearch = async e => {
+    e.preventDefault();
+    
+    let search_text = search;
+
+    await apiRequests.onSearch(search_text).then(results => {
+      if (results.status){
+        setSearchResults(results.payload);
+      }else{
+        setSearchResults([]);
+      }
+    }).catch(error => {
+      setInline({message:'error performing search',message_type:'error'});
+    });
+
+    return true;
+  };
+
+
   useEffect(() => {
     apiRequests.fetchProductsAPI().then(result => {
       setProducts(result);
@@ -49,9 +74,11 @@ export default function Market() {
             <div className="input-group">
               <input
                 type="text"
-                name="q"
+                name="search"
                 className="form-control"
                 placeholder="Search Market..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
               />
               <span className="input-group-btn">
                 <button
@@ -59,6 +86,7 @@ export default function Market() {
                   name="search"
                   id="search-btn"
                   className="btn btn-flat"
+                  onClick={e => onSearch(e)}
                 >
                   <i className="fa fa-search" />
                 </button>

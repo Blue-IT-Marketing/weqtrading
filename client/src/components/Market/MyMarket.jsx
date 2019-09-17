@@ -508,7 +508,7 @@ function AddService() {
       });
 
       return true;
-  }
+  };
   
 
   useEffect(() => {

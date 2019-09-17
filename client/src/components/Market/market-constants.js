@@ -144,13 +144,14 @@ export const store_errors_init = {
 
 
 export const payment_init = {
-    uid: "",
-    id: "",
-    date: "",
-    amount: "",
-    processed : false,
-    transaction_type: "deposit"
-};
+         uid: "",
+         id: "",
+         date: "",
+         amount: "",
+         processed: false,
+         transaction_type: "deposit",
+         deposit_slip_url : ''
+       };
 
 export const payment_errors_init = {
     amount_error  : '',

@@ -289,16 +289,36 @@ export const fetchProductRequests = async(uid,id) => {
     }
   }).then(requests => {
     results.status = true;
-    results.payload = {...requests};
+    results.payload = [...requests];
     results.error = {};
   }).catch(error => {
     results.status = false;
-    results.payload = {};
+    results.payload = [];
     results.error = {...error};
   });
   return results;
 };
 
+export const fetchServiceRequests = async(uid,id) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.get(routes.api_services_endpoint + `/requests/${uid}/${id}`).then(result =>{
+    if (result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('error fetching service requests');
+    }
+  }).then(requests => {
+    results.status = true;
+    results.payload = [...requests];
+    results.error = {};  
+  }).catch(error => {
+    results.status = false;
+    results.payload = [];
+    results.error = {...error};
+  });
+  return results;
+};
 
 export const onDeleteService = async(service) => {
   let results = { status: true, payload: {}, error: {} };
@@ -626,4 +646,64 @@ export const fetchUserByID = async (uid) => {
     results.error = {...error};
   });
   return results;
-}
+};
+
+
+export const processDeposit = async (deposited) => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.put(routes.api_transactions_endpoint,deposited).then(result => {
+        if(result.status === 200){
+          return result.data;
+        }else{
+          throw new Error('there was an error processing deposit');
+        }
+  }).then(deposited => {
+    results.status = true;
+    results.payload = {...deposited}
+    results.error = {};
+  }).catch(error => {
+    results.status = false;
+    results.payload= {};
+    results.error = {...error};
+  });
+  return results;
+};
+
+
+export const onSearch = async search_text => {
+  let results = { status: true, payload: {}, error: {} };
+
+  await axios.get(routes.api_products_endpoint + `/search/${search_text}`).then(result => {
+      if (result.status === 200){
+        return result.data;
+      }else{
+        throw new Error('error performing search');
+      }
+  }).then(products => {
+    results.status = true;
+    results.payload = [...products];
+    results.error = {}  ;
+  }).catch(error => {
+    results.status = false;
+    results.error = { ...error };
+  })
+
+
+  await axios.get(routes.api_services_endpoint + `/search/${search_text}`).then(result => {
+    if(result.status === 200){
+      return result.data;
+    }else{
+      throw new Error('error performing seach');
+    }
+  }).then(services => {
+    results.status = true;
+    results.payload = [...results.payload,...services];
+    results.error = {}
+  }).catch(error => {
+    results.status = false;
+    results.error = {...error};
+  });
+
+  return results;
+};

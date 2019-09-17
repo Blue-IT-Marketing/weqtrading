@@ -306,34 +306,34 @@ const ProductRequests = ({product}) => {
           </div>
           <div className="box box-footer">
             <div className='row'>
-                <div className='col-md-5'>
+                
                     <ul className='list-group'>
                         <li className='list-group-item'> Product Name : {product.product_name}</li>
-                        <li className='list-group-item'> Product Price : {product.price}</li>
+                        <li className='list-group-item'> Product Price : R {product.price}.00</li>
                         <li className='list-group-item'> Description : {product.description}</li>                
-                    </ul>  
-                </div>
-                <div className='col-md-7'>
-                    <table className='table table-responsive'>
-                        <thead>
-                            <tr>
-                                <td>Client</td>
-                                <td>Requests</td>
-                                <td>Date Requested</td>
-                                <td>Sent</td>
-                                <td>Sent Date</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {requests.map(request => {
-                                return <RequestItem request={request} key={request.id} />;
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                    </ul> 
+                    <hr></hr> 
+            </div>
+            <div className='row'>
+                  <table className='table table-responsive'>
+                      <thead>
+                          <tr>
+                              <td>Client</td>
+                              <td>Requests</td>
+                              <td>Date Requested</td>
+                              <td>Sent</td>
+                              <td>Sent Date</td>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {requests.map(request => {
+                              return <RequestItem request={request} key={request.id} />;
+                          })}
+                      </tbody>
+                  </table>
             </div>
           </div>
-        </div>
+        </div>            
       </Fragment>
     );
 }

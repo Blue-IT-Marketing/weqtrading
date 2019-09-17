@@ -10,6 +10,8 @@ class Transactions(ndb.Expando):
     amount = ndb.StringProperty()
     processed = ndb.BooleanProperty(default=False)
     transaction_type = ndb.StringProperty(default='deposit')
+    deposit_slip_url = ndb.StringProperty(default='https://via.placeholder.com/300/09f/fff.png')
+
 
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
@@ -22,7 +24,8 @@ class Transactions(ndb.Expando):
         self.date = str(datetime.date(year=today.year,month=today.month,day=today.day))
         self.amount = transaction['amount']
         self.processed = transaction['processed'] == 'true'
-        self.transaction_type = transaction['transaction_type']        
+        self.transaction_type = transaction['transaction_type']
+        self.deposit_slip_url = transaction['deposit_slip_url']
         
         return self.put()
 

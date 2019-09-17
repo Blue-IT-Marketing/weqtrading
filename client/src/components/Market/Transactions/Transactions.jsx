@@ -11,7 +11,7 @@ import InlineMessage from "../../Forms/InlineMessage";
 
 import * as apiRequests from "../api-requests";
 import { Utils } from "../../../utilities";
-
+import {firebase} from '../../../firebase';
 
 const CreatePayment = () => {
   const [payment, setPayment] = useState(payment_init);
@@ -170,10 +170,97 @@ const CreatePayment = () => {
 
 const Deposit = ({ transaction }) => {
   const [deposit, setDeposit] = useState({
-    uid: ""
+    uid: '',
+    transaction_id : '',
+    proof_of_deposit : '',
+  });
+  const [uploaded, setUploaded] = useState({
+    image: "",
+    url: "",
+    size: 0,
+    filename: "",
+    progress: 0
   });
 
+  const[inline,setInline] = useState({message:'',message_type:'inf'});
+
+
   const { user_account_state } = useContext(UserAccountContext);
+
+  const doUpload = async e => {
+    const { image } = uploaded;
+    try {
+      const uploadTask = firebase.storage.ref(`deposits/${user_account_state.user_account.uid}/${transaction.id}/${image.name}`).put(image);
+      await uploadTask.on(
+        "state_changed",
+        snapshot => {
+          //progress
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setUploaded({ ...uploaded, progress });
+        },
+        error => {
+          console.log(error.message);
+        },
+        () => {
+          // complete function
+          firebase.storage
+            .ref(`deposits/${user_account_state.user_account.uid}/${transaction.id}`)
+            .child(image.name)
+            .getDownloadURL()
+            .then(url => {
+              console.log(url);
+              setDeposit({
+                ...deposit,
+                proof_of_deposit: url
+              });
+            });
+        }
+      );
+    } catch (error) {
+      console.log(error)
+      setInline({message:'upload proof of deposit',message_type:'error'});
+    }
+
+  };
+
+  const onChangeProof = e => {
+    if (e.target.files[0]) {
+      const image = e.target.files[0];
+      console.log(image);
+      setUploaded({
+        ...uploaded,
+        image: image
+      });
+      return true;
+    }
+    return false;
+  };
+
+
+  const ProcessPayment = e => {
+      let uid = user_account_state.user_account.uid;
+      // rewrite this
+      let deposited = {...deposit};
+      deposited.uid = uid;
+      deposited.transaction_id = transaction.id;
+
+      apiRequests.processDeposit(deposited).then(result => {
+        if(result.status){
+          setDeposit(result.payload);
+          setInline({message:'successfully sent deposit for processing'});
+        }else{
+          setInline({message:result.error.message,message_type:'error'});
+        }
+      }).catch(error => {
+        setInline({message:error.message,message_type:'error'});
+      });
+
+      return true;
+  };
+
+  const placeholder = "https://via.placeholder.com/300/09f/fff.png";
 
   return (
     <Fragment>
@@ -229,6 +316,49 @@ const Deposit = ({ transaction }) => {
               className="form-control"
               value={transaction.transaction_type}
             />
+          </div>
+
+          <div className="form-group">
+            <label>Proof of Payment</label>
+            <input type="file" className="form-control" name="proof" onChange={e => onChangeProof(e)}  />
+          </div>
+
+          <div className="form-group">
+            <button
+              type="button"
+              className="btn btn-success btn-sm"
+              name="upload-proof-payment"
+              onClick={e => doUpload(e).then(result => {
+                console.log(result)
+              })}
+            >
+              {" "}
+              <i className="fa fa-cloud-upload"> </i> Upload Proof of Payment
+            </button>
+          </div>
+          <div className="form-group">
+            <div className="polaroid">
+              <label>Proof of Payment</label>
+              <img
+                src={deposit.proof_of_deposit || placeholder}
+                className="pola-image"
+                width="300"
+                height="300"
+              />
+            </div>
+          </div>
+
+          <div className='form-group'>
+              <button
+                type='button'
+                className='btn btn-success btn-lg'
+                name='process-payment'
+                onClick={e => ProcessPayment(e)}
+              >
+                <i className='fa fa-credit-card'> </i>{" "}
+                Process Payment
+
+              </button>
           </div>
         </form>
       </div>
@@ -315,7 +445,7 @@ const TransactionItem = ({
   return (
     <tr>
       <td>{transaction.date}</td>
-      <td>{transaction.amount}</td>
+      <td>R {transaction.amount}.00</td>
       <td>{transaction.transaction_type}</td>
       <td>{transaction.processed ? "Yes" : "No"}</td>
       <td>
@@ -325,7 +455,7 @@ const TransactionItem = ({
           className="btn btn-danger btn-sm"
           name={transaction.id}
           onClick={e => {
-            let id = e.target.name;
+            let id = transaction.id;
             RemoveTransaction(id);
           }}
         >
@@ -338,7 +468,7 @@ const TransactionItem = ({
           className="btn btn-warning btn-sm"
           name={transaction.id}
           onClick={e => {
-            let id = e.target.name;
+            let id = transaction.id;
             OpenTransaction(id);
           }}
         >
@@ -367,9 +497,7 @@ const Transactions = () => {
 
   const RemoveTransaction = id => {
     let uid = user_account_state.user_account.uid;
-    apiRequests
-      .removeTransaction(id, uid)
-      .then(Response => {
+    apiRequests.removeTransaction(id, uid).then(Response => {
         if (Response.status) {
           setTransactions(Response.payload);
         } else {

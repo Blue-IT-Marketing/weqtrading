@@ -72,6 +72,25 @@ class APIRouterHandler(webapp2.RequestHandler):
                     response_data.append(product.to_dict())
 
             # requests here equals product requests
+
+            elif router == 'search':
+
+                search_text = id
+                products_request = Products.query()
+                products_list = products_request.fetch()
+                
+                response_data = []
+
+                for product in products_list:
+                    if (product.product_name != None) and (search_text.lower() in product.product_name.lower()):
+                        response_data.append(product.to_dict())
+                    elif (product.description != None) and (search_text.lower() in product.description.lower()):
+                        response_data.append(product.to_dict())
+                    elif (product.price != None) and search_text.lower() in product.price.lower():
+                        response_data.append(product.to_dict())
+                    else:
+                        pass                                                        
+
             elif request == 'requests':
                 # /requests/${uid}/${id}
                 uid = router
@@ -105,7 +124,6 @@ class APIRouterHandler(webapp2.RequestHandler):
 
                 if len(products_list) > 0:
                     product = products_list[0]
-
                     response_data = product.to_dict()
                 else:
                     status_int = 403
@@ -132,6 +150,24 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = []
                 for service in services_list:
                     response_data.append(service.to_dict())
+
+            elif router == 'search':
+                search_text = id
+                services_request = Services.query()
+                services_list = services_request.fetch()
+
+                response_data = []
+
+                for service in services_list:
+                    if (service.service_name != None) and (search_text.lower() == service.service_name.lower()):
+                        response_data.append(service.to_dict())
+                    elif (service.description != None) and (search_text.lower() == service.description.lower()):
+                        response_data.append(service.to_dict())
+                    elif (service.price != None) and (search_text.lower() == service.price.lower()):
+                        response_data.append(service.to_dict())
+                    else:
+                        pass
+
                     
             else:
                 # fetch a single service
@@ -567,6 +603,12 @@ class APIRouterHandler(webapp2.RequestHandler):
             else:
                 status_int = 403
                 response_data = {'message': 'error updating product'}
+
+        elif 'transactions' in route:
+            json_data = json.loads(self.request.body);
+
+            # do process transaction here and create an alert to show that transction
+            # must be processed
 
         else:
             status_int = 401
