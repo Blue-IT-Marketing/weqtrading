@@ -1,3 +1,4 @@
+
 import moment from 'moment';
 class Utilities {
   constructor(today, url) {
@@ -184,6 +185,8 @@ class Utilities {
       return false;
     }
   };
+
+
 }
 
 // (today,url)

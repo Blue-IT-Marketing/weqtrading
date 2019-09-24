@@ -182,8 +182,6 @@ class APIRouterHandler(webapp2.RequestHandler):
                     status_int = 403
                     response_data = {'message':'service not found'}
 
-
-
         elif 'physical-address' in route:
 
             uid = route[len(route) - 1]
@@ -277,6 +275,24 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data.append(transaction.to_dict())
 
 
+        elif 'dashboard' in route:
+            uid = str(route[len(route) - 1])
+
+            this_user = User()
+            user = this_user.getUser(uid=uid)
+
+            if ('payments' in route) and user.is_admin:
+                
+                payments_requests = Transactions.query()
+                payments_list = payments_requests.fetch()
+
+                response_data = []
+                for payment in payments_list:
+                    response_data.append(payment.to_dict())
+            else:
+                status_int = 403
+                response_data = {'message':'you are not authorized to access dashboard'}
+                    
         else:
             status_int = 400
             response_data = {'message': 'the server cannot process this request'}
@@ -609,6 +625,63 @@ class APIRouterHandler(webapp2.RequestHandler):
 
             # do process transaction here and create an alert to show that transction
             # must be processed
+        
+        elif 'payments' in route:
+
+            if 'approve' in route:
+                uid = str(route[len(route) - 1])
+                transaction = json.loads(self.request.body)
+
+                this_user = User()
+                this_user = this_user.getUser(uid=uid)
+                if this_user.is_admin:
+
+                    this_transaction_request = Transactions.query(Transactions.id == transaction['id'])
+                    this_transaction_list = this_transaction_request.fetch()
+
+                    if len(this_transaction_list) > 0:
+                        this_transaction = this_transaction_list[0]
+                        this_transaction.processed = True
+                        this_transaction.put()
+                        response_data = this_transaction.to_dict()
+                    else:
+                        status_int = 401
+                        response_data = {'message': 'transaction not found'}
+                else:
+                    status_int = 403
+                    response_data = {'message': 'you are not authorized to perform this action'}
+            elif 'reject' in route:
+                uid = str(route[len(route) - 1])
+                transaction = json.loads(self.request.body)
+
+                this_user = User()
+                this_user = this_user.getUser(uid=uid)
+
+                if this_user.is_admin:
+                    this_transaction_request = Transactions.query(
+                        Transactions.id == transaction['id'])
+                    this_transaction_list = this_transaction_request.fetch()
+
+                    if len(this_transaction_list) > 0:
+                        this_transaction = this_transaction_list[0]
+                        this_transaction.processed = False
+                        this_transaction.put()
+                        response_data = this_transaction.to_dict()
+                    else:
+                        status_int = 401
+                        response_data = {'message': 'transaction not found'}
+                else:
+                    status_int = 403
+                    response_data = {
+                        'message': 'you are not authorized to perform this action'}
+
+            # add more sub actions here
+            else:
+                status_int = 501
+                response_data = {'message': 'we do not understand that request'}
+
+
+
 
         else:
             status_int = 401
