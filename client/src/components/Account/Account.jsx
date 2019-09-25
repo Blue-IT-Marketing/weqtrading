@@ -526,9 +526,20 @@ function PersonalDetails({user_account}){
 
 export default function Account (){
     const [display, setDisplay] = useState("personaldetails");
+    const [displayMenu, setMenu] = useState({ menu: false });
+    const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
+
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
     
     let onSwitchScreen = (e) => {
-        setDisplay(e.target.name);
+        setDisplay(e);
         console.log(display);        
     }
 
@@ -551,38 +562,49 @@ export default function Account (){
                 </strong>
               </h3>
               <div className="box-tools">
-                <button
-                  type="button"
-                  className="btn btn-box-tool"
-                  name="personaldetails"
-                  onClick={e => onSwitchScreen(e)}
-                >
-                  <i className="fa fa-user"> </i> Personal Details
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-box-tool"
-                  name="verifications"
-                  onClick={e => onSwitchScreen(e)}
-                >
-                  <i className="fa fa-lock"> </i> Verifications
-                </button>
+                <div className="dropdown">
+                  <button
+                    type="button"
+                    className="btn btn-box-tool dropdown-toggle"
+                    onClick={e => showDropdownMenu(e)}
+                  >
+                    <i className="fa fa-bars"> </i>
+                  </button>
+                  {displayMenu.menu ? (
+                    <ul className="dropmenu">
+                      <li
+                        type="button"
+                        className="btn btn-box-tool droplink"
+                        name="personaldetails"
+                        onClick={e => onSwitchScreen("personaldetails")}
+                      >
+                        <i className="fa fa-user"> </i> Personal Details
+                      </li>
+                      <li
+                        type="button"
+                        className="btn btn-box-tool droplink"
+                        name="verifications"
+                        onClick={e => onSwitchScreen("verifications")}
+                      >
+                        <i className="fa fa-lock"> </i> Verifications
+                      </li>
 
-                <button
-                  type="button"
-                  className="btn btn-box-tool"
-                  name="accountsettings"
-                  onClick={e => onSwitchScreen(e)}
-                >
-                  <i className="fa fa-cogs"> </i> Account Settings
-                </button>
+                      <li
+                        type="button"
+                        className="btn btn-box-tool droplink"
+                        name="accountsettings"
+                        onClick={e => onSwitchScreen("accountsettings")}
+                      >
+                        <i className="fa fa-cogs"> </i> Account Settings
+                      </li>
+                    </ul>
+                  ) : null}
+                </div>
               </div>
             </div>
 
             {display === "personaldetails" ? (
-              <PersonalDetails
-                user_account={user_account_state.user_account}
-              />
+              <PersonalDetails user_account={user_account_state.user_account} />
             ) : (
               ""
             )}

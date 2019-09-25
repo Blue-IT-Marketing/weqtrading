@@ -104,7 +104,7 @@ const showDropdownMenu = e => {
                 className="btn btn-box-tool dropdown-toggle"
                 onClick={e => showDropdownMenu(e)}
               >
-                Topics{" "}
+                <i className='fa fa-bars'> </i>{" "}
               </button>
               {displayMenu.menu ? (
                 <ul className="dropmenu">

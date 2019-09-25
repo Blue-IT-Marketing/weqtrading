@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import {Capitalize} from 'react-lodash';
 class InlineMessage extends Component {
 	constructor(props){
 		super(props);
@@ -17,7 +17,8 @@ class InlineMessage extends Component {
 						<button
 							type={'button'}
 							className={'box-title btn-outline-info btn-lg'}
-						><em><i className='fa fa-check-circle'> </i> <small> {this.state.message} </small></em>
+						>
+								<em><i className='fa fa-check-circle'> </i> <small> {<Capitalize string={this.state.message} />}  </small></em>
 						</button>
 					</div>
 				</div>

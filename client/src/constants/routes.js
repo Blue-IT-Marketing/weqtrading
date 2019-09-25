@@ -1,5 +1,3 @@
-
-
 export const home_page = '/';
 export const contact_page = '/contact';
 export const about_page = '/about';
@@ -36,14 +34,16 @@ export const dashboard_page = '/dashboard'; // site owner and administrator only
  * api routes 
  */
 
- export const api_products_endpoint = '/api/products';
- export const api_services_endpoint = '/api/services';
- export const api_categories_endpoint = '/api/categories';
- export const api_physical_endpoint = '/api/physical-address';
- export const api_contact_endpoint = '/api/contact-details';
- export const api_cart_endpoint = '/api/cart';
- export const api_coupons_endpoint = '/api/coupons';
- export const api_dashboard_endpoint = '/api/dashboard';
- export const api_user_endpoint = '/api/user';
+export const api_products_endpoint = '/api/products';
+export const api_services_endpoint = '/api/services';
+export const api_categories_endpoint = '/api/categories';
+export const api_physical_endpoint = '/api/physical-address';
+export const api_contact_endpoint = '/api/contact-details';
+export const api_cart_endpoint = '/api/cart';
+export const api_coupons_endpoint = '/api/coupons';
+export const api_dashboard_endpoint = '/api/dashboard';
+export const api_user_endpoint = '/api/user';
 export const api_store_endpoint = '/api/store';
- export const api_transactions_endpoint = '/api/transactions';
+export const api_transactions_endpoint = '/api/transactions';
+
+export const api_paypal_checkout_webhook = "/api/checkout/paypal/webhook";

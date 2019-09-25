@@ -12,6 +12,7 @@ import InlineMessage from "../../Forms/InlineMessage";
 import * as apiRequests from "../api-requests";
 import { Utils } from "../../../utilities";
 import {firebase} from '../../../firebase';
+import {Capitalize} from 'react-lodash';
 
 const CreatePayment = () => {
   const [payment, setPayment] = useState(payment_init);
@@ -161,12 +162,6 @@ const CreatePayment = () => {
   );
 };
 
-// uid: "",
-// id: "",
-// date: "",
-// amount: "",
-// processed : false,
-// transaction_type: "deposit"
 
 const Deposit = ({ transaction }) => {
   const [deposit, setDeposit] = useState({
@@ -446,23 +441,21 @@ const TransactionItem = ({
     <tr>
       <td>{transaction.date}</td>
       <td>R {transaction.amount}.00</td>
-      <td>{transaction.transaction_type}</td>
-      <td>{transaction.processed ? "Yes" : "No"}</td>
-      <td>
+      <td>{<Capitalize string={transaction.transaction_type} /> }</td>
+      <td>{transaction.processed ? "Yes" : "No"}</td>      
         {" "}
         <button
           type="button"
-          className="btn btn-danger btn-sm"
+          className="btn btn-danger btn-sm margin"
           name={transaction.id}
           onClick={e => {
             let id = transaction.id;
             RemoveTransaction(id);
           }}
+          title="Delete"
         >
-          <i className="fa fa-cut"> </i> Remove
+          <i className="fa fa-cut"> </i>
         </button>
-      </td>
-      <td>
         <button
           type="button"
           className="btn btn-warning btn-sm"
@@ -471,10 +464,11 @@ const TransactionItem = ({
             let id = transaction.id;
             OpenTransaction(id);
           }}
+          title="Open"
         >
-          <i className="fa fa-folder-open"> </i> Open{" "}
+          <i className="fa fa-folder-open"> </i>
         </button>
-      </td>
+      
     </tr>
   );
 };
@@ -566,6 +560,7 @@ const Transactions = () => {
               <td>Amount</td>
               <td>Transaction Type</td>
               <td>Processed</td>
+              <td>Control</td>
             </tr>
           </thead>
           <tbody>
@@ -586,6 +581,7 @@ const Transactions = () => {
               <td>Amount</td>
               <td>Transaction Type</td>
               <td>Processed</td>
+              <td>Control</td>
             </tr>
           </tfoot>
         </table>

@@ -1,4 +1,4 @@
-import React,{Fragment,useState,useEffect,useContext} from 'react';
+import React,{Fragment,useState,useEffect,useContext,useRef} from 'react';
 import {Link} from 'react-router-dom';
 import InlineError from '../../Forms/InlineError';
 import InlineMessage from '../../Forms/InlineMessage';
@@ -23,10 +23,11 @@ import { Utils } from '../../../utilities';
 import * as settings from '../../../constants';
 
 import { UserAccountContext } from "../../../context/UserAccount/userAccountContext";
-
+import {Capitalize} from 'react-lodash';
+import { client_id } from './checkout_constants';
 
 const BasketItem = ({item}) => {
-  console.log('Returning Items',item);
+  
   const[product,setProduct] = useState(products_init);
   const[service,setService] = useState(service_init);
 
@@ -59,14 +60,15 @@ const BasketItem = ({item}) => {
       <tr>
         <td title={description}>
           {
-            item.item_type === 'products' ?
-              product.product_name : service.service_name
+            (item.item_type === 'products') ?
+              <Capitalize string={product.product_name} /> 
+            : <Capitalize string={service.service_name} />
           }
         </td>
-        <td>{item.item_type}</td>
+        <td><Capitalize string={item.item_type} /></td>
         <td>{item.quantity}</td>
-        <td>{item.price}</td>
-        <td>{item.sub_total}</td>
+        <td>R {item.price}.00</td>
+        <td>R {item.sub_total}.00</td>
       </tr>
     );
 }
@@ -81,7 +83,13 @@ const ShoppingBasket = () => {
     const[inline,setInline] = useState({message:'',message_type:'info'});
     
     const[display,setDisplay] = useState('shopping-basket');
+    const [paidFor,SetPaidFor] = useState(false);
+    const [loaded,setLoaded] = useState(false);
+    
+    let paypalRef = useRef();
+
     const { user_account_state, doLogin } = useContext(UserAccountContext);
+    
     
     const applyCouponCode = e => {
         /**
@@ -143,7 +151,65 @@ const ShoppingBasket = () => {
       };
     }, []);
 
-  
+
+    useEffect(() => {
+      const script = document.createElement("script");
+      script.addEventListener("load", () => setLoaded(true));
+
+
+      const loadPayPalScript = async () => {
+        script.src = `https://www.paypal.com/sdk/js?client-id=${client_id}`;
+        await document.body.appendChild(script);
+        return true;
+      };
+
+      loadPayPalScript().then(result => {
+        console.log('paypal script loaded');        
+      });
+
+    }, [basket]);
+
+    useEffect(() => {
+
+      const createPurchaseUnits = async () => {
+        let purchase_units = [];
+        await basket.forEach(purchase_item => {
+                console.log('Purchase Item',purchase_item);
+                purchase_units.push({
+                  id_service_product: purchase_item.id_service_product,
+                  amount: {
+                    currency_code: "USD",
+                    value: purchase_item.price
+                  }
+                });
+              });
+
+        return purchase_units;
+      };
+
+      createPurchaseUnits().then(purchase_units => {
+            setTimeout(() => {
+              console.log('Purchase Units', purchase_units);
+              console.log('PAYPAL',window.paypal);
+              window.paypal.Buttons({
+                  createOrder: (data, actions) => {
+                    return actions.order.create({ purchase_units : purchase_units });
+                  },
+                  onApprove: async (data, actions) => {
+                    const order = await actions.order.capture();
+                    SetPaidFor(true);
+                    console.log(order);
+                  }
+                }).render(paypalRef);
+
+            },10000) // end timeout()
+          }) // end create purchase units         
+      
+      return () => {
+        
+      };
+    }, [loaded])
+
     return (
       <Fragment>
         <div className="box box-body">
@@ -311,6 +377,7 @@ const ShoppingBasket = () => {
                     >
                       <i className="fa fa-paypal"> </i> PayPal
                     </button>
+                    <div ref={v => (paypalRef = v)} />
                   </li>
                 </ul>
               </div>
