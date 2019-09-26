@@ -1,3 +1,3 @@
 
 export const client_id = 'AULnK8eNTwd5pVu8N4sWE_j4fLA4yrhNyJs82ikVjbRXiySyOzuNBWUn59NHL0-V0kBvkpxZrSIB8Tux';
-const client_secret = 'ENPNfj6B5AK8VTGIbOTn-7Wk5VHExhJ7PKwwTkxHeO4t2M-K9Pg0zFDnJtl1y0mIfeotFPBMQKj4eKtH'
+

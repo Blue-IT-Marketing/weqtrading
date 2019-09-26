@@ -273,23 +273,20 @@ const ProductRequests = ({product}) => {
         const fetchRequestsAPI = async () => {
             let uid = user_account_state.user_account.uid;
             let id = product.id;
-
             apiRequests.fetchProductRequests(uid,id).then(results => {
                 if(results.status){
-                    setRequests(results.payload);
-                    
+                    setRequests(results.payload);                    
                 }else{
                     setRequests([]);
                 }
             }).catch(error => {
                 console.log(error.message);
             });
-
             return true;
         };
-
+        
         fetchRequestsAPI().then(result => {
-                console.log(result);
+          console.log(result);
         });
 
         return () => {

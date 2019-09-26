@@ -99,21 +99,12 @@ class APIRouterHandler(webapp2.RequestHandler):
                 this_query = ProductRequests.query(ProductRequests.product_id == id)
                 this_product_requests_list = this_query.fetch()
 
-                # check if the user owns the product from which he requests requests
-
-                this_products_query = Products.query(Products.uid == uid)
-                this_products_list = this_products_query.fetch()
-
-                product_found = ''
-                for product in this_products_list:
-                    if product.uid == uid:
-                        product_found = product
                                 
                 response_data = []
 
                 for product_request in this_product_requests_list:
                     # this insures that it wont be possible to get product requests if you are not the owner of the product
-                    if product_found.id == product_request.product_id:
+                    if product_request.uid == uid:
                         response_data.append(product_request.to_dict())
                     else:
                         pass
@@ -289,6 +280,25 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = []
                 for payment in payments_list:
                     response_data.append(payment.to_dict())
+
+            elif ('contacts' in route) and user.is_admin:
+                contacts_requests = Contact.query()
+                contacts_list = contacts_requests.fetch()
+
+                response_data = []
+                for contact in contacts_list:
+                    response_data.append(contact.to_dict())
+
+            elif ('users' in route) and user.is_admin:
+
+                users_requests = User.query()
+                user_list = users_requests.fetch()
+
+                response_data = []
+
+                for user in user_list:
+                    response_data.append(user.to_dict())
+                    
             else:
                 status_int = 403
                 response_data = {'message':'you are not authorized to access dashboard'}
@@ -681,7 +691,39 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = {'message': 'we do not understand that request'}
 
 
+        elif 'dashboard' in route:
+            uid = route[len(route) - 1];
 
+            # finding admin user information
+            admin_request = User.query(User.uid == uid)
+            admin_list = admin_request.fetch()
+
+            if len(admin_list) > 0:
+                user = admin_list[0]
+            else:
+                user = User()
+
+
+            response_data = ''
+
+            if ('user' in route) and user.is_admin:
+                user_data = json.loads(self.request.body)
+
+                user_request = User.query(User.uid == user_data['uid'])
+                user_list = user_request.fetch()
+
+                if(len(user_list) > 0):
+                    user = user_list[0]
+                    user = user.updateUser(json_data=user_data)
+                    response_data = user.to_dict()
+                else:
+                    status_int = 403
+                    response_data = {'message':'user not found'}
+
+            else:
+                status_int = 402
+                response_data = {'message': 'request malformed'}
+                    
 
         else:
             status_int = 401

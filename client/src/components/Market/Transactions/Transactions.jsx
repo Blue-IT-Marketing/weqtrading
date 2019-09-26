@@ -538,16 +538,7 @@ const Transactions = () => {
         <h3 className="box-title">
           <i className="fa fa-cc-diners-club"> </i> Transactions
         </h3>
-        <div className="box-tools">
-          <button
-            type="button"
-            className="btn btn-box-tool"
-            name="transactions"
-            onClick={e => setDisplay("transactions-list")}
-          >
-            <i className="fa fa-server"> </i> Transaction List
-          </button>
-        </div>
+
       </div>
 
       {display === "show-transaction" ? (
@@ -620,7 +611,7 @@ const Payments = () => {
                 className="btn btn-box-tool dropdown-toggle"
                 onClick={e => showDropdownMenu(e)}
               >
-                <i className="fa fa-money"> </i> Payments{" "}
+                <i className="fa fa-bars"> </i>
               </button>
               {displayMenu.menu ? (
                 <ul className="dropmenu">

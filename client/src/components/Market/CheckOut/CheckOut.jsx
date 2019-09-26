@@ -153,23 +153,6 @@ const ShoppingBasket = () => {
 
 
     useEffect(() => {
-      const script = document.createElement("script");
-      script.addEventListener("load", () => setLoaded(true));
-
-
-      const loadPayPalScript = async () => {
-        script.src = `https://www.paypal.com/sdk/js?client-id=${client_id}`;
-        await document.body.appendChild(script);
-        return true;
-      };
-
-      loadPayPalScript().then(result => {
-        console.log('paypal script loaded');        
-      });
-
-    }, [basket]);
-
-    useEffect(() => {
 
       const createPurchaseUnits = async () => {
         let purchase_units = [];
@@ -188,7 +171,7 @@ const ShoppingBasket = () => {
       };
 
       createPurchaseUnits().then(purchase_units => {
-            setTimeout(() => {
+
               console.log('Purchase Units', purchase_units);
               console.log('PAYPAL',window.paypal);
               window.paypal.Buttons({
@@ -200,9 +183,8 @@ const ShoppingBasket = () => {
                     SetPaidFor(true);
                     console.log(order);
                   }
-                }).render(paypalRef);
+              }).render(paypalRef);
 
-            },10000) // end timeout()
           }) // end create purchase units         
       
       return () => {
@@ -359,6 +341,7 @@ const ShoppingBasket = () => {
                     </button>
                   </li>
                   <li className="list-group-item">
+                    <div ref={v => (paypalRef = v)} />
                     <button
                       type="button"
                       className="btn btn-success margin"
@@ -366,18 +349,8 @@ const ShoppingBasket = () => {
                       title="Send Invoice and Pay Via EFT or Make a Deposit"
                       onClick={e => setDisplay(e)}
                     >
-                      <i className="fa fa-shopping-bag"> </i> Checkout
+                      <i className="fa fa-shopping-bag"> </i> Checkout (EFT)
                     </button>
-                    <button
-                      type="button"
-                      className="btn btn-success"
-                      name="paypal"
-                      title="Pay Online via your PayPal Account or Credit Card"
-                      onClick={e => setDisplay(e)}
-                    >
-                      <i className="fa fa-paypal"> </i> PayPal
-                    </button>
-                    <div ref={v => (paypalRef = v)} />
                   </li>
                 </ul>
               </div>

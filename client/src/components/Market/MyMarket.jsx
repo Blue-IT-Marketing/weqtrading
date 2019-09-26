@@ -1011,7 +1011,7 @@ export default function MyMarket() {
                 className="btn btn-box-tool dropdown-toggle"
                 onClick={e => showDropdownMenu(e)}
               >
-                Create Store{" "}
+                <i className='fa fa-bars'> </i>
               </button>
               {displayMenu.menu ? (
                 <ul className="dropmenu">

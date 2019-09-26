@@ -3,6 +3,9 @@ import { UserAccountContext } from "../../context/UserAccount/userAccountContext
 import { routes } from "../../constants";
 import {payment_init, payment_errors_init} from '../Market/market-constants';
 import * as apiRequests from './dashboard-api';
+
+import {extended_user, extended_user_error} from '../Auth/auth-constants';
+
 import axios from 'axios';
 
 import InlineMessage from '../Forms/InlineMessage';
@@ -255,7 +258,9 @@ const ManagePayments = () => {
     <Fragment>
       <div className='box box-body'>
           <div className='box box-header'>
-              <h3 className='box-title'>Payments Manager </h3>
+              <h3 className='box-title'>
+                <i className='fa fa-credit-card'> </i>
+                Payments Manager </h3>
           </div>
               { show_payment.id ?
                   <ShowPayment payment={show_payment} />  :
@@ -291,6 +296,358 @@ const ManagePayments = () => {
 };
 
 
+const ManageUser = ({user}) => {
+  const[manageUser,setManageUser] = useState(extended_user);
+  const[inline,setInline] = useState({message:'',message_type:'inf'});
+  const[errors,setErrors] = useState(extended_user_error);
+  const {user_account_state} = useContext(UserAccountContext);
+  const {uid} = user_account_state.user_account;
+
+  const checkErrors = async () => {
+    let isError = false;
+    const check_names = () => {
+      if(Utils.isEmpty(manageUser.names)){
+        setErrors({...errors,names_error:'names field cannot be empty'});
+        return true;
+      };
+        
+      return false;
+    };
+
+    const check_surname = () => {
+      if(Utils.isEmpty(manageUser.surname)){
+        setErrors({...errors,surname_error: 'surname field cannot be empty'});
+        return true;
+      }
+      return false;
+    };
+
+    const check_cell = () => {
+      if(!Utils.isCell(manageUser.cell)){
+        setErrors({...errors,cell_error : 'cell field is invalid'});
+        return true;
+      }
+      return false;
+    };
+
+    const check_email = () => {
+      if(!Utils.validateEmail(manageUser.email)){
+        setErrors({...errors,email_error:'email field is invalid'});
+        return true;
+      }
+      return false;
+    };
+
+    check_names() ? isError = true : isError = isError;
+    check_surname() ? isError = true : isError = isError;
+    check_cell() ? isError = true : isError = isError;
+    check_email() ? isError = true : isError = isError;
+
+    return isError;
+  };
+  
+  const onUpdateUser = async(e) => {
+      apiRequests.onUpdateUser(manageUser,uid).then(results => {
+        if(results.status){
+          setInline({message:'successfully updated user details',message_type:'inf'});          
+        }else{
+          setInline({message:results.error.message,message_type:'error'});
+        }
+      }).catch(error => {
+        setInline({message:error.message,message_type:'error'});
+      });
+      return true;
+  };
+
+  useEffect(() => {
+    setManageUser(user);  
+    return () => {
+      setManageUser(extended_user);
+    };
+  }, [user])
+  
+  return (
+    <Fragment>
+      <form className="form-horizontal">
+        <div className="form-group">
+          <label>Names</label>
+          <input
+            type="text"
+            className="form-control"
+            name="names"
+            value={manageUser.names}
+            onChange={e =>
+              setManageUser({ ...manageUser, [e.target.name]: e.target.value })
+            }
+          />
+          {errors.names_error ? <InlineError message={errors.names_error} /> : null }
+        </div>
+        <div className="form-group">
+          <label>Surname</label>
+          <input
+            type="text"
+            className="form-control"
+            name="surname"
+            value={manageUser.surname}
+            onChange={e =>
+              setManageUser({ ...manageUser, [e.target.name]: e.target.value })
+            }
+          />
+          {errors.surname_error ? <InlineError message={errors.surname_error} /> : null}
+        </div>
+        <div className="form-group">
+          <label>Cell</label>
+          <input
+            type="tel"
+            className="form-control"
+            name="cell"
+            value={manageUser.cell}
+            onChange={e =>
+              setManageUser({ ...manageUser, [e.target.name]: e.target.value })
+            }
+          />
+          {errors.cell_error ? <InlineError message={errors.cell_error} /> : null}
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            className="form-control"
+            name="email"
+            value={manageUser.email}
+            onChange={e =>
+              setManageUser({ ...manageUser, [e.target.name]: e.target.value })
+            }
+          />
+          {errors.email_error ? <InlineError message={errors.email_error} /> : null}
+        </div>
+        <div className="form-group">
+          <button
+            type="button"
+            className="btn btn-success btn-lg"
+            name="updateuser"
+            onClick={e => checkErrors(e).then(isError => {
+              isError ? 
+                setInline({message:'there was an error processing form',message_type:'error'})
+              : onUpdateUser(e).then( result => setInline({message:'user successfully updated'})
+              )
+              
+            })}
+          >
+            <i className="fa fa-save"> </i> Save
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-warning btn-lg" 
+            name="reset"
+              onClick={ () => {
+                  setInline({message:'',message_type:'inf'});
+                  setErrors(extended_user_error);
+                  setManageUser(user);                 
+              }}
+            >
+            <i className="fa fa-eraser"> </i> Reset
+          </button>
+        </div>
+      </form>
+    </Fragment>
+  );
+};
+
+const UserItem = ({ user, onOpenUser }) => {
+  return (
+    <tr>
+      <td
+        className='btn'
+        onClick={() => onOpenUser(user.uid)}
+      >{user.names}</td>
+      <td>{user.surname}</td>
+      <td>{user.email}</td>
+      <td>{user.cell}</td>
+    </tr>
+  );
+};
+
+const ManageUsers = () => {
+  const [users,setUsers] = useState([]);
+  const [manageUser,setManageUser] = useState(extended_user);
+  const [inline,setInline] = useState({message:'',message_type:'inf'});
+  
+  const {user_account_state} = useContext(UserAccountContext);
+  const {uid} = user_account_state.user_account;
+
+  function onOpenUser (uid) {    
+    setManageUser(users.find(user => user.uid === uid));
+  };
+
+  useEffect(() => {
+    const fetchUserlistAPI = async () => {
+      apiRequests.fetchUsersAPI(uid).then(results => {
+        if(results.status){
+          setUsers(results.payload);
+        }else{
+          setInline({message:results.error.message,message_type:'error'});
+        }
+      }).catch(error => {
+          setInline({message:error.message,message_type:'error'});
+      });
+
+      return true;
+    };
+
+    fetchUserlistAPI().then(result => {
+      console.log(result);
+    });
+
+    return () => {
+      
+    };
+  }, [])
+
+  
+  return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <i className="fa fa-users"> </i> Manage Users
+          </h3>
+        </div>
+        {manageUser.uid ? (
+          <ManageUser user={manageUser} />
+        ) : (
+          <table className="table table-responsive">
+            <thead>
+              <tr>
+                <td>Names</td>
+                <td>Surname</td>
+                <td>Email</td>
+                <td>Cell</td>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(user => {
+                return (
+                  <UserItem
+                    onOpenUser={onOpenUser}
+                    user={user}
+                    key={user.uid}
+                  />
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </Fragment>
+  );
+}
+
+
+const ContactItem = ({contact}) => {
+  return (
+    
+      <tr>
+        <td>{contact.names}</td>
+        <td>{contact.email}</td>
+        <td>{contact.subject}</td>
+        <td>{contact.timestamp}</td>  
+    </tr>
+  );
+}
+
+const ManageContact = () => {
+  const[contacts,setContacts] = useState([]);
+  const[inline,setInline] = useState({message:'',message_type:'inf'});
+  const{user_account_state} = useContext(UserAccountContext);
+  const{uid} = user_account_state.user_account;
+
+
+  useEffect(() => {
+    
+    const fetchContactsAPI = async () => {
+        apiRequests.fetchUserContactForm(uid).then(response => {
+          if(response.status){
+            console.log(response.payload);
+            setContacts(response.payload);
+          }else{
+            setInline({message:'error fetching user contact form details',message_type:'error'});
+          }
+        }).catch(error => {
+          setInline({message:error.message,message_type:'error'});
+        });
+
+        return true;
+    };
+
+    fetchContactsAPI().then(result => {
+      console.log('Contacts Fetched',result);
+    })
+
+    return () => {
+      setInline({message:'',message_type:'inf'});
+      setContacts([]);
+    };
+  }, [])
+
+
+  return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <i className="fa fa-envelope"> </i> Manage Contact
+          </h3>
+        </div>
+  
+        <div className="box-footer">
+          <table className='table table-responsive'>
+            <thead>
+                <tr>
+                  <td>Names</td>
+                  <td>Email</td>
+                  <td>Subject</td>
+                  <td>Time</td>                  
+                </tr>
+            </thead>
+            <tbody>            
+              {contacts.map(contact => {
+                return <ContactItem contact={contact} key={contact.contact_id} />;
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Fragment>
+  );
+}
+
+
+const NotAuthorized = () => {
+  return(
+        <Fragment>
+          <div className="box box-danger">
+            <div className="box box-header">
+              <h3 className="box-title">
+                <strong>
+                  {" "}
+                  <i className="fa fa-dashboard"> </i>{' '} Dashboard{" "}
+                </strong>
+                <hr />
+              </h3>
+              <div className="box box-warning">
+                <span className="error-content">
+                  <em>you are not authorized to access our dashboard</em>
+                </span>
+              </div>
+            </div>
+          </div>
+        </Fragment>
+
+  )
+}
+
+
 const Dashboard = () => {
   
     const[admins,setAdmins] = useState([]);
@@ -299,8 +656,22 @@ const Dashboard = () => {
       is_admin: false
     })
     const [inline,setInline] = useState({message:'',message_type:'info'});
+    const [display,setDisplay] = useState('manage-users');
+    const [displayMenu, setMenu] = useState({ menu: false });
+    const { user_account_state } = useContext(UserAccountContext);
+    const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
 
-    const{user_account_state} = useContext(UserAccountContext);
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
+
+
+    
 
     useEffect(() => {
       const fetchPresentUser = async () => {
@@ -334,46 +705,57 @@ const Dashboard = () => {
               <h3 className="box-title">
                 <strong>
                   {" "}
-                  <i className="fa fa-dashboard"> </i> Dashboard{" "}
+                  <i className="fa fa-dashboard"> </i>{' '} Dashboard{" "}
                 </strong>
               </h3>
 
               <div className="box-tools">
-                <button className="btn btn-box-tool">
-                  {" "}
-                  <strong>
-                    {" "}
-                    <i className="fa fa-callout-info"> </i> Manage Payments{" "}
-                  </strong>{" "}
-                </button>
+                <div classNam="dropdown">
+                  <button
+                    type="button"
+                    className="btn btn-box-tool dropdown-toggle"
+                    onClick={e => showDropdownMenu(e)}
+                  >
+                    <i className="fa fa-bars"> </i>{" "}
+                  </button>
+                  {displayMenu.menu ? (
+                    <ul className="dropmenu">
+                      <li
+                        className="btn btn-block droplink"
+                        name="manage-payments"
+                        onClick={() => setDisplay("manage-payments")}
+                      >
+                        <i className="fa fa-credit-card"> </i> Manage Payments{" "}
+                      </li>
+                      <li
+                        className="btn btn-block droplink"
+                        name="manage-users"
+                        onClick={() => setDisplay("manage-users")}
+                      >
+                        <i className="fa fa-users"> </i> Manage Users{" "}
+                      </li>
 
+                      <li
+                        className="btn btn-block droplink"
+                        name="manage-contacts"
+                        onClick={() => setDisplay("manage-contacts")}
+                      >
+                        <i className="fa fa-envelope"> </i> Manage Contact{" "}
+                      </li>
+                    </ul>
+                  ) : null}
+                </div>
               </div>
             </div>
+            {display === "manage-payments" ? <ManagePayments /> : null}
 
+            {display === "manage-users" ? <ManageUsers /> : null}
 
-            <ManagePayments />
-
+            {display === "manage-contacts" ? <ManageContact /> : null}
           </div>
         </Fragment>
       ) : (
-        <Fragment>
-          <div className="box box-danger">
-            <div className="box box-header">
-              <h3 className="box-title">
-                <strong>
-                  {" "}
-                  <i className="fa fa-dashboard"> </i> Dashboard{" "}
-                </strong>
-                <hr />
-              </h3>
-              <div className="box box-warning">
-                <span className="error-content">
-                  <em>you are not authorized to access our dashboard</em>
-                </span>
-              </div>
-            </div>
-          </div>
-        </Fragment>
+        <NotAuthorized />
       )}
     </Fragment>
   );

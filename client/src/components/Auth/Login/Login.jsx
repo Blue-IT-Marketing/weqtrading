@@ -16,9 +16,24 @@ export default function Login() {
   const [errors,setErrors] = useState(user_errors_init);
   const [inline,setInline] = useState(inline_init);
 
-  	const usernameRef = useRef(null);
-  	const passwordRef = useRef(null);
-  	const submitRef = useRef(null);
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+  const submitRef = useRef(null);
+
+  const [displayMenu, setMenu] = useState({ menu: false });
+
+  const showDropdownMenu = e => {
+    e.preventDefault();
+    setMenu({ menu: true });
+    document.addEventListener("click", hideDropdownMenu);
+  };
+
+  const hideDropdownMenu = () => {
+    setMenu({ menu: false });
+    document.removeEventListener("click", hideDropdownMenu);
+  };
+
+	  
 
   	const handleChange = e => {
         setValues({...values,[e.target.name]:e.target.value})
@@ -77,20 +92,35 @@ export default function Login() {
               </h3>
 
               <div className="box-tools">
-                <Link to={routes.forget_password_page}>
-                  <button type="button" className="btn btn-box-tool">
-                    <strong>
-                      <i className="fa fa-unlock"> </i> Forget Password
-                    </strong>
+                <div className="dropdown">
+                  <button
+                    type="button"
+                    className="btn btn-box-tool dropdown-toggle"
+                    onClick={e => showDropdownMenu(e)}
+                  >
+                    <i className='fa fa-bars'> </i>{" "}
                   </button>
-                </Link>
-                <Link to={routes.signup_page}>
-                  <button type="button" className="btn btn-box-tool">
-                    <strong>
-                      <i className="fa fa-sign-in"> </i> Subscribe
-                    </strong>
-                  </button>
-                </Link>
+                  {displayMenu.menu ? (
+                    <ul className="dropmenu">
+                      <li
+                        className="btn btn-block droplink"
+                      >
+                      <Link to={routes.forget_password_page}>
+                            <i className="fa fa-unlock"> </i> Forget Password
+                      </Link>
+                      </li>
+                      <li
+                        className="btn btn-block droplink"
+                      ><Link to={routes.signup_page}>
+                            <i className="fa fa-sign-in"> </i> Subscribe
+                      </Link>
+                      </li>
+                    </ul>
+                  ):null
+                  }
+
+                </div>
+
               </div>
             </div>
             <div className="box-footer">

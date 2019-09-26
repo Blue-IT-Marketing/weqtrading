@@ -228,26 +228,26 @@ export default function Products() {
                   className="btn btn-box-tool dropdown-toggle"
                   onClick={e => showDropdownMenu(e)}
                 >
-                  Products Categories{" "}
+                  <i className='fa fa-bars'> </i>{' '}
                 </button>
-                {displayMenu.menu ? (
+                {
+                  displayMenu.menu ? (
                   <ul className="dropmenu">
-                    {sub_categories.map(sub => {
+                    {
+                      sub_categories.map(sub => {
                       console.log("Sub Categories", sub);
                       return (
-                        <li
-                          className="btn btn-block droplink"
-                          name={sub}
-                          key={sub}
+                        <li className="btn btn-block droplink" name={sub} key={sub}
                           onClick={e => {
-                            let cat = sub;
-                            onCategoryClick(cat);
-                          }}
-                        >
-                          <i className="fa fa-folder-open"> </i> {sub}
+                              let cat = sub;
+                              onCategoryClick(cat);
+                            }}
+                          >
+                            <i className="fa fa-folder-open"> </i> {sub}
                         </li>
                       );
-                    })}
+                      })
+                    }
                   </ul>
                 ) : null}
               </div>
