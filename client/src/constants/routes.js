@@ -10,6 +10,22 @@ export const account_page = '/account';
 
 export const blog_page = '/blog';
 
+export const chat_page = '/chat';
+
+export const sms_page = '/sms';
+export const sms_account = '/sms-account';
+export const sms_settings = '/sms-settings';
+export const sms_contacts = '/sms-contacts';
+export const sms_messages = '/sms-messages';
+
+export const email_account = '/email-account';
+export const email_settings = '/email-settings';
+export const send_email = '/email-send';
+export const inbox_email = '/email-inbox';
+export const email_sent = '/email-sent';
+export const email_drafts = '/email-drafts';
+
+
 export const market_page = '/market';
 export const market_products_page = '/market-products';
 export const market_services_page = '/market-services';
@@ -47,3 +63,5 @@ export const api_store_endpoint = '/api/store';
 export const api_transactions_endpoint = '/api/transactions';
 
 export const api_paypal_checkout_webhook = "/api/checkout/paypal/webhook";
+
+export const api_sms_endpoint = '/api/sms';

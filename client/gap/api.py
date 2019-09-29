@@ -4,7 +4,7 @@ import jinja2
 from google.appengine.ext import ndb
 from google.appengine.api import users
 import json,logging
-from contact import Contact
+from contact import Contact,Response
 from categories import Categories
 from products import Products
 from services import Services
@@ -16,6 +16,7 @@ from coupons import Coupons
 from user import User
 from store import Store
 from transactions import Transactions
+from banking import Banking
 
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
@@ -265,7 +266,6 @@ class APIRouterHandler(webapp2.RequestHandler):
             for transaction in transactions_list:
                 response_data.append(transaction.to_dict())
 
-
         elif 'dashboard' in route:
             uid = str(route[len(route) - 1])
 
@@ -298,11 +298,23 @@ class APIRouterHandler(webapp2.RequestHandler):
 
                 for user in user_list:
                     response_data.append(user.to_dict())
-                    
+
+            elif 'banking' in route and user.is_admin:
+
+                banking_requests = Banking.query(Banking.is_admin_account == True)
+                banking_list = banking_requests.fetch()
+
+                response_data = []
+
+                for banking in banking_list:
+                    response_data.append(banking.to_dict())
+
+
             else:
                 status_int = 403
                 response_data = {'message':'you are not authorized to access dashboard'}
                     
+
         else:
             status_int = 400
             response_data = {'message': 'the server cannot process this request'}
@@ -394,7 +406,7 @@ class APIRouterHandler(webapp2.RequestHandler):
                 today = datetime.now()
                 today = today.strftime("%d-%b-%Y")
                 cart.date_created = today
-                cart.total_items = str(0)                
+
                 cart.sub_total = str(0)
                 cart.tax = str(0)
                 cart.total = str(0)
@@ -403,15 +415,17 @@ class APIRouterHandler(webapp2.RequestHandler):
             try:
                 product_name = item['product_name']
                 items.item_type = 'products'
+                items.quantity = str(json_data['quantity'])
             except:
                 items.item_type = 'services'
+                items.quantity = str(json_data['quantity'])
 
             items.item_id = items.create_item_id()
 
             items.id_service_product = item['id']
             items.cart_id = cart.cart_id
             items.price = item['price']
-            items.quantity = str(1)
+
             items.sub_total = str(float(items.price) * int(items.quantity))
 
             cart.sub_total = str(float(cart.sub_total) + float(items.sub_total))
@@ -419,7 +433,7 @@ class APIRouterHandler(webapp2.RequestHandler):
             cart.total = str(float(cart.sub_total) + float(cart.tax))
 
 
-            cart.total_items = str(int(cart.total_items) + 1)
+            cart.total_items = str(int(cart.total_items) + int(items.quantity))
 
             cart.put() 
             items.put() 
@@ -482,9 +496,49 @@ class APIRouterHandler(webapp2.RequestHandler):
             response_data = this_transaction.to_dict()
 
 
+        elif 'dashboard' in route:
+            uid = route[len(route) - 1]
 
+            admin_user_query = User.query(User.uid == uid)
+            admin_user_list = admin_user_query.fetch()
+
+            response_data = ''
+
+            if len(admin_user_list) > 0:
+                admin_user = admin_user_list[0]
             
+                if ('contact' in route) and admin_user.is_admin :
 
+                    if 'response' in route :
+                        response_message = json.loads(self.request.body)
+
+                        this_response = Response()
+                        results = this_response.createResponse(response_data=response_message, admin_user=admin_user)
+                        response_data = results.to_dict()
+                    else:
+                        status_int = 400
+                        response_data = {'message': 'request could not be understood'}
+
+                elif ('banking' in route) and admin_user.is_admin:
+
+                    banking_details = json.loads(self.request.body)
+
+                    this_banking = Banking()
+                    results =  this_banking.addAdminBank(banking_details=banking_details)
+                    if (results != ''):
+                        response_data = results.to_dict()
+                    else:
+                        status_int = 401
+                        response_data = {'message': 'error saving banking details'}
+
+                else:
+                    status_int = 400
+                    response_data = {
+                        'message': 'request could not be understood'}
+            else:
+                status_int = 400
+                response_data = {
+                    'message': 'request could not be understood'}
 
         else:
             status_int = 400
@@ -542,6 +596,44 @@ class APIRouterHandler(webapp2.RequestHandler):
             else:
                 status_int = 401
                 response_data = {'message':'product not found'}
+
+        elif 'dashboard' in route:
+            uid = route[len(route) - 2]
+
+            user_request = User.query(User.uid == uid)
+            user_list =user_request.fetch()
+
+            response_data = []
+            if len(user_list) > 0:
+                user = user_list[0]
+
+
+                if ('banking' in route) and ('delete' in route) and user.is_admin:
+                    # routes.api_dashboard_endpoint + `/banking/delete/${uid}/${banking_id}
+
+                    banking_id = route[len(route) - 1]
+
+                    this_banking = Banking()
+                    result = this_banking.deleteBanking(banking_id=banking_id)
+
+                    if result == True:
+                        banking_query = Banking.query()
+                        banking_list = banking_query.fetch()
+
+                        for banking in banking_list:
+                            response_data.append(banking.to_dict())
+                    else:
+                        status_int = 403
+                        response_data = {'message': 'bank account record not found'}
+
+                #TODO add more adminstrative tasks here
+                else:
+                    status_int = 401
+                    response_data = {'message': 'your request is not understood'}
+
+            else:
+                status_int = 401
+                response_data = {'message': 'your request is not understood'}
 
         else:
             status_int = 403

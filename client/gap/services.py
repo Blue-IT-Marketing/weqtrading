@@ -9,11 +9,20 @@ class Services (ndb.Expando):
     id = ndb.StringProperty()
     category_id = ndb.StringProperty()
     service_name = ndb.StringProperty()
+    seo_link = ndb.StringProperty()
     description = ndb.StringProperty()
     service_art = ndb.StringProperty()
     price = ndb.StringProperty()
     currency = ndb.StringProperty(default='zar')
     active = ndb.BooleanProperty(default=True)
+
+    def create_seo_link(self,name):
+        temp = ''
+        char_list = name.split()
+        for char in char_list:
+            temp += char
+
+        return temp
 
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
@@ -30,6 +39,7 @@ class Services (ndb.Expando):
                 this_service.id = this_service.create_id()
                 this_service.category_id = service['category_id']
                 this_service.service_name = service['service_name']
+                this_service.seo_link = this_service.create_seo_link(name=this_service.service_name)
                 this_service.service_art = service['service_art']
                 this_service.price = service['price']
                 this_service.uid = service['uid']

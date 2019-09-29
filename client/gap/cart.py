@@ -73,7 +73,7 @@ class ServiceRequests(ndb.Expando):
 class Cart(ndb.Expando):
     cart_id = ndb.StringProperty() # unique id for this cart instance
     uid = ndb.StringProperty()
-    total_items = ndb.StringProperty()
+    total_items = ndb.StringProperty(default='0')
     date_created = ndb.StringProperty() 
     is_active = ndb.BooleanProperty(default=True) # to indicate if the user is still interested in the items in this cart
     sub_total = ndb.StringProperty(default=0)
@@ -103,9 +103,9 @@ class Items(ndb.Expando):
     cart_id = ndb.StringProperty() # to identify the cart where the item is attached
     item_type = ndb.StringProperty(default='product') # Service or Product
     id_service_product = ndb.StringProperty() # ID is the same as the product ID
-    price = ndb.StringProperty(default=0) # price charged for service or product
-    quantity = ndb.StringProperty(default=0) # Quantity of items 
-    sub_total = ndb.StringProperty(default=0) # sub total
+    price = ndb.StringProperty(default='0') # price charged for service or product
+    quantity = ndb.StringProperty(default='0') # Quantity of items
+    sub_total = ndb.StringProperty(default='0') # sub total
 
     def create_item_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))

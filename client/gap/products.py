@@ -14,11 +14,20 @@ class Products (ndb.Expando):
     id = ndb.StringProperty()
     category_id = ndb.StringProperty()
     product_name = ndb.StringProperty()
+    seo_link = ndb.StringProperty()
     description = ndb.StringProperty()
     product_art = ndb.StringProperty()
     price = ndb.StringProperty()
     currency = ndb.StringProperty(default='zar')
     active = ndb.BooleanProperty(default=True)
+
+    def create_seo_link(self,name):
+        temp = ''
+        char_list = name.split()
+        for char in char_list:
+            temp += char
+
+        return temp
     
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
@@ -33,6 +42,7 @@ class Products (ndb.Expando):
             self.id = self.create_id()
             self.category_id = product['category_id']
             self.product_name = product['product_name']
+            self.seo_link = self.create_seo_link(name=self.product_name)
             self.description = product['description']
             self.price = product['price']
             self.product_art = product['product_art']

@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="85e58e66-fe42-4b0d-a2c0-dfd10d6c4f5b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/client.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gap/banking.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/SMS/SMS.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/SMS/sms-api.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/SMS/sms-constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gap/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/gap/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gap/cart.py" beforeDir="false" afterPath="$PROJECT_DIR$/gap/cart.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gap/contact.py" beforeDir="false" afterPath="$PROJECT_DIR$/gap/contact.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gap/products.py" beforeDir="false" afterPath="$PROJECT_DIR$/gap/products.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gap/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/gap/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/App/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/App/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/App/MyApp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/App/MyApp.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Blog/Blog.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Blog/Blog.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Contact/ThisContactForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Contact/ThisContactForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Dashboard/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Dashboard/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Dashboard/dashboard-api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Dashboard/dashboard-api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Layout/MenuItems/MenuItems.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Layout/MenuItems/MenuItems.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/CheckOut/checkout_constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/CheckOut/checkout_constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/Market.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/Market.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/Products/Products.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/Products/Products.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/Products/Products.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/Products/Products.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/Service/Services.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/Service/Services.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/api-requests.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/api-requests.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Market/market-constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Market/market-constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/firebase.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/firebase.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/functions/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/functions/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/.yarn-integrity" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/.yarn-integrity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/http-errors/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/http-errors/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/http-errors/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/HISTORY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/codes.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/node_modules/statuses/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/http-errors/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/http-errors/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/isarray/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/component.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/isarray/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/isarray/test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/.eslintrc.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/.github/ISSUE_TEMPLATE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/.github/PULL_REQUEST_TEMPLATE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/Mime.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/Mime.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/cli.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/cli.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/lite.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/src/README_js.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/src/benchmark.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/src/build.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/src/build.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/src/test.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/mime/src/test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/types/other.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/mime/types/standard.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/restify/node_modules/.bin/mime" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/restify/node_modules/.bin/mime" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/restify/node_modules/.bin/mime.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/restify/node_modules/.bin/mime.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/.bin/mime" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/node_modules/.bin/mime" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/.bin/mime.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/node_modules/.bin/mime.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/build/build.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/build/test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/cli.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/mime.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/node_modules/mime/types.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/send/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/send/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/setprototypeof/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/setprototypeof/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/setprototypeof/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/setprototypeof/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/setprototypeof/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/setprototypeof/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/statuses/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/statuses/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/statuses/codes.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/statuses/codes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/node_modules/statuses/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/node_modules/statuses/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../server/yarn.lock" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/App/MyApp.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="66" column="75" selection-start-line="66" selection-start-column="75" selection-end-line="66" selection-end-column="75" />
+              <folding>
+                <element signature="e#0#76#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/components/SMS/SMS.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5185">
+              <caret line="317" column="20" selection-start-line="317" selection-start-column="20" selection-end-line="317" selection-end-column="20" />
+              <folding>
+                <element signature="e#44#142#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/Market/Market.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" selection-start-line="4" selection-end-line="4" selection-end-column="40" />
+              <folding>
+                <element signature="e#1229#1569#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/SMS/sms-api.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="527">
+              <caret line="32" column="25" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="25" />
+              <folding>
+                <element signature="e#1#27#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/SMS/sms-constants.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>setPaymentDetails</find>
+      <find>Approve</find>
+      <find>Reject</find>
+      <find>addProductToBasket</find>
+      <find>classNam</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>setBankingDetails</replace>
+      <replace>approve</replace>
+      <replace>reject</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/components/Market/api-requests.js" />
+        <option value="$PROJECT_DIR$/src/components/Market/CheckOut/checkout_constants.js" />
+        <option value="$PROJECT_DIR$/public/manifest.json" />
+        <option value="$PROJECT_DIR$/src/components/Market/Market.jsx" />
+        <option value="$PROJECT_DIR$/gap/products.py" />
+        <option value="$PROJECT_DIR$/gap/services.py" />
+        <option value="$PROJECT_DIR$/src/components/Market/market-constants.js" />
+        <option value="$PROJECT_DIR$/src/components/Market/Service/Services.jsx" />
+        <option value="$PROJECT_DIR$/src/components/Dashboard/dashboard-api.js" />
+        <option value="$PROJECT_DIR$/gap/banking.py" />
+        <option value="$PROJECT_DIR$/gap/api.py" />
+        <option value="$PROJECT_DIR$/src/components/Dashboard/Dashboard.jsx" />
+        <option value="$PROJECT_DIR$/src/components/Market/Products/Products.jsx" />
+        <option value="$PROJECT_DIR$/gap/cart.py" />
+        <option value="$PROJECT_DIR$/src/components/SMS/SMS.js" />
+        <option value="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.jsx" />
+        <option value="$PROJECT_DIR$/src/components/Blog/Blog.css" />
+        <option value="$PROJECT_DIR$/src/components/Market/Products/Products.css" />
+        <option value="$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.css" />
+        <option value="$PROJECT_DIR$/src/components/App/App.css" />
+        <option value="$PROJECT_DIR$/src/components/Layout/MenuItems/MenuItems.jsx" />
+        <option value="$PROJECT_DIR$/src/constants/routes.js" />
+        <option value="$PROJECT_DIR$/src/components/App/MyApp.jsx" />
+        <option value="$PROJECT_DIR$/src/components/SMS/sms-constants.js" />
+        <option value="$PROJECT_DIR$/src/components/SMS/sms-api.js" />
+        <option value="$PROJECT_DIR$/src/components/SMS/SMS.jsx" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-1374" />
+    <option name="y" value="-8" />
+    <option name="width" value="1382" />
+    <option name="height" value="754" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85e58e66-fe42-4b0d-a2c0-dfd10d6c4f5b" name="Default Changelist" comment="" />
+      <created>1569656758672</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569656758672</updated>
+      <workItem from="1569656836965" duration="18423000" />
+      <workItem from="1569676205891" duration="28242000" />
+      <workItem from="1569743020708" duration="684000" />
+      <workItem from="1569762025257" duration="6334000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="53683000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1374" y="-8" width="1382" height="754" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1709531" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32850242" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
+      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="Database" order="4" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/components/Blog/Blog.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="27" column="62" lean-forward="true" selection-start-line="27" selection-start-column="62" selection-end-line="27" selection-end-column="62" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/CheckOut/store-basket.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/manifest.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="52" selection-start-line="2" selection-start-column="52" selection-end-line="2" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gap/products.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="23" selection-start-line="23" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gap/services.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="46" selection-start-line="46" selection-end-line="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/market-constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="47" column="18" lean-forward="true" selection-start-line="47" selection-start-column="18" selection-end-line="47" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/api-requests.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="425" column="13" selection-start-line="425" selection-start-column="13" selection-end-line="425" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/CheckOut/checkout_constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="4" lean-forward="true" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Dashboard/dashboard-api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="201" column="19" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="88" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gap/banking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="28" column="70" selection-start-line="28" selection-start-column="70" selection-end-line="28" selection-end-column="70" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/Service/Services.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-221">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
+          <folding>
+            <element signature="e#0#71#0" expanded="true" />
+            <element signature="e#672#1499#0" />
+            <element signature="e#1514#3057#0" />
+            <element signature="e#4252#4592#0" />
+            <element signature="e#4612#5120#0" />
+            <element signature="e#5145#5323#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gap/api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="435" column="73" selection-start-line="435" selection-start-column="73" selection-end-line="435" selection-end-column="73" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#21924#28252#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/SMS/SMS.js" />
+    <entry file="file://$PROJECT_DIR$/gap/cart.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="75" selection-start-line="75" selection-end-line="75" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#228#1429#0" />
+            <element signature="e#1473#2701#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/Products/Products.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="181" column="50" selection-start-line="181" selection-start-column="50" selection-end-line="181" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Blog/Blog.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="38" column="22" lean-forward="true" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/Products/Products.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="33" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="30" lean-forward="true" selection-end-line="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/App/App.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1474">
+          <caret line="99" selection-start-line="99" selection-end-line="99" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/index.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/constants/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="25" column="44" selection-start-line="25" selection-start-column="44" selection-end-line="25" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Layout/MenuItems/MenuItems.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="308" column="57" lean-forward="true" selection-start-line="308" selection-start-column="57" selection-end-line="308" selection-end-column="69" />
+          <folding>
+            <element signature="e#0#71#0" expanded="true" />
+            <element signature="e#2859#4909#0" />
+            <element signature="e#3750#4888#0" />
+            <element signature="e#5065#5527#0" />
+            <element signature="e#5532#6101#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Dashboard/Dashboard.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/CheckOut/CheckOut.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16490">
+          <caret line="1063" selection-start-line="1046" selection-end-line="1063" />
+          <folding>
+            <element signature="e#0#74#0" expanded="true" />
+            <element signature="e#5429#6594#0" />
+            <element signature="e#6614#6966#0" />
+            <element signature="e#6992#7946#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/App/App.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Auth/auth-api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/App/MyApp.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="66" column="75" selection-start-line="66" selection-start-column="75" selection-end-line="66" selection-end-column="75" />
+          <folding>
+            <element signature="e#0#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Market/Market.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" selection-end-column="40" />
+          <folding>
+            <element signature="e#1229#1569#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/SMS/sms-api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="32" column="25" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="25" />
+          <folding>
+            <element signature="e#1#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/SMS/sms-constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/SMS/SMS.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5185">
+          <caret line="317" column="20" selection-start-line="317" selection-start-column="20" selection-end-line="317" selection-end-column="20" />
+          <folding>
+            <element signature="e#44#142#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

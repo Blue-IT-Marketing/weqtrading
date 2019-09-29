@@ -2,33 +2,14 @@ import React, { Component } from 'react';
 import axios from "axios";
 import {Utils} from '../../utilities';
 import InlineError from "../Forms/InlineError";
-export let contact_form_details  = {
-            messageid:"",
-            names : "",
-            email : "",
-            cell: "",
-            subject: "",
-            message: "",
 
-            message_read : false,
-            date_read : "",
-            date_sent : ""
-};
+import {
+    contact_form_details,
+    contact_response_message_detail,
+    contact_form_errors
+} from './contact-constants';
 
-export let contact_response_message_detail = {
-        messageid:"",
-        response:"",
-        date_sent:"",
-};
 
-let contact_form_errors = {
-            names_error : '',
-            email_error : '',
-            cell_error : '',
-            subject_error : '',
-            message_error : '',
-
-};
 
 class ThisContactForm extends Component {
     constructor (){
@@ -206,7 +187,7 @@ class ThisContactForm extends Component {
 
                 <button
                     type="button"
-                    className="btn btn-success btn-lg"
+                    className="btn btn-success btn-lg margin"
                     onClick={e => {
                         let self = this;
                         this.onCheckErrors().then(function(results){
