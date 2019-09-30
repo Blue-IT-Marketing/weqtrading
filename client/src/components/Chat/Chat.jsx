@@ -86,11 +86,18 @@ const Chat = () => {
   const [feedback, setFeedBack] = useState(chat_constants.feedback_init);
 
   const [writer,setWriter] = useState(extended_user);
+  let server_url = '';
 
+  if (document.URL.includes('localhost') || document.URL.includes('127.0.0.1')){
+    server_url = chat_constants.chat_server;
+  }else{
+    server_url = chat_constants.chat_server_online;
+  }
   
-  const [socket] = useSocket(chat_constants.chat_server, {
+  const [socket] = useSocket(server_url, {
     transports: ["websocket"]
   });
+
   socket.connect();
 
 
@@ -181,7 +188,12 @@ const Chat = () => {
     populate_message.chat_id = chat_constants.chat_room_init.chat_id;
 
     return populate_message;
-  }
+  };
+
+  const onClearMessages = (e) => {      
+    let data = chat_constants.chat_room_init;
+    socket.emit('clear', data);      
+  };
 
   useEffect(() => {    
     socket.emit("populate", onPopulate());
@@ -189,7 +201,6 @@ const Chat = () => {
     };
   }, []);
 
-  
   return (
     <Fragment>
 
@@ -208,7 +219,7 @@ const Chat = () => {
               <button type="button" className="btn btn-default btn-sm active">
                 <i className="fa fa-square text-green"></i>
               </button>
-              <button type="button" className="btn btn-default btn-sm" onClick={e => socket.emit("clear", uid)}>
+              <button type="button" className="btn btn-default btn-sm" onClick={e => onClearMessages(e)}>
                 <i className="fa fa-square text-red"></i>
               </button>
             </div>
