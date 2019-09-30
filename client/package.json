@@ -35,7 +35,9 @@
     "redux-thunk": "^2.3.0",
     "simple-crypto-js": "^2.0.2",
     "slackbots": "^1.2.0",
-    "typescript": "*"
+    "typescript": "*",
+    "use-immer": "^0.3.4",
+    "use-socket.io-client": "^1.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

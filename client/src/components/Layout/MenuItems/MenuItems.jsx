@@ -391,23 +391,19 @@ const SideBarMenuAuth = () => {
 
 			</li>
 
+			<li>
+				<Link to={routes.chat_page} title="Online Realtime Chat">
+					<strong>
+						<i className="fa fa-comments"> </i>{' '} Chat
+					</strong>
+				</Link>
+			</li>
 
 			<li>
 				<Link to={routes.blog_page} title="Weq Trading Blog">
 					<i className="fa fa-book"> </i> <strong>Blog</strong>
 				</Link>
 			</li>
-			{
-				user.uid ?
-					<li>
-						<Link to={routes.chat_page} title="Online Realtime Chat">
-							<strong>
-								<i className="fa fa-comments"> </i>{' '} Chat
-							</strong>
-						</Link>
-					</li>
-					: null
-			}
 
 
 			{user.is_admin ? (

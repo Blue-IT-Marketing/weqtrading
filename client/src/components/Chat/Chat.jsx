@@ -1,11 +1,11 @@
 
 import React, { Fragment,useState,useContext,useEffect } from 'react';
-import socketIOClient from "socket.io-client";
+import useSocket from "use-socket.io-client";
 import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
 import * as chat_constants from './chat-constants';
 import {extended_user} from '../Auth/auth-constants';
 import * as authAPI from '../Auth/auth-api';
-import { write } from 'fs';
+
 
 
 const DisplayMessage = ({message}) => {
@@ -32,21 +32,20 @@ const DisplayMessage = ({message}) => {
     let uid = message.author;
     retrieveAuthor(uid).then(result => console.log(result))  
     return () => {
-      
+      setAuthor(extended_user);
     };
   }, [message]);
 
   return(
                   
-        <div className="item">
+        <div className="box-comments">
               {/* <img src={} alt="user image" className="online" /> */}
 
-        <p className="message"><a href="#" className="name">
-          <small 
-            className="text-muted pull-right">
-              <i className="fa fa-clock-o"></i> {message.timestamp}
-            </small>
-            {author.names}
+        <p className="box-comment">
+        
+        <a href="#">
+          <small  className="text-muted pull-right"> <i className="fa fa-clock-o"></i> {message.timestamp} </small>
+            {author.names}{' '}
         </a>
           {message.message}
         </p>
@@ -75,19 +74,21 @@ const DisplayMessage = ({message}) => {
 };
 
 const Chat = () => {
+  
   const [messages,setMessages] = useState([]);  
-  const [message,setMessage] = useState({author:'',message:'',timestamp:'',attachments : ''});  
-  const [feedback,setFeedBack] = useState({author:'',message:''});
+  const [message,setMessage] = useState(chat_constants.chat_message_init);  
+  const [feedback, setFeedBack] = useState(chat_constants.feedback_init);
+
   const [writer,setWriter] = useState(extended_user);
-  const {user_account_state} = useContext(UserAccountContext);
 
-  let socket = socketIOClient(chat_constants.chat_server);
+  
+  const [socket] = useSocket(chat_constants.chat_server);
+  socket.connect();
 
-  const onSendMessage = () => {
-    const {uid} = user_account_state.user_account;
-    // emit events
-    if(uid === message.uid) { socket.emit("chat", message) }
-  };
+  const { user_account_state } = useContext(UserAccountContext);
+  
+
+  
 
   const retrieveFeedbackUser = async uid => {
       await authAPI.fetchUser(uid).then(results => {
@@ -99,58 +100,64 @@ const Chat = () => {
       })
   };
 
-  const onTyping = async e => {
-    socket.emit("typing", message);
-    return {...message};
-  };
+  const updateMessages = async new_message => {
+      
+      console.log('Returned Message',new_message);
+      
+      let new_messages = [];
 
-
-  useEffect(() => {      
-      const uid = user_account_state.user_account.uid;  
-
-      socket.on("chat", data => {
-        let new_messages = [...messages];
-        
-        new_messages.push(data);
-        
-        setMessages(new_messages);
-
-        setFeedBack({author:'',message:''});
-        setWriter(extended_user);
+      await messages.forEach(item => {
+          new_messages.push(item);
       });
 
-      socket.on("typing", data => {
+      new_messages.push(new_message);
+
+      await setMessages(new_messages);
+      console.log("Messages ", new_messages);
+      return true;
+  };
+
+  useEffect(() => {
+
+    const uid = user_account_state.user_account.uid;
+
+    socket.on("chat", data => {
+      
+      const new_message = {...data};
+      
+      updateMessages(new_message).then(result => {
+        setFeedBack({ author: "", message: "" });
+        setWriter(extended_user);
+        setMessage({ ...message, message: "" });
+      });
+
+    });
+
+    socket.on("typing", data => {
+      const uid = data.author;
+      retrieveFeedbackUser(uid).then(result => {
         setFeedBack({
           author: data.author,
           message: data.message
         });
       });
+    });
 
-      setMessage({
-        ...message,
-        author: uid,
-      });
-
-      return () => {
-        setMessage({
-          ...message,
-          author: ''
-        });        
-      };
-
-  }, []);
-
-  useEffect(() => {
-    let uid = feedback.author;
-
-    retrieveFeedbackUser(uid).then(result => console.log(result));
+    setMessage({
+      ...message,
+      author: uid
+    });
 
     return () => {
-      
+      setMessage({
+        ...message,
+        author: ""
+      });
     };
-  }, [feedback])
+  }, []);
 
-    
+
+
   
   return (
     <Fragment>
@@ -177,19 +184,11 @@ const Chat = () => {
         </div>
 
         <div className="box-body chat" id="chat-box">
-          {
-            writer.uid ?
-              <div className="item">
-                <h3 className="message"> {writer.names} :  {feedback.message} </h3>
-              </div>
-            :null
-          }
-
-          {messages.map(message => {
-            return <DisplayMessage message={message} />;
+          {messages.map((message,index) => {
+            return <DisplayMessage message={message} key={index} />;
           })}
-
         </div>
+
         {/* <!-- /.chat --> */}
         <div className="box-footer">
           <div className="input-group">
@@ -198,19 +197,28 @@ const Chat = () => {
               placeholder="Type message..."
               name="message"
               value={message.message}
-              onKeyPress={e => onTyping(e).then(result => console.log(result))}
-              onChange={e =>setMessage({ ...message, [e.target.name]: e.target.value })}
+              onKeyPress={e => socket.emit("typing", message)}
+              onChange={e =>
+                setMessage({ ...message, [e.target.name]: e.target.value })
+              }
             />
 
             <div className="input-group-btn">
               <button
                 type="button"
                 className="btn btn-success"
-                onClick={e => onSendMessage(e)}
+                onClick={e => socket.emit("chat", message)}
               >
                 <i className="fa fa-plus"></i> send
               </button>
             </div>
+          </div>
+        </div>
+        <div className="box-footer">
+          <div className="box-tools">
+            {writer.uid ? (
+              <strong> {writer.names} - - is typing a message...</strong>
+            ) : null}
           </div>
         </div>
       </div>

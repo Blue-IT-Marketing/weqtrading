@@ -141,13 +141,13 @@ class SMSBundles(ndb.Expando):
 
 class SMSPayments(ndb.Expando):
     uid = ndb.StringProperty()
-	id = ndb.StringProperty()
-	bundle_id = ndb.StringProperty()
-	payment_method = ndb.StringProperty()
-	payment_amount = ndb.StringProperty()
-	payment_date = ndb.StringProperty()
-	payment_time = ndb.StringProperty()
-	approved = ndb.BooleanProperty(default=False)
+    id = ndb.StringProperty()
+    bundle_id = ndb.StringProperty()
+    payment_method = ndb.StringProperty()
+    payment_amount = ndb.StringProperty()
+    payment_date = ndb.StringProperty()
+    payment_time = ndb.StringProperty()
+    approved = ndb.BooleanProperty(default=False)
 
 
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
@@ -190,7 +190,6 @@ class ContactLists(ndb.Expando):
 
 
 class Contacts(ndb.Expando):
-    # id is list id
     id = ndb.StringProperty()
     uid = ndb.StringProperty()
     name = ndb.StringProperty() 
