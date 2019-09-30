@@ -28,13 +28,19 @@ const DisplayMessage = ({message}) => {
 
   };
 
+  const returnDate = ({timestamp}) => {
+    return Date(parseInt(timestamp) * 1000);
+  }
+
   useEffect(() => {
+
     let uid = message.author;
-    retrieveAuthor(uid).then(result => console.log(result))  
-    return () => {
-      setAuthor(extended_user);
+    
+    retrieveAuthor(uid).then(result => {});
+    
+    return () => {      
     };
-  }, [message]);
+  }, []);
 
   return(
                   
@@ -44,7 +50,7 @@ const DisplayMessage = ({message}) => {
         <p className="box-comment">
         
         <a href="#">
-          <small  className="text-muted pull-right"> <i className="fa fa-clock-o"></i> {message.timestamp} </small>
+          <small  className="text-muted pull-right" title={ returnDate(message.timestamp)}> <i className="fa fa-clock-o"></i>  </small>
             {author.names}{' '}
         </a>
           {message.message}
@@ -82,12 +88,15 @@ const Chat = () => {
   const [writer,setWriter] = useState(extended_user);
 
   
-  const [socket] = useSocket(chat_constants.chat_server);
+  const [socket] = useSocket(chat_constants.chat_server, {
+    transports: ["websocket"]
+  });
   socket.connect();
+
 
   const { user_account_state } = useContext(UserAccountContext);
   
-
+  const uid = user_account_state.user_account.uid;
   
 
   const retrieveFeedbackUser = async uid => {
@@ -100,30 +109,18 @@ const Chat = () => {
       })
   };
 
-  const updateMessages = async new_message => {
-      
+  const updateMessages = async new_message => {      
       console.log('Returned Message',new_message);
       
-      let new_messages = [];
-
-      await messages.forEach(item => {
-          new_messages.push(item);
-      });
-
-      new_messages.push(new_message);
-
-      await setMessages(new_messages);
-      console.log("Messages ", new_messages);
+      await setMessages(new_message);
+      console.log("Messages ", new_message);
       return true;
   };
 
-  useEffect(() => {
-
-    const uid = user_account_state.user_account.uid;
-
+  useEffect(() => {    
     socket.on("chat", data => {
       
-      const new_message = {...data};
+      const new_message = [...data];
       
       updateMessages(new_message).then(result => {
         setFeedBack({ author: "", message: "" });
@@ -156,11 +153,22 @@ const Chat = () => {
     };
   }, []);
 
+  const onSendMessage = e => {
+    let data = message;
+    data.author = user_account_state.user_account.uid;
+    socket.emit('chat',data);
+  };
 
+  const onTyping = e => {
+    let data = message;
+    data.author = user_account_state.user_account.uid;
+    socket.emit('typing',data);
+  }
 
   
   return (
     <Fragment>
+
       <div className="box box-success">
         <div className="box box-header">
           <i className="fa fa-comments-o"></i>
@@ -176,7 +184,7 @@ const Chat = () => {
               <button type="button" className="btn btn-default btn-sm active">
                 <i className="fa fa-square text-green"></i>
               </button>
-              <button type="button" className="btn btn-default btn-sm">
+              <button type="button" className="btn btn-default btn-sm" onClick={e => socket.emit("clear", uid)}>
                 <i className="fa fa-square text-red"></i>
               </button>
             </div>
@@ -184,8 +192,9 @@ const Chat = () => {
         </div>
 
         <div className="box-body chat" id="chat-box">
-          {messages.map((message,index) => {
-            return <DisplayMessage message={message} key={index} />;
+          {messages.map((message) => {
+            console.log('message',message);
+            return <DisplayMessage message={message} key={message.message_id} />;
           })}
         </div>
 
@@ -197,7 +206,7 @@ const Chat = () => {
               placeholder="Type message..."
               name="message"
               value={message.message}
-              onKeyPress={e => socket.emit("typing", message)}
+              onKeyPress={e => onTyping(e)}
               onChange={e =>
                 setMessage({ ...message, [e.target.name]: e.target.value })
               }
@@ -207,7 +216,7 @@ const Chat = () => {
               <button
                 type="button"
                 className="btn btn-success"
-                onClick={e => socket.emit("chat", message)}
+                onClick={e => onSendMessage(e)}
               >
                 <i className="fa fa-plus"></i> send
               </button>
