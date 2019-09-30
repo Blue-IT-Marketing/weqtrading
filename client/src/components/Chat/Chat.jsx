@@ -79,8 +79,8 @@ const DisplayMessage = ({message}) => {
   )
 };
 
-const Chat = () => {
-  
+const Chat = () => {  
+
   const [messages,setMessages] = useState([]);  
   const [message,setMessage] = useState(chat_constants.chat_message_init);  
   const [feedback, setFeedBack] = useState(chat_constants.feedback_init);
@@ -117,7 +117,8 @@ const Chat = () => {
       return true;
   };
 
-  useEffect(() => {    
+  useEffect(() => {  
+
     socket.on("chat", data => {
       
       const new_message = [...data];
@@ -140,6 +141,12 @@ const Chat = () => {
       });
     });
 
+    socket.on("populate", data => {
+      // this allows my app to populate itself with the most recent messages on entry
+      // the data field carries an array which includes messages            
+      setMessages(data);
+    });
+
     setMessage({
       ...message,
       author: uid
@@ -156,6 +163,7 @@ const Chat = () => {
   const onSendMessage = e => {
     let data = message;
     data.author = user_account_state.user_account.uid;
+    data.chat_id = chat_constants.chat_room_init.chat_id;
     socket.emit('chat',data);
   };
 
@@ -163,7 +171,23 @@ const Chat = () => {
     let data = message;
     data.author = user_account_state.user_account.uid;
     socket.emit('typing',data);
+  };
+
+  const onPopulate = () => {
+    
+    const uid = user_account_state.user_account.uid;
+    const populate_message = chat_constants.chat_user_init;
+    populate_message.author = uid;
+    populate_message.chat_id = chat_constants.chat_room_init.chat_id;
+
+    return populate_message;
   }
+
+  useEffect(() => {    
+    socket.emit("populate", onPopulate());
+    return () => {      
+    };
+  }, []);
 
   
   return (
