@@ -5,8 +5,8 @@ export const sms_message_init = {
 	id : '',
 	uid : '',
 	message : '',
-	to : '',
-	from : '',
+	to_cell : '',
+	from_cell : '',
 	date_created : '',
 	scheduled_datetime : '',
 	date_time_sent : '',
@@ -37,6 +37,7 @@ export const sms_bundle_init = {
 
 
 export const payment_details_init ={
+	uid : '',
 	id : '',
 	bundle_id : '',
 	payment_method :'',
@@ -76,3 +77,12 @@ export const default_bundles = [
 		purchase_price : '800'
 	}
 ];
+
+
+export const contact_lists_init = {
+	uid : '',
+	id : '',
+	name : '',
+	description : '',
+	total_contacts : '',	
+};

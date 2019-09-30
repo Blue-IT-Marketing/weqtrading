@@ -17,6 +17,7 @@ from user import User
 from store import Store
 from transactions import Transactions
 from banking import Banking
+from messaging import SMSBundles, SMSBalances, SMSMessage, SMSPayments, ContactLists,Contacts
 
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
@@ -314,6 +315,59 @@ class APIRouterHandler(webapp2.RequestHandler):
                 status_int = 403
                 response_data = {'message':'you are not authorized to access dashboard'}
                     
+        elif 'sms' in route:
+            uid = route[len(route) - 1]
+
+            # TODO use cron jobs to synchronize
+            # local bundles with bundles on sasms crud
+
+            user = User()
+            this_user = user.getUser(uid=uid)
+            response_data = []
+            if ('bundles' in route) and (this_user != ''):
+
+                bundles = SMSBundles()
+                results = bundles.fetchBundles()
+
+                for bundle in results:
+                    response_data.append(bundle.to_dict())
+
+            elif ('contact-lists' in route) and (this_user != ''):
+
+                contacts_list = ContactLists()
+                results = contacts_list.getContactList(uid=uid)
+
+                for contact_list in results:
+                    response_data.append(contact_list.to_dict())
+            elif ('bylistname' in route) and (this_user != ''):
+
+                list_name = route[len(route) - 2]
+
+                this_contact = Contacts()
+                contact_list = this_contact.getContactByListName(list_name=list_name)
+
+                for contact in contact_list:
+                    response_data.append(contact.to_dict())
+
+            elif ('bycontactid' in route) and (this_user != ''):
+                list_id = route[len(route) - 2]
+
+                this_contact = Contacts()
+                contact_list = this_contact.getContactsByContactID(id=list_id)
+
+                for contact in contact_list:
+                    response_data.append(contact.to_dict())
+            elif ('byuid' in route) and (this_user != ''):
+                this_contact = Contacts()
+                contact_list = this_contact.getContactsByUserID(uid=uid)
+
+                for contact in contact_list:
+                    response_data.append(contact.to_dict())
+                
+            else:
+                status = 303
+                response_data = {'message':'request not understood'}
+
 
         else:
             status_int = 400
@@ -495,6 +549,25 @@ class APIRouterHandler(webapp2.RequestHandler):
 
             response_data = this_transaction.to_dict()
 
+        elif 'sms' in route:
+            uid = route[len(route) - 1]
+
+            user = User()
+            this_user = user.getUser(uid)
+
+            if ('send' in route) and (this_user != ''):
+                sms_message = json.loads(self.request.body)
+                sms = SMSMessage()
+
+                # once the message is sent results will be returned
+                # through a webhook
+                results = sms.addSMSmessage(sms_message=sms_message)
+
+                response_data = results.to_dict()
+
+            else:
+                status_int = 303
+                response_data = {'message':'request not understood'}
 
         elif 'dashboard' in route:
             uid = route[len(route) - 1]

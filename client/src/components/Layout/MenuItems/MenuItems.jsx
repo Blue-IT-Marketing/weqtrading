@@ -225,20 +225,47 @@ const SideBarMenuAuth = () => {
 					</li>
 				</ul>
 			</li>
-			{
-				user.uid ?
+
+			<li
+				id="messaging"
+				className="treeview"
+				onClick={e => {
+					let id = 'messaging';
+					openMessagingMenu(e, id);
+				}}
+			>
+
+				<Link to="#">
+					<i className="fa fa-send-o" /> <span>Messaging</span>
+					<span className="pull-right-container">
+						<i
+							className="fa fa-angle-left pull-right"
+							onClick={e => {
+								if (e.target.className === 'fa fa-angle-left pull-right') {
+									e.target.className = 'fa fa-angle-right pull-right';
+								} else {
+									e.target.className = 'fa fa-angle-left pull-right';
+								}
+							}}
+						/>
+					</span>
+				</Link>
+
+
+				<ul className="treeview-menu" onClick={e => e.stopPropagation()}>
+
 
 					<li
-						id="messaging"
+						id="sms"
 						className="treeview"
 						onClick={e => {
-							let id = 'messaging';
+							let id = 'sms';
 							openMessagingMenu(e, id);
 						}}
 					>
 
 						<Link to="#">
-							<i className="fa fa-send-o" /> <span>Messaging</span>
+							<i className="fa fa-send" /> <span>SMS</span>
 							<span className="pull-right-container">
 								<i
 									className="fa fa-angle-left pull-right"
@@ -253,148 +280,117 @@ const SideBarMenuAuth = () => {
 							</span>
 						</Link>
 
-
 						<ul className="treeview-menu" onClick={e => e.stopPropagation()}>
-
-
-							<li
-								id="sms"
-								className="treeview"
-								onClick={e => {
-									let id = 'sms';
-									openMessagingMenu(e, id);
-								}}
-							>
-
-								<Link to="#">
-									<i className="fa fa-send" /> <span>SMS</span>
-									<span className="pull-right-container">
-										<i
-											className="fa fa-angle-left pull-right"
-											onClick={e => {
-												if (e.target.className === 'fa fa-angle-left pull-right') {
-													e.target.className = 'fa fa-angle-right pull-right';
-												} else {
-													e.target.className = 'fa fa-angle-left pull-right';
-												}
-											}}
-										/>
-									</span>
+							<li>
+								<Link to={routes.sms_account} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-user'> </i>{' '} Account
+									</strong>
 								</Link>
-
-								<ul className="treeview-menu" onClick={e => e.stopPropagation()}>
-									<li>
-										<Link to={routes.sms_account} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-user'> </i>{' '} Account
-											</strong>
-										</Link>
-									</li>
-									<li>
-										<Link to={routes.sms_settings} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-cogs'> </i>{' '} Settings
-											</strong>
-										</Link>
-									</li>
-									<li>
-										<Link to={routes.sms_contacts} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-user-md'> </i>{' '} Contacts
-											</strong>
-										</Link>
-									</li>
-
-									<li>
-										<Link to={routes.sms_messages} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-send-o'> </i>{' '} Messages
-											</strong>
-										</Link>
-									</li>
-								</ul>
-
+							</li>
+							<li>
+								<Link to={routes.sms_settings} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-cogs'> </i>{' '} Settings
+									</strong>
+								</Link>
+							</li>
+							<li>
+								<Link to={routes.sms_contacts} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-user-md'> </i>{' '} Contacts
+									</strong>
+								</Link>
 							</li>
 
-							<li
-								id="email"
-								className="treeview"
-								onClick={e => {
-									let id = 'email';
-									openMessagingMenu(e, id);
-								}}
-							>
-								<Link to="#">
-									<i className="fa fa-envelope" /> <span>Email</span>
-									<span className="pull-right-container">
-										<i
-											className="fa fa-angle-left pull-right"
-											onClick={e => {
-												if (e.target.className === 'fa fa-angle-left pull-right') {
-													e.target.className = 'fa fa-angle-right pull-right';
-												} else {
-													e.target.className = 'fa fa-angle-left pull-right';
-												}
-											}}
-										/>
-									</span>
+							<li>
+								<Link to={routes.sms_messages} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-send-o'> </i>{' '} Messages
+									</strong>
 								</Link>
-								<ul className="treeview-menu" onClick={e => e.stopPropagation()}>
-									<li>
-										<Link to={routes.email_account} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-cogs'> </i> Account
-											</strong>
-										</Link>
-									</li>
-
-									<li>
-										<Link to={routes.email_settings} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-cogs'> </i> Settings
-											</strong>
-										</Link>
-									</li>
-
-									<li>
-										<Link to={routes.send_email} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-inbox'> </i> Send Email
-											</strong>
-										</Link>
-									</li>
-									<li>
-										<Link to={routes.inbox_email} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-inbox'> </i> Inbox
-											</strong>
-										</Link>
-									</li>
-									<li>
-										<Link to={routes.email_sent} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-send-o'> </i> Sent Box
-											</strong>
-										</Link>
-									</li>
-
-									<li>
-										<Link to={routes.email_drafts} title='Realtime Messaging Module'>
-											<strong>
-												<i className='fa fa-file'> </i> Drafts
-											</strong>
-										</Link>
-									</li>
-								</ul>
 							</li>
-
 						</ul>
-
 
 					</li>
 
-					: null
-			}
+					<li
+						id="email"
+						className="treeview"
+						onClick={e => {
+							let id = 'email';
+							openMessagingMenu(e, id);
+						}}
+					>
+						<Link to="#">
+							<i className="fa fa-envelope" /> <span>Email</span>
+							<span className="pull-right-container">
+								<i
+									className="fa fa-angle-left pull-right"
+									onClick={e => {
+										if (e.target.className === 'fa fa-angle-left pull-right') {
+											e.target.className = 'fa fa-angle-right pull-right';
+										} else {
+											e.target.className = 'fa fa-angle-left pull-right';
+										}
+									}}
+								/>
+							</span>
+						</Link>
+						<ul className="treeview-menu" onClick={e => e.stopPropagation()}>
+							<li>
+								<Link to={routes.email_account} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-cogs'> </i> Account
+									</strong>
+								</Link>
+							</li>
+
+							<li>
+								<Link to={routes.email_settings} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-cogs'> </i> Settings
+									</strong>
+								</Link>
+							</li>
+
+							<li>
+								<Link to={routes.send_email} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-inbox'> </i> Send Email
+									</strong>
+								</Link>
+							</li>
+							<li>
+								<Link to={routes.inbox_email} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-inbox'> </i> Inbox
+									</strong>
+								</Link>
+							</li>
+							<li>
+								<Link to={routes.email_sent} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-send-o'> </i> Sent Box
+									</strong>
+								</Link>
+							</li>
+
+							<li>
+								<Link to={routes.email_drafts} title='Realtime Messaging Module'>
+									<strong>
+										<i className='fa fa-file'> </i> Drafts
+									</strong>
+								</Link>
+							</li>
+						</ul>
+					</li>
+
+				</ul>
+
+
+			</li>
+
 
 			<li>
 				<Link to={routes.blog_page} title="Weq Trading Blog">

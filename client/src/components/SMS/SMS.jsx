@@ -221,8 +221,67 @@ const DeliveryReports = () => {
  */
 // eslint-disable-next-line no-unused-vars
 const SendBulkSMS = () => {
+
     const [listNames,setListNames] = useState([]);
-    const [contacts,setContacts] = useState([]);
+	const [contacts,setContacts] = useState([]);
+	const {user_account_state} = useContext(UserAccountContext);
+	const [display, setDisplay] = useState("send-sms");
+  	const [messagesMenu, setMenu] = useState({ menu: false });
+
+	
+	const showDropdownMenu = e => {
+      e.preventDefault();
+      setMenu({ menu: true });
+      document.addEventListener("click", hideDropdownMenu);
+    };
+
+    const hideDropdownMenu = () => {
+      setMenu({ menu: false });
+      document.removeEventListener("click", hideDropdownMenu);
+    };
+
+	const loadContactsFromListName = async listname => {
+
+		const uid = user_account_state.user_account.uid;
+		
+		await smsApiRequests.fetchContactsByListName(uid,listname).then(results => {
+			if(results.status){
+				setContacts(results.payload);
+			}else{
+				setContacts([]);
+			}
+		}).catch(error => {
+			setContacts([]);
+		});
+
+		return true;
+	};
+	
+
+	useEffect(() => {
+		const fetchContactLists = async () => {
+			const uid = user_account_state.user_account.uid;
+			await smsApiRequests.fetchContactLists(uid).then(results => {
+				if(results.status){
+					setListNames(listNames);
+				}else{
+					setListNames([]);
+					console.log("error fetching contact lists", results.error.message);
+				}
+			}).catch(error => {
+				setListNames([]);
+				console.log('error fetching contact lists',error.message);
+			});
+
+			return true;
+		};
+
+		fetchContactLists().then(result => console.log(result));
+
+		return () => {
+			
+		};
+	}, [])
 
 	return(
 		<Fragment>
@@ -231,10 +290,30 @@ const SendBulkSMS = () => {
 					<h3 className='box-title'>
 						<i className='fa fa-send-o'> </i>{' '}
                         Send Bulk SMS</h3>
-				</div>
 
+					<div className="box-tools">
+						<button
+							type="button"
+							className="btn btn-box-tool dropdown"
+							onClick={e => showDropdownMenu(e)}
+						>
+							<i className='fa fa-bars'> </i>{' '}
+						</button>
+						{messagesMenu.menu ? (
+							<ul className="dropmenu">
+								<li
+									className="btn btn-block droplink"
+									name="send-sms"
+									onClick={() => setDisplay('send-sms')}
+								> <i className='fa fa-send'> </i>{' '}
+									Send SMS
+								</li>
+							</ul>
+						) : null }
+					</div>
 
-			</div>
+					</div>
+				</div>			
 		</Fragment>
 	);
 };
@@ -256,7 +335,7 @@ const SendSMS = () => {
 		let isError = false;
 
 		const check_to_error = () => {
-			if (!Utils.isCell(sms.to)){
+			if (!Utils.isCell(sms.to_cell)){
 				setErrors({...errors,to_error: 'to field is not a valid cell phone number'});
 				return true;
 			}
@@ -264,7 +343,7 @@ const SendSMS = () => {
 		};
 
 		const check_from_error = () => {
-			if (!Utils.isCell(sms.from)){
+			if (!Utils.isCell(sms.from_cell)){
 				setErrors({...errors,from_error: 'from field is not a valid cell phone number'});
 				return true;
 			}
@@ -336,8 +415,8 @@ const SendSMS = () => {
 						<input
 							type='tel'
 							className='form-control'
-							name='from'
-							value={sms.from}
+							name='from_cell'
+							value={sms.from_cell}
 							onChange={e => setSMS({...sms,[e.target.name]:e.target.value}) }
 						/>
 						{errors.from_error  ? <InlineError message={errors.from_error} /> : ''}
@@ -347,8 +426,8 @@ const SendSMS = () => {
 						<input
 							type='tel'
 							className='form-control'
-							name={'to'}
-							value={sms.to}
+							name={'to_cell'}
+							value={sms.to_cell}
 							onChange={e => setSMS({...sms,[e.target.name]:e.target.value}) }
 						/>
 						{errors.to_error ? <InlineError message={errors.to_error} /> : ''}
