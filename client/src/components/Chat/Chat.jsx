@@ -94,18 +94,11 @@ const Chat = () => {
     server_url = chat_constants.chat_server_online;
   }
   
-  const [socket] = useSocket(server_url, {
-    transports: ["websocket"]
-  });
-
+  const [socket] = useSocket(server_url, {transports: ["websocket"]});
   socket.connect();
 
-
-  const { user_account_state } = useContext(UserAccountContext);
-  
+  const { user_account_state } = useContext(UserAccountContext);  
   const uid = user_account_state.user_account.uid;
-  
-
   const retrieveFeedbackUser = async uid => {
       await authAPI.fetchUser(uid).then(results => {
         if(results.status){
@@ -203,26 +196,28 @@ const Chat = () => {
 
   return (
     <Fragment>
-
       <div className="box box-success">
         <div className="box box-header">
           <i className="fa fa-comments-o"></i>
 
           <h3 className="box-title">Chat</h3>
 
-          <div
-            className="box-tools pull-right"
-            data-toggle="tooltip"
-            title="Status"
-          >
+            <div
+              className="box-tools pull-right"
+              data-toggle="tooltip"
+              title="Status">
+
             <div className="btn-group" data-toggle="btn-toggle">
               <button type="button" className="btn btn-default btn-sm active">
                 <i className="fa fa-square text-green"></i>
               </button>
               <button type="button" className="btn btn-default btn-sm" onClick={e => onClearMessages(e)}>
-                <i className="fa fa-square text-red"></i>
+                <i className="fa fa-square text-red"> {' '} </i>
               </button>
+
             </div>
+
+
           </div>
         </div>
 
