@@ -164,7 +164,7 @@ class ContactLists(ndb.Expando):
     id = ndb.StringProperty() 
     name = ndb.StringProperty()  
     description = ndb.StringProperty() 
-    total_contacts = ndb.StringProperty() 
+    total_contacts = ndb.StringProperty(default='0') 
 
     def create_id(self, size=64, chars=string.ascii_lowercase + string.digits):
         return ''.join(random.choice(chars) for x in range(size))
@@ -189,9 +189,12 @@ class ContactLists(ndb.Expando):
         return contacts_list
 
 
-class Contacts(ndb.Expando):
+class SMSContacts(ndb.Expando):
+    # SMS Contact ID
     id = ndb.StringProperty()
     uid = ndb.StringProperty()
+    list_id = ndb.StringProperty()
+    list_name = ndb.StringProperty()
     name = ndb.StringProperty() 
     surname = ndb.StringProperty()
     relationship = ndb.StringProperty()
@@ -200,14 +203,16 @@ class Contacts(ndb.Expando):
     email = ndb.StringProperty()
 
     def addContact(self,contact):
-        contacts_query = Contacts.query(Contacts.cell == contact['cell'])
+        contacts_query = SMSContacts.query(SMSContacts.cell == contact['cell'])
         contacts_list = contacts_query.fetch()
         if len(contacts_list) > 0:
             return ''
         else:
-            contacts = Contacts()
+            contacts = SMSContacts()
             contacts.id = contact['id']
             contacts.uid = contact['uid']
+            contacts.list_id = contact['list_id']
+            contacts.list_name = contact['list_name']
             contacts.name = contact['name']
             contacts.surname = contact['surname']
             contacts.relationship = contact['relationship']
@@ -220,16 +225,21 @@ class Contacts(ndb.Expando):
 
     def getContactByListName(self,list_name):
 
-        contacts_query = Contacts.query(Contacts.list_name == list_name)
+        contacts_query = SMSContacts.query(SMSContacts.list_name == list_name)
         return contacts_query.fetch()
+
+    def fetchContactsByListID(self,id):
+        contacts_query = SMSContacts.query(SMSContacts.list_id == id)
+        return contacts_query.fetch()
+            
 
     def getContactsByContactID(self,id):
 
-        contacts_query = Contacts.query(Contacts.id == id)
+        contacts_query = SMSContacts.query(SMSContacts.id == id)
         return contacts_query.fetch()
 
     def getContactsByUserID(self,uid):
-        contacts_query = Contacts.query(Contacts.uid == uid)
+        contacts_query = SMSContacts.query(SMSContacts.uid == uid)
         return contacts_query.fetch()
 
 

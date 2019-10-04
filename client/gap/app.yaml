@@ -12,13 +12,12 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: /assets
-  static_dir : templates/assets
+- url: /certificates
+  static_dir : templates/certificates
 
 - url: /static
   static_dir: templates/static
-- url: /
-  script: main.app
+
 - url: .*
   script: main.app
 

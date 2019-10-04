@@ -89,7 +89,9 @@ const Chat = () => {
   let server_url = '';
 
   if (document.URL.includes('localhost') || document.URL.includes('127.0.0.1')){
+    
     server_url = chat_constants.chat_server;
+    
   }else{
     server_url = chat_constants.chat_server_online;
   }

@@ -98,6 +98,31 @@ export const fetchContactLists = async uid => {
 	return results;
 };
 
+
+export const saveContactsList = async (uid,json_contacts_list) => {
+	const results = { status: false, payload: [], error: {} };
+
+	const prepared_route = routes.api_sms_endpoint + `/contact-lists/${uid}`;
+
+	await axios.post(prepared_route, json_contacts_list).then(response => {
+		if(response.status === 200){
+			return response.data
+		}else{
+			throw new Error('there was an error fetching contacts lists');
+		}
+	}).then(contacts_lists => {
+		results.status = true;
+		results.payload = [...contacts_lists];
+		results.error = {};
+	}).catch(error => {
+		results.status = false;
+		results.payload = [];
+		results.error = {};
+	});
+
+	return results;
+};
+
 export const fetchContactsByListName = async (uid,listname) => {
 	const results = { status: false, payload: [], error: {} };
 

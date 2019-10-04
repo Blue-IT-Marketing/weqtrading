@@ -86,3 +86,35 @@ export const contact_lists_init = {
 	description : '',
 	total_contacts : '',	
 };
+
+export const contact_lists_errors_init = {
+	name_error : '',
+	description_error : '',
+	total_contacts : '0',	
+};
+
+
+export const contacts_init = {
+    id  : '',
+	uid  : '',
+	list_id : '',
+	list_name : '',
+    name  : '', 
+    surname  : '',
+    relationship  : '',
+    tel  : '',
+    cell  : '',
+    email  : '',	
+};
+
+
+export const contacts_errors_init = {
+	name_error: "",
+	surname_error: "",
+	relationship_error: "",
+	tel_error: "",
+	cell_error: "",
+	email_error: ""
+};
+
+

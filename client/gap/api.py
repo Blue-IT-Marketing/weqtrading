@@ -17,7 +17,7 @@ from user import User
 from store import Store
 from transactions import Transactions
 from banking import Banking
-from messaging import SMSBundles, SMSBalances, SMSMessage, SMSPayments, ContactLists,Contacts
+from messaging import SMSBundles, SMSBalances, SMSMessage, SMSPayments, ContactLists,SMSContacts
 
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
@@ -339,11 +339,12 @@ class APIRouterHandler(webapp2.RequestHandler):
 
                 for contact_list in results:
                     response_data.append(contact_list.to_dict())
+                    
             elif ('bylistname' in route) and (this_user != ''):
 
                 list_name = route[len(route) - 2]
 
-                this_contact = Contacts()
+                this_contact = SMSContacts()
                 contact_list = this_contact.getContactByListName(list_name=list_name)
 
                 for contact in contact_list:
@@ -352,13 +353,13 @@ class APIRouterHandler(webapp2.RequestHandler):
             elif ('bycontactid' in route) and (this_user != ''):
                 list_id = route[len(route) - 2]
 
-                this_contact = Contacts()
+                this_contact = SMSContacts()
                 contact_list = this_contact.getContactsByContactID(id=list_id)
 
                 for contact in contact_list:
                     response_data.append(contact.to_dict())
             elif ('byuid' in route) and (this_user != ''):
-                this_contact = Contacts()
+                this_contact = SMSContacts()
                 contact_list = this_contact.getContactsByUserID(uid=uid)
 
                 for contact in contact_list:
@@ -562,8 +563,17 @@ class APIRouterHandler(webapp2.RequestHandler):
                 # once the message is sent results will be returned
                 # through a webhook
                 results = sms.addSMSmessage(sms_message=sms_message)
-
+                response_data = {}
                 response_data = results.to_dict()
+
+            elif ('contact-lists' in route) and (this_user != ''):
+                json_contact_lists = json.loads(self.request.body)
+
+                contacts_lists = ContactLists()
+                results = contacts_lists.addList(contact_list=json_contact_lists)
+                response_data = {}
+                response_data = results.to_dict()
+
 
             else:
                 status_int = 303

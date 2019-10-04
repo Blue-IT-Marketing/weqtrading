@@ -3,12 +3,17 @@
 import React, {Fragment, createContext, useReducer, useContext, useState, useEffect} from 'react';
 import {Utils} from '../../utilities';
 import {
-	default_bundles,
-	payment_details_init,
-	sms_balance_init,
-	sms_bundle_init, sms_message_errors_init,
-	sms_message_init
-} from './sms-constants';
+  default_bundles,
+  payment_details_init,
+  sms_balance_init,
+  sms_bundle_init,
+  sms_message_errors_init,
+  sms_message_init,
+  contacts_init,
+  contacts_errors_init,
+  contact_lists_init,
+  contact_lists_errors_init
+} from "./sms-constants";
 import * as smsApiRequests from './sms-api';
 import { UserAccountContext } from '../../context/UserAccount/userAccountContext';
 import InlineError from '../Forms/InlineError';
@@ -575,29 +580,425 @@ export const SMSMessages = () => {
 };
 
 
-/**
- * ability to add and remove contacts, ability to
- * organize contacts by named contact lists
- * @returns {*}
- * @constructor
- */
+const ContactListItem = ({contact}) => {
+	return(
+		<Fragment>
 
-// eslint-disable-next-line no-unused-vars
-export const SMSContacts = () => {
+		</Fragment>
+	)
+};
+
+
+const DisplayContactList = ({contacts_list}) => {
 	return(
 		<Fragment>
 			<div className='box box-body'>
 				<div className='box box-header'>
 					<h3 className='box-title'>
-						<i className='fa fa-envelope-square'> </i> {' '}
-                        Contacts
+						<i className='fa fa-list'> </i>{' '}Contacts List
 					</h3>
 				</div>
 
 
 			</div>
 		</Fragment>
-	);
+	)
+};
+
+/**
+ * add contact to backend
+ * then add contact to contact list via call-back function
+ * 
+ * @param {*} addContact
+ */
+const AddContact = ({addContact}) => {
+	const [contact,setContact] = useState(contacts_init)
+	return(
+		<Fragment>
+			<div className='box box-body'>
+				<div className='box box-header'>
+					<h3 className='box-title'>Add Contact</h3>
+				</div>
+
+				<form className='form-horizontal'>
+				
+				</form>	
+				
+			</div>
+		</Fragment>
+	)
+}
+
+const ContactsManager = ({contacts}) => {
+	const [contacts_list,setContactsList] = useState([]);
+
+	// setting contacts to contacts_list
+	useEffect(() => {
+		setContactsList(contacts);
+	  return () => {
+		setContactsList([]);
+	  };
+	}, []);
+
+
+	return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <i className="fa fa-user"></i> Contacts Manager
+          </h3>
+		  <div className='box-tools'>
+			  <div className='dropdown'>
+
+			  </div>
+		  </div>
+        </div>
+
+		{
+			contacts_list.map(contact => {
+				return <ContactListItem contact={contact} />
+			})
+		}
+      </div>
+    </Fragment>
+  );
+}
+
+const AddContactList = () => {
+	const [contacts_list, setContactsList] = useState(contact_lists_init);
+	const [errors,setErrors] = useState(contact_lists_errors_init);
+	const [inline,setInline] = useState({message:'',message_type:'errir'});
+	const {user_account_state} = useContext(UserAccountContext);
+
+
+	// function to check contacts list errors before we can add them
+
+	const checkErrors = async e => {
+		e.preventDefault();
+		let isError = false;
+
+		const check_name = () => {
+			if(Utils.isEmpty(contacts_list.name)){
+				setErrors({...errors,name_error:'name field cannot be empty'});
+				return true;
+			}
+			return false;
+		};
+
+		const check_description = () => {		
+		
+			if(Utils.isEmpty(contacts_list.description)){
+				setErrors({...errors,description_error:'description field cannot be empty'});
+				return true;
+			}
+			return false;		
+		};
+
+		check_name() ? isError = true : isError =isError;
+		check_description() ? isError = true : isError = isError;
+
+		return isError;		
+	};
+
+	// function to add contact lists to the backend database
+	const onAddContactsList = async e => {
+		
+		const uid = user_account_state.user_account.uid;
+		const json_contacts_list = JSON.stringify(contacts_list)
+		await smsApiRequests.saveContactsList(uid, json_contacts_list).then(response =>{
+			if(response.status){
+				setContactsList(response.payload);
+			}else{
+				setInline({message:response.error.message,message_type:'error'});
+			}
+		}).catch(error => {
+			setInline({message:error.message,message_type:'error'});
+		});
+
+		return true;
+	};
+	
+	// initialize contacts list
+	useEffect(() => {		
+		  setContactsList({...contacts_list,uid : user_account_state.user_account.uid});			  
+		return () => {
+			setContactsList(contact_lists_init);
+		};
+	}, [])
+	return(
+		<Fragment>
+			<div className="box box-body">
+				<div className="box box-header">
+					<h3 className="box-title">
+						Add Contact Lists
+					</h3>
+				</div>
+
+				<form className='form-horizontal'>
+					<div className='form-group'>
+						<label className='label'> List Name</label>
+						<input 
+							type="text" 
+							className="form-control" 
+							name='name'
+							value={contacts_list.name} 
+							onChange={e => setContactsList({...contacts_list,[e.target.name]:e.target.value})}
+						/>
+						{errors.name_error ? <InlineError message={errors.name_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label className='label'> Description</label>
+						<input 
+							type="text" 
+							className="form-control" 
+							name='description'
+							value={contacts_list.description} 
+							onChange={e => setContactsList({...contacts_list,[e.target.name]:e.target.value})}
+						/>
+						{errors.description_error ? <InlineError message={errors.description_error} /> : null}
+					</div>
+
+					<div className='form-group'>
+						<button
+							type='button'
+							className='btn btn-success btn-lg'
+							name='save'
+							onClick={e =>
+								{
+									checkErrors(e).then(isError => {
+										isError ? setInline({message:'error processing form',message_type:'error'})
+										: onAddContactsList(e).then(results => {
+											console.log(results);
+										});
+									})
+
+								}
+							 }
+						>
+							<i className='fa fa-save'> </i>{' '}
+								Add Contacts List
+						</button>
+						<button
+							type='button'
+							className='btn btn-warning btn-lg'
+							name='reset'
+							onClick={e => {
+								setInline({message:'',message_type:'info'});
+								setErrors(contact_lists_errors_init);
+								setContactsList(contact_lists_init);
+							}}
+						>
+							<i className='fa fa-eraser'></i>{' '}
+							Reset
+						</button>
+
+					</div>
+
+					<div className='form-group'>
+						{inline.message ? <InlineMessage message={inline.message} message_type={inline.message_type} /> : null}
+					</div>
+
+				</form>
+			</div>
+		</Fragment>
+	)
+}
+
+const ContactsListItems = ({ onOpenContactList,contact_list }) => {
+  return (
+    <tr>
+      <td
+        className="btn btn-outline-primary"
+        onClick={e => {
+          const id = contact_list.id;
+          onOpenContactList(id);
+        }}
+      >
+        {contact_list.name}
+      </td>
+      <td>{contact_list.description}</td>
+      <td>{contact_list.total_contacts}</td>
+    </tr>
+  );
+};
+
+const ContactsLists = ({ onOpenContactList,contact_lists }) => {
+  return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">Contact Lists</h3>
+        </div>
+
+        <table className="table table-responsive table-bordered">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Description</td>
+              <td>Total Contacts</td>
+            </tr>
+          </thead>
+          <tbody>
+            {contact_lists.map(contact_list => (
+              <ContactsListItems
+                onOpenContactList={onOpenContactList}
+                contact_list={contact_list}
+              />
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Name</td>
+              <td>Description</td>
+              <td>Total Contacts</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </Fragment>
+  );
+};
+
+/**
+ * ability to add and remove contacts, ability to
+ * organize contacts by named contact lists
+ * 
+// 	export const contact_lists_init = {
+// 		uid : '',
+// 		id : '',
+// 		name : '',
+// 		description : '',
+// 		total_contacts : '',	
+// 	};
+ * 
+ * 
+ * @returns {*}
+ * @constructor
+ */
+
+// eslint-disable-next-line no-unused-vars
+export const SMSContacts = () => {
+
+	const [contactLists,setContactLists] = useState([]);
+	const [contacts,setContacts] = useState([]);
+
+	const [display, setDisplay] = useState("contact-lists");
+	const [smsContactsMenu,setMenu] = useState({menu:false});
+
+	const {user_account_state} = useContext(UserAccountContext);
+
+	const showDropdownMenu = e => {
+		e.preventDefault();
+		setMenu({ menu: true });
+		document.addEventListener('click', hideDropdownMenu);
+	};
+
+	const hideDropdownMenu = () => {
+		setMenu({ menu: false });
+		document.removeEventListener('click', hideDropdownMenu);
+	};
+
+	/**
+	 * 
+	 * @param {*} id list id used to fetch contact list belonging to the list opened
+	 */
+	const onOpenContactList = id => {
+		const contact_list_details = contactLists.find(contact_list => contact_list.id === id);
+		const uid = user_account_state.user_account.uid;
+		const listname = contact_list_details.list_name;
+		smsApiRequests.fetchContactsByListName(uid,listname).then(response => {
+			if(response.status){
+				setContacts(response.payload);
+				setDisplay('contacts_manager');
+			}else{
+				setContacts([]);
+			}
+		}).catch(error => {
+			setContacts([]);
+		});
+
+		return true;
+	};
+
+
+	useEffect(() => {
+	  
+		const fetchContactListsAPI = async () => {
+			const uid = user_account_state.user_account.uid;
+
+			await smsApiRequests.fetchContactLists(uid).then(results => {
+				if(results.status){ 
+					setContactLists(results.payload)
+				}else{
+					setContactLists([])
+				}
+			}).catch(error => {
+				setContactLists([])
+			});
+
+			return true
+	  };		
+
+	  fetchContactListsAPI().then(results => console.log('contacts lists fetched',results));
+
+	  return () => {
+		setContactLists([]);	
+	  };
+	}, []);
+
+	return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <i className="fa fa-envelope-square"> </i> Contacts
+          </h3>
+
+          <div className="box-tools">
+            <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-box-tool dropdown"
+                onClick={e => showDropdownMenu(e)}
+              >
+                <i className="fa fa-bars"> </i>{" "}
+              </button>
+              {smsContactsMenu.menu ? (
+                <ul className="dropmenu">
+                  <li
+                    className="btn btn-block droplink"
+                    name="contact-lists"
+                    onClick={() => setDisplay("contact-lists")}
+                  >
+                    {" "}
+                    <i className="fa fa-envelope"> </i> Contacts Lists
+                  </li>
+                  <li
+                    className="btn btn-block droplink"
+                    name="add-contacts"
+                    onClick={() => setDisplay("add-contacts")}
+                  >
+                    {" "}
+                    <i className="fa fa-envelope"> </i> Add Contacts
+                  </li>
+                </ul>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {display === "contact-lists" ? (
+          <ContactsLists
+            onOpenContactList={onOpenContactList}
+            contact_lists={contactLists}
+          />
+        ) : null}
+        {display === "add-contacts" ? <AddContactList /> : null}
+        {display === "contacts_manager" ? <ContactsManager contacts={contacts} /> : null}
+      </div>
+    </Fragment>
+  );
 };
 
 

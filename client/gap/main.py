@@ -32,6 +32,8 @@ template_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.getcwd()))
 #TODO- Create a main router for all the URLS
 #TODO- The main routers should route only this Address /.* and will work as long as its the last router to execute and also help catch all other errors
 
+
+
 class MainRouterHandler(webapp2.RequestHandler):
 
     def RouteSitemap(self):
@@ -55,7 +57,29 @@ class MainRouterHandler(webapp2.RequestHandler):
 
 
     def get(self):
-        self.RouteHome()
+        route_list = self.request.uri
+        route = route_list.split('/')
+        context = {}
+
+        if 'OYrRbrrK5t59OeS8g-vOTV3nq6bI7HJ2tyxRxx5FhH4' in route:
+            
+            template = template_env.get_template('certificates/oyii.txt')
+            self.response.headers["Content-Type"] = "text/plain"
+            self.response.write(template.render(context))
+
+        elif '7ucJ8_YozK-FXpRdSsljodHPujqpuC7paveK_IpNTNk' in route:
+            
+            template = template_env.get_template('certificates/7up.txt')
+            self.response.headers["Content-Type"] = "text/plain"
+            self.response.write(template.render(context))
+
+        elif 'robots.txt' in route:
+            self.RouteRobots()
+
+        
+
+        else:
+            self.RouteHome()
 
     def post(self):
         self.RouteHome()
@@ -63,6 +87,7 @@ class MainRouterHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
+    
     ('.*', MainRouterHandler)
 
 ], debug=True)
