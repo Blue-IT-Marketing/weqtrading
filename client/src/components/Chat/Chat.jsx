@@ -1,8 +1,5 @@
 
 import React, { Fragment,useState,useContext,useEffect } from 'react';
-import useSocket from "use-socket.io-client";
-import { UserAccountContext } from "../../context/UserAccount/userAccountContext";
-import * as chat_constants from './chat-constants';
 import {extended_user} from '../Auth/auth-constants';
 import * as authAPI from '../Auth/auth-api';
 import {SocketContext} from '../../context/socketsio';
