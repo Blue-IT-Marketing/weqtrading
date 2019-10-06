@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { Fragment, useState, useEffect } from 'react';
-import Axios from 'axios';
+import React, { Fragment, useState, useEffect,useContext } from 'react';
 import './Blog.css';
-import {useForceUpdate} from '../hooks/forceUpdate';
-import {get_blog_articles} from './articles';
+import {BlogContext} from '../../context/blog';
 
-let blog_posts = '';
+
 
 
 function BlogPost({ post_data }) {
-	const [post, setPost] = useState({});
+
+  const [post, setPost] = useState({});
+  
 
 	let article = post_data;
 	console.log('Articles',article);
@@ -49,11 +49,13 @@ function BlogPost({ post_data }) {
 
 
 const Blog = () => {
-	const[category,setCategory] = useState('entertainment');
-  const [posts, setPosts] = useState([]);
-  const [displayMenu,setMenu] = useState({menu:false});
-	
 
+  const [displayMenu,setMenu] = useState({menu:false});	
+  const {
+    category,
+    setCategory,
+    posts,
+  } = useContext(BlogContext);
   
 
 const showDropdownMenu = e => {
@@ -69,22 +71,7 @@ const showDropdownMenu = e => {
 
   const title = `${category[0].toUpperCase()}${category.slice(1)} News`;
 
-	useEffect(() => {
-    async function fetchData() {
-      try{
-        let blog_posts = await get_blog_articles(category);
-        console.dir(blog_posts);
-        setPosts(blog_posts);
-        return true;
-      }catch(error){
-        console.log(error);
-        return false;
-      }            
-    }
-    fetchData().then(result => {
-      console.log(result);
-    })
-  }, [category]);
+
 
 	return (
     <Fragment>

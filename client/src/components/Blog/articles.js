@@ -1,4 +1,18 @@
-import Axios from 'axios';
+import axios from 'axios';
+
+function return_api_key(){
+	let apiKey = '';
+	axios.get(`/api/news/key/${uid}`).then(result => {
+		if(result.status === 200){
+			return result.data;
+		}
+	}).then(response => {
+		apiKey = response.key;
+	}).catch(error => {
+		apiKey = null;
+	});
+	return apiKey;
+};
 
 function return_date(){
 	const now = new Date();
@@ -17,13 +31,17 @@ let articles_api = {
 	apiKey : '41e896a0a1c94b61903408fae1a49471',
 	this_date : return_date(),
 	this_pagesize :return_page_size(),
+
 	entertainment_news: 'https://newsapi.org/v2/top-headlines?country=za&category=entertainment&apiKey=41e896a0a1c94b61903408fae1a49471',
 	sports_news: 'https://newsapi.org/v2/top-headlines?country=za&category=sports&apiKey=41e896a0a1c94b61903408fae1a49471',
     business_news: 'https://newsapi.org/v2/top-headlines?country=za&category=business&apiKey=41e896a0a1c94b61903408fae1a49471',
     tech_news: 'https://newsapi.org/v2/top-headlines?country=za&category=technology&apiKey=41e896a0a1c94b61903408fae1a49471',
     science_news: 'https://newsapi.org/v2/top-headlines?country=za&category=science&apiKey=41e896a0a1c94b61903408fae1a49471',
-    health_news: 'https://newsapi.org/v2/top-headlines?country=za&category=health&apiKey=41e896a0a1c94b61903408fae1a49471'
+	health_news: 'https://newsapi.org/v2/top-headlines?country=za&category=health&apiKey=41e896a0a1c94b61903408fae1a49471'
+		
 };
+
+
 export async function get_blog_articles(category) {	
 	let results = '';
 	let apiRequest = '';
@@ -38,7 +56,7 @@ export async function get_blog_articles(category) {
             default: apiRequest = articles_api.entertainment_news;break;        
         }
         
-	await Axios.get(apiRequest).then(result => {
+	await axios.get(apiRequest).then(result => {
 		if (result.status === 200) {
 			return result.data;
 		} else {
