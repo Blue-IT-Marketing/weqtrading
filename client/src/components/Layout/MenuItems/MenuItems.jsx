@@ -9,6 +9,7 @@ import * as apiRequests from '../../Auth/auth-api';
 
 const SideBarMenuAuth = () => {
 	const[user,setUser] = useState(extended_user);
+	
 	const {user_account_state} = useContext(UserAccountContext);
 
 	const openClientMenu = (e,id) => {    
@@ -62,7 +63,9 @@ const SideBarMenuAuth = () => {
 
 	useEffect(() => {
 		const fetchAPI = async () => {
-			let uid = user_account_state.user_account.uid;
+			
+			const uid = user_account_state.user_account.uid;
+
 			await apiRequests.fetchUser(uid).then(results => {
 				if(results.status){
 					setUser(results.payload);
@@ -89,7 +92,7 @@ const SideBarMenuAuth = () => {
   
 	return (
 		<ul className="sidebar-menu">
-			<li className="header">W-Trading</li>
+			<li className="header">W-Trading </li>
 			<li>
 				<Link to={routes.home_page} title="weqtrading online store">
 					<i className="fa fa-home" /> <strong>Home</strong>
@@ -423,6 +426,9 @@ const SideBarMenuAuth = () => {
 		</ul>
 	);
 };
+
+
+
 
 const SideBarMenuNonAuth = () => {
 	return (

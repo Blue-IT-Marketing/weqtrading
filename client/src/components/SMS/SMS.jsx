@@ -18,6 +18,7 @@ import * as smsApiRequests from './sms-api';
 import { UserAccountContext } from '../../context/UserAccount/userAccountContext';
 import InlineError from '../Forms/InlineError';
 import InlineMessage from '../Forms/InlineMessage';
+import { Add } from 'react-lodash';
 
 /**
  * function module to list balances and allowing balance top-up via
@@ -579,31 +580,299 @@ export const SMSMessages = () => {
 	);
 };
 
-
-const ContactListItem = ({contact}) => {
-	return(
-		<Fragment>
-
-		</Fragment>
-	)
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @param {*} param0 
+ */
+const ContactListItem = ({ onOpenContact,contact }) => {
+  return (
+    <Fragment>
+      <tr
+        className="btn btn-outline-primary"
+        onClick={e => {
+          const id = contact.id;
+          onOpenContact(id);
+        }}
+      >
+        <td>{contact.name}</td>
+        <td>{contact.surname}</td>
+        <td>{contact.cell}</td>
+        <td>{contact.tel}</td>
+        <td>{contact.email}</td>
+      </tr>
+    </Fragment>
+  );
 };
 
 
-const DisplayContactList = ({contacts_list}) => {
+const DisplayContactList = ({ onOpenContact,contacts_list }) => {
+  return (
+    <Fragment>
+      <div className="box box-body">
+        <div className="box box-header">
+          <h3 className="box-title">
+            <i className="fa fa-list"> </i> Contacts List
+          </h3>
+        </div>
+
+        <table className="table table-responsive table-bordered">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Surname</td>
+              <td>Cell</td>
+              <td>Tel</td>
+              <td>Email</td>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts_list.map(contact => (
+              <ContactListItem
+                onOpenContact={onOpenContact}
+                contact={contact}
+              />
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Name</td>
+              <td>Surname</td>
+              <td>Cell</td>
+              <td>Tel</td>
+              <td>Email</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </Fragment>
+  );
+};
+
+
+/**
+ * 
+ * @param {*} param0 
+ */
+const EditContact = ({contact_detail}) => {
+	const [contact, setContact] = useState(contacts_init);
+	const [errors,setErrors] = useState(contacts_errors_init);
+	const [inline,setInline] = useState({message:'',message_type:'error'});
+	
+	const {user_account_state} = useContext(UserAccountContext);
+
+	const updateContact = async () => {
+		const results = {status:false,payload:{},errors:{}};
+		
+		const uid = user_account_state.user_account.uid;
+
+		const contact_details = JSON.stringify(contact)
+		await smsApiRequests.updateContact(uid,contact_details).then(results => {
+			if(results.status){
+				return results.data;
+			}else{
+
+			}
+		})
+	};
+
+
+	const checkErrors = async e => {
+		let isError = false;
+		const check_name = () => {
+			if(Utils.isEmpty(contact.name)){
+				setErrors({...errors,name_error : 'name field cannot be empty'});
+				return true;
+			}
+			return false;
+		};
+
+		const check_surname = () => {
+			if(Utils.isEmpty(contact.surname)){
+				setErrors({...errors,surname_error : 'surname field cannot be empty'});
+				return true;
+			}
+			return false;
+		};
+
+		const check_cell = () => {
+		
+			if(!Utils.isCell(contact.cell)){
+				setErrors({...errors,cell_error : 'cell number is invalid'});
+				return true;
+			}
+			return false;
+		
+
+		};
+
+		const check_email = () => {
+			if (contact.email){
+			if(!Utils.validateEmail(contact.email)){
+				setErrors({...errors,email_error : 'email is invalid'});
+				return true;
+			}
+			return false;
+			};
+			return false;
+		};
+
+		const check_tel = () => {
+			if(contact.tel){
+				if(!Utils.isTel(contact.tel)){
+					setErrors({...errors,tel_error:'telephone number is'});
+					return true;
+				}
+				return false;
+			}
+			return false;
+		};
+
+		check_name() ? isError = true : isError = isError;
+		check_surname() ? isError = true : isError = isError;
+		check_cell() ? isError = true : isError = isError;
+		check_email() ? isError = true : isError = isError;
+		check_tel() ? isError = true : isError = isError;
+
+		return isError;
+	};
+	
+	useEffect(() => {
+		setContact(contact_detail);
+	  return () => {
+		setContact(contacts_init);
+	  };
+	}, [contact_detail]);
+
+
 	return(
+		
 		<Fragment>
 			<div className='box box-body'>
 				<div className='box box-header'>
-					<h3 className='box-title'>
-						<i className='fa fa-list'> </i>{' '}Contacts List
-					</h3>
+					<h3 className='box-title'>Edit Contact</h3>
 				</div>
 
+				<form className='form-horizontal'>
+					<div className='form-group'>
+						<label>Name</label>
+						<input 
+							type="text" 
+							className="form-control"
+							name='name'
+							value={contact.name}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+							/>
+						{errors.name_error ? <InlineError message={errors.name_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Surname</label>
+						<input 
+							type='text'
+							className='form-control'
+							name='surname'
+							value={contact.surname}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.surname_error ? <InlineError message={errors.surname_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Cell</label>
+						<input 
+							type='tel'
+							className='form-control'
+							name='cell'
+							value={contact.cell}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.cell_error ? <InlineError message={errors.cell_error} /> : null}
+					</div>
 
+					<div className='form-group'>
+						<label>Tel</label>
+						<input 
+							type='tel'
+							className='form-control'
+							name='tel'
+							value={contact.tel}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.tel_error ? <InlineError message={errors.tel_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Email</label>
+						<input 
+							type='email'
+							className='form-control'
+							name='email'
+							value={contact.email}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.email_error ? <InlineError message={errors.email_error} /> : null}
+					</div>
+
+					<div className='form-group'>
+						<label>Relationship</label>
+						<select
+							className='form-control'
+							name='relationship'
+							value={contact.relationship}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						>
+							<option value='business'>Business</option>
+							<option value='customer'>Customer</option>
+							<option value='marketing-clients'>Marketing Clients</option>
+						</select>
+					</div>
+					<div className='form-group'>
+						<button
+							type='button'
+							className='btn btn-success btn-lg'
+							name='addContact'
+							onClick={e => checkErrors(e).then(isError => {
+								isError ? setInline({message:'there was an error processing form',message_type:'error'})
+								: updateContact().then(result => {
+									if (result.status){
+										setInline({message:'successfully updated contacts',message_type:'info'});
+									}else{
+										setInline({message:'error adding new contact record please try again later',message_type:'error'});
+									}
+								}).catch(error => {
+									setInline({message:error.message,message_type:'error'});
+								});
+							})}
+						>
+							<i className='fa fa-save'> </i>{' '}
+							Add Contact
+						</button>
+						<button
+							type='button'
+							className='btn btn-warning btn-lg'
+							name='reset'
+							onClick={e => {
+								setInline({message:'',message_type:'info'});
+								setContact(contacts_init);
+								setErrors(contacts_errors_init);
+							}}
+						>
+							<i className='fa fa-eraser'> </i>{' '}
+							Reset
+						</button>
+					</div>
+
+					<div className='form-group'>
+						{inline.message ? <InlineMessage message={inline.message} message_type={inline.message_type} /> : null}
+					</div>
+					
+				</form>	
 			</div>
 		</Fragment>
+		
 	)
-};
+}
 
 /**
  * add contact to backend
@@ -612,7 +881,70 @@ const DisplayContactList = ({contacts_list}) => {
  * @param {*} addContact
  */
 const AddContact = ({addContact}) => {
-	const [contact,setContact] = useState(contacts_init)
+	const [contact,setContact] = useState(contacts_init);
+	const [errors,setErrors] = useState(contacts_errors_init);
+	const [inline,setInline] = useState({message:'',message_type:'error'});
+
+	const checkErrors = async e => {
+		let isError = false;
+		const check_name = () => {
+			if(Utils.isEmpty(contact.name)){
+				setErrors({...errors,name_error : 'name field cannot be empty'});
+				return true;
+			}
+			return false;
+		};
+
+		const check_surname = () => {
+			if(Utils.isEmpty(contact.surname)){
+				setErrors({...errors,surname_error : 'surname field cannot be empty'});
+				return true;
+			}
+			return false;
+		};
+
+		const check_cell = () => {
+		
+			if(!Utils.isCell(contact.cell)){
+				setErrors({...errors,cell_error : 'cell number is invalid'});
+				return true;
+			}
+			return false;
+		
+
+		};
+
+		const check_email = () => {
+			if (contact.email){
+			if(!Utils.validateEmail(contact.email)){
+				setErrors({...errors,email_error : 'email is invalid'});
+				return true;
+			}
+			return false;
+			};
+			return false;
+		};
+
+		const check_tel = () => {
+			if(contact.tel){
+				if(!Utils.isTel(contact.tel)){
+					setErrors({...errors,tel_error:'telephone number is'});
+					return true;
+				}
+				return false;
+			}
+			return false;
+		};
+
+		check_name() ? isError = true : isError = isError;
+		check_surname() ? isError = true : isError = isError;
+		check_cell() ? isError = true : isError = isError;
+		check_email() ? isError = true : isError = isError;
+		check_tel() ? isError = true : isError = isError;
+
+		return isError;
+	};
+
 	return(
 		<Fragment>
 			<div className='box box-body'>
@@ -621,16 +953,184 @@ const AddContact = ({addContact}) => {
 				</div>
 
 				<form className='form-horizontal'>
-				
+					<div className='form-group'>
+						<label>Name</label>
+						<input 
+							type="text" 
+							className="form-control"
+							name='name'
+							value={contact.name}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+							/>
+						{errors.name_error ? <InlineError message={errors.name_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Surname</label>
+						<input 
+							type='text'
+							className='form-control'
+							name='surname'
+							value={contact.surname}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.surname_error ? <InlineError message={errors.surname_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Cell</label>
+						<input 
+							type='tel'
+							className='form-control'
+							name='cell'
+							value={contact.cell}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.cell_error ? <InlineError message={errors.cell_error} /> : null}
+					</div>
+
+					<div className='form-group'>
+						<label>Tel</label>
+						<input 
+							type='tel'
+							className='form-control'
+							name='tel'
+							value={contact.tel}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.tel_error ? <InlineError message={errors.tel_error} /> : null}
+					</div>
+					<div className='form-group'>
+						<label>Email</label>
+						<input 
+							type='email'
+							className='form-control'
+							name='email'
+							value={contact.email}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						/>
+						{errors.email_error ? <InlineError message={errors.email_error} /> : null}
+					</div>
+
+					<div className='form-group'>
+						<label>Relationship</label>
+						<select
+							className='form-control'
+							name='relationship'
+							value={contact.relationship}
+							onChange={e => setContact({...contact,[e.target.name]:e.target.value})}
+						>
+							<option value='business'>Business</option>
+							<option value='customer'>Customer</option>
+							<option value='marketing-clients'>Marketing Clients</option>
+						</select>
+					</div>
+					<div className='form-group'>
+						<button
+							type='button'
+							className='btn btn-success btn-lg'
+							name='addContact'
+							onClick={e => checkErrors(e).then(isError => {
+
+								isError ? 
+								setInline(
+									{
+										message:'there was an error processing form',
+										message_type:'error'
+									})
+								: addContact(contact).then(response => {
+									if (response.status){
+										setInline({message:'successfully updated contacts',message_type:'info'});
+									}else{
+										setInline({message:'error adding new contact record please try again later',message_type:'error'});
+									}
+								}).catch(error => {
+									setInline({message:error.message,message_type:'error'});
+								});
+
+							})}
+						>
+							<i className='fa fa-save'> </i>{' '}
+							Add Contact
+						</button>
+						<button
+							type='button'
+							className='btn btn-warning btn-lg'
+							name='reset'
+							onClick={e => {
+								setInline({message:'',message_type:'info'});
+								setContact(contacts_init);
+								setErrors(contacts_errors_init);
+							}}
+						>
+							<i className='fa fa-eraser'> </i>{' '}
+							Reset
+						</button>
+					</div>
+
+					<div className='form-group'>
+						{inline.message ? <InlineMessage message={inline.message} message_type={inline.message_type} /> : null}
+					</div>
+					
 				</form>	
-				
 			</div>
 		</Fragment>
 	)
 }
 
-const ContactsManager = ({contacts}) => {
+const ContactsManager = ({contacts,contact_list_details}) => {
 	const [contacts_list,setContactsList] = useState([]);
+	const [display, setDisplay] = useState("contact-lists");
+	const [contactsManagerMenu,setMenu] = useState({menu:false});
+
+	const [contact,setContact] = useState(contacts_init);
+
+	const {user_account_state} = useContext(UserAccountContext);
+
+	const showDropdownMenu = e => {
+		e.preventDefault();
+		setMenu({ menu: true });
+		document.addEventListener('click', hideDropdownMenu);
+	};
+
+	const hideDropdownMenu = () => {
+		setMenu({ menu: false });
+		document.removeEventListener('click', hideDropdownMenu);
+	};
+
+	const onOpenContact = async id => {
+		setContact(contacts_list.find(contact => contact.id === id));
+		setDisplay('edit-contact');
+
+	}
+
+	/**
+	 * contact details will be added to the backend and in turn the results will update contacts_list 
+	 * @param {*} contact_details containst the details of the contact to be added
+	 */
+	const addContact = async (contact_details) =>{
+		
+		const results = {status : false,payload:{},error:{}};
+		
+		const uid = user_account_state.user_account.uid;
+		
+		contact_details.list_id = contact_list_details.id;
+		contact_details.list_name = contact_list_details.name;
+		const json_contact = JSON.stringify(contact_details)
+		// add contact to contact list
+		await smsApiRequests.saveContact(uid,json_contact).then(response => {
+			
+			if(response.status){
+				setContactsList(response.payload);
+				results = {...response};
+			}
+
+		}).catch(error => {
+			results.status = false;
+			results.payload = [];
+			results.error = {...error};
+		});
+
+		return results;
+	};
 
 	// setting contacts to contacts_list
 	useEffect(() => {
@@ -648,18 +1148,48 @@ const ContactsManager = ({contacts}) => {
           <h3 className="box-title">
             <i className="fa fa-user"></i> Contacts Manager
           </h3>
-		  <div className='box-tools'>
-			  <div className='dropdown'>
-
-			  </div>
-		  </div>
+          <div className="box-tools">
+            <div className="dropdown">
+              <button
+                type="button"
+                className="btn btn-box-tool dropdown"
+                onClick={e => showDropdownMenu(e)}
+              >
+                <i className="fa fa-bars"> </i>{" "}
+              </button>
+              {contactsManagerMenu.menu ? (
+                <ul className="dropmenu">
+                  <li
+                    className="btn btn-block droplink"
+                    name="contact-lists"
+                    onClick={() => setDisplay("contact-lists")}
+                  >
+                    {" "}
+                    <i className="fa fa-users"> </i> Contact Lists
+                  </li>
+                  <li
+                    className="btn btn-block droplink"
+                    name="add-contact"
+                    onClick={() => setDisplay("add-contact")}
+                  >
+                    {" "}
+                    <i className="fa fa-envelope"> </i> Add Contact
+                  </li>
+                </ul>
+              ) : null}
+            </div>
+          </div>
         </div>
 
-		{
-			contacts_list.map(contact => {
-				return <ContactListItem contact={contact} />
-			})
-		}
+        {display === "contact-lists" ? 
+          <DisplayContactList
+            onOpenContact={onOpenContact}
+            contacts_list={contacts_list}
+          />
+        : null}
+        {display === "add-contact" ? <AddContact addContact={addContact} />:null}
+		
+		{display === 'edit-contact' ? <EditContact contact_detail={contact} /> : null}
       </div>
     </Fragment>
   );
@@ -731,7 +1261,7 @@ const AddContactList = () => {
 			<div className="box box-body">
 				<div className="box box-header">
 					<h3 className="box-title">
-						Add Contact Lists
+						Create Contact List
 					</h3>
 				</div>
 
@@ -882,6 +1412,7 @@ export const SMSContacts = () => {
 
 	const [contactLists,setContactLists] = useState([]);
 	const [contacts,setContacts] = useState([]);
+	const [listDetail,setListDetail] = useState(contact_lists_init);
 
 	const [display, setDisplay] = useState("contact-lists");
 	const [smsContactsMenu,setMenu] = useState({menu:false});
@@ -907,6 +1438,7 @@ export const SMSContacts = () => {
 		const contact_list_details = contactLists.find(contact_list => contact_list.id === id);
 		const uid = user_account_state.user_account.uid;
 		const listname = contact_list_details.list_name;
+		setListDetail(contact_list_details);
 		smsApiRequests.fetchContactsByListName(uid,listname).then(response => {
 			if(response.status){
 				setContacts(response.payload);
@@ -972,7 +1504,7 @@ export const SMSContacts = () => {
                     onClick={() => setDisplay("contact-lists")}
                   >
                     {" "}
-                    <i className="fa fa-envelope"> </i> Contacts Lists
+                    <i className="fa fa-envelope"> </i> Contact Lists
                   </li>
                   <li
                     className="btn btn-block droplink"
@@ -980,7 +1512,7 @@ export const SMSContacts = () => {
                     onClick={() => setDisplay("add-contacts")}
                   >
                     {" "}
-                    <i className="fa fa-envelope"> </i> Add Contacts
+                    <i className="fa fa-envelope"> </i> Create Contact List
                   </li>
                 </ul>
               ) : null}
@@ -995,7 +1527,12 @@ export const SMSContacts = () => {
           />
         ) : null}
         {display === "add-contacts" ? <AddContactList /> : null}
-        {display === "contacts_manager" ? <ContactsManager contacts={contacts} /> : null}
+        {display === "contacts_manager" ? (
+          <ContactsManager
+            contact_list_details={listDetail}
+            contacts={contacts}
+          />
+        ) : null}
       </div>
     </Fragment>
   );

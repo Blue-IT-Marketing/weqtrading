@@ -108,7 +108,7 @@ export const saveContactsList = async (uid,json_contacts_list) => {
 		if(response.status === 200){
 			return response.data
 		}else{
-			throw new Error('there was an error fetching contacts lists');
+			throw new Error('there was an error creating contact lists');
 		}
 	}).then(contacts_lists => {
 		results.status = true;
@@ -121,6 +121,38 @@ export const saveContactsList = async (uid,json_contacts_list) => {
 	});
 
 	return results;
+};
+
+
+export const saveContact= async (uid,json_contact) => {
+
+	const results = { status: false, payload: [], error: {} };
+	const prepared_route = routes.api_sms_endpoint + `/smscontact/${uid}`;
+
+	await axios.post(prepared_route,json_contact).then(response => 
+		{
+			if(response.status === 200){
+				return response.data;
+			}else{
+				throw new Error('there was an error adding contact to contact list');
+		}
+		}).then(contact_list => {
+			results.status = true;
+			results.payload = [...contact_list];
+			results.error = {};
+		}).catch(error => {
+			results.status = false;
+			results.payload = [];
+			results.error ={...error};
+	});
+
+	return results;
+};
+
+export const updateContact = async(uid, contact_details) => {
+		const results = { status: false, payload: [], error: {} };
+
+		return results;
 };
 
 export const fetchContactsByListName = async (uid,listname) => {

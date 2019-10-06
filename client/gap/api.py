@@ -574,6 +574,19 @@ class APIRouterHandler(webapp2.RequestHandler):
                 response_data = {}
                 response_data = results.to_dict()
 
+            elif ('smscontact' in route) and (this_user != ''):
+                json_contact = json.loads(self.request.body)
+                logging.info(json_contact)
+
+                sms_contact = SMSContacts()
+                results = sms_contact.addContact(contact=json_contact)
+
+                contact_list = sms_contact.fetchContactsByListID(id=json_contact['list_id'])
+
+                response_data = []
+
+                for contact in contact_list:
+                    response_data.append(contact.to_dict())
 
             else:
                 status_int = 303
