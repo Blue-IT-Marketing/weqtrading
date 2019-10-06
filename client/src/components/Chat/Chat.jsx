@@ -115,8 +115,7 @@ const Chat = () => {
         </div>
 
         <div className="box-body chat" id="chat-box">
-          {messages.map((message) => {
-            console.log('message',message);
+          {messages.map((message) => {            
             return <DisplayMessage message={message} key={message.message_id} />;
           })}
         </div>
