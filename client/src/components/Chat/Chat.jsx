@@ -6,6 +6,7 @@ import {SocketContext} from '../../context/socketsio';
 
 
 const DisplayMessage = ({message}) => {
+  
   const[author,setAuthor] = useState(extended_user);
   
   const retrieveAuthor = async uid => {

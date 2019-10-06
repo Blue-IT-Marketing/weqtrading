@@ -1,3 +1,9 @@
+
+
+/**
+ * chat context provider encapsulating all the 
+ * functions of the socket.io and message que management
+ */
 import React, { Component, useContext, createContext,useState,useEffect, Children } from "react";
 import useSocket from "use-socket.io-client";
 import { UserAccountContext } from "../UserAccount/userAccountContext";
@@ -58,7 +64,6 @@ export const SocketContextProvider = (props) => {
         };
     }, [])
     
-
   useEffect(() => {  
 
     // reacting to on chat messages
