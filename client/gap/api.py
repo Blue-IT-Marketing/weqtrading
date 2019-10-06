@@ -18,7 +18,7 @@ from store import Store
 from transactions import Transactions
 from banking import Banking
 from messaging import SMSBundles, SMSBalances, SMSMessage, SMSPayments, ContactLists,SMSContacts
-
+from chat import ChatMessages, ChatRoom, ChatUsers
 def authorize (uid):
     # take in a user id and check if the user has permissions to access 
     # the resource he or she is asking for
@@ -368,6 +368,59 @@ class APIRouterHandler(webapp2.RequestHandler):
             else:
                 status = 303
                 response_data = {'message':'request not understood'}
+
+        elif 'chat-rooms' in route:
+            uid = route[len(route) - 1]
+            chat_id = route[len(route) - 2]
+            user = User()
+            this_user = user.getUser(uid=uid)
+            response_data = {}
+            if this_user != '':
+                chat_room_instance = ChatRoom()
+                chat_room = chat_room_instance.getChatRoom(chat_id=chat_id)
+
+                chat_messages = []
+                chat_users = []
+                if chat_room != '':
+                    messages_instance = ChatMessages()
+                    messages = messages_instance.getChatMessages(chat_id=chat_id)
+
+                    for message in messages:
+                        chat_messages.append(message.to_dict())
+
+                    chat_users_instance = ChatUsers()
+                    users = chat_users_instance.getChatUsers(chat_id=chat_id)
+
+                    for user in users:
+                        chat_users.append(user.to_dict())
+                
+                response_data = {
+                    'chat_id' : chat_id,
+                    'created_by' : chat_room.created_by,
+                    'messages' : chat_messages,
+                    'users' : chat_users
+                };
+
+            else:
+                status_int = 401
+                response_data = {
+                    'message': 'user not recognised'
+                }
+
+
+
+                
+
+
+
+
+
+
+
+
+
+
+
 
 
         else:

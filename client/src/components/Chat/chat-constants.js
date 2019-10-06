@@ -14,7 +14,8 @@ export const chat_message_init = {
 export const chat_room_init = {
     chat_id : 'weqtrading',
     created_by : 'heinrich',
-    messages : []    
+    messages : [],
+    users : []
 };
 
 export const chat_user_init = {

@@ -28,7 +28,7 @@ const DisplayMessage = ({message}) => {
 
   };
 
-  const returnDate = ({timestamp}) => {
+  const returnDate = timestamp => {
     return Date(parseInt(timestamp) * 1000);
   }
 
@@ -86,21 +86,25 @@ const Chat = () => {
   const [feedback, setFeedBack] = useState(chat_constants.feedback_init);
 
   const [writer,setWriter] = useState(extended_user);
+
   let server_url = '';
 
-  if (document.URL.includes('localhost') || document.URL.includes('127.0.0.1')){
-    
-    server_url = chat_constants.chat_server;
-    
+  // necessary so i can upload the code without modifying chat servers
+  if (document.URL.includes('localhost') || document.URL.includes('127.0.0.1')){    
+    server_url = chat_constants.chat_server;    
   }else{
     server_url = chat_constants.chat_server_online;
   }
   
+  // initializing socket to use websockets
   const [socket] = useSocket(server_url, {transports: ["websocket"]});
   socket.connect();
 
+
   const { user_account_state } = useContext(UserAccountContext);  
   const uid = user_account_state.user_account.uid;
+
+  // if there is a feedback being sent user details for that feedback will be retrieved here
   const retrieveFeedbackUser = async uid => {
       await authAPI.fetchUser(uid).then(results => {
         if(results.status){
@@ -111,6 +115,7 @@ const Chat = () => {
       })
   };
 
+  // updating user interface with new messages  
   const updateMessages = async new_message => {      
       console.log('Returned Message',new_message);
       
@@ -121,7 +126,8 @@ const Chat = () => {
 
   useEffect(() => {  
 
-    socket.on("chat", data => {
+    // reacting to on chat messages
+    socket.on("chat", data => {      
       
       const new_message = [...data];
       
@@ -133,6 +139,7 @@ const Chat = () => {
 
     });
 
+    // reacting to on typing messages
     socket.on("typing", data => {
       const uid = data.author;
       retrieveFeedbackUser(uid).then(result => {
@@ -143,16 +150,20 @@ const Chat = () => {
       });
     });
 
+    // reacting to on populate messages
     socket.on("populate", data => {
       // this allows my app to populate itself with the most recent messages on entry
       // the data field carries an array which includes messages            
       setMessages(data);
     });
 
+    // initializing message so that when a message 
+    // is sent it is sent with the user id of the correct user
     setMessage({
       ...message,
       author: uid
     });
+
 
     return () => {
       setMessage({
@@ -162,6 +173,7 @@ const Chat = () => {
     };
   }, []);
 
+  // function used to send a message
   const onSendMessage = e => {
     let data = message;
     data.author = user_account_state.user_account.uid;
@@ -169,14 +181,21 @@ const Chat = () => {
     socket.emit('chat',data);
   };
 
+  // function used to indicate that this user is typing
   const onTyping = e => {
+    setFeedBack(chat_constants.feedback_init);
     let data = message;
     data.author = user_account_state.user_account.uid;
     socket.emit('typing',data);
   };
 
-  const onPopulate = () => {
-    
+  //  try calling this method to let the user join the chat room then call onPopulate
+  const userJoinChat = () => {
+
+  };
+
+  // this function is called on entry to populate with all the messages
+  const onPopulate = () => {    
     const uid = user_account_state.user_account.uid;
     const populate_message = chat_constants.chat_user_init;
     populate_message.author = uid;
@@ -185,11 +204,14 @@ const Chat = () => {
     return populate_message;
   };
 
+
+  // called in order to clear messages
   const onClearMessages = (e) => {      
     let data = chat_constants.chat_room_init;
     socket.emit('clear', data);      
   };
 
+  // creating the onPupulate entry message
   useEffect(() => {    
     socket.emit("populate", onPopulate());
     return () => {      
@@ -258,7 +280,7 @@ const Chat = () => {
         <div className="box-footer">
           <div className="box-tools">
             {writer.uid ? (
-              <strong> {writer.names} - - is typing a message...</strong>
+              <a href='#'><small><strong><em> {writer.names} - - is typing a message... </em></strong></small></a>
             ) : null}
           </div>
         </div>
