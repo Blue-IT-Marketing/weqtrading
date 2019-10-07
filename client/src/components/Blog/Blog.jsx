@@ -70,9 +70,6 @@ const showDropdownMenu = e => {
   }
 
   const title = `${category[0].toUpperCase()}${category.slice(1)} News`;
-
-
-
 	return (
     <Fragment>
       <div className="box box-body">

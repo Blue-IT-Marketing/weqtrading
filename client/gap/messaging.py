@@ -132,7 +132,7 @@ class SMSBundles(ndb.Expando):
 
         return isdeleted
 
-    def fetchBundles():
+    def fetchBundles(self):
 
         bundles_query = SMSBundles.query()
         bundles_list = bundles_query.fetch()

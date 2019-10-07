@@ -116,7 +116,7 @@ export const SocketContextProvider = (props) => {
   // function used to send a message
   const onSendMessage = e => {
     let data = message;
-    data.author = user_account_state.user_account.uid;
+    data.author = uid;
     data.chat_id = chat_constants.chat_room_init.chat_id;
     socket.emit('chat',data);
   };
@@ -125,7 +125,7 @@ export const SocketContextProvider = (props) => {
   const onTyping = e => {
     setFeedBack(chat_constants.feedback_init);
     let data = message;
-    data.author = user_account_state.user_account.uid;
+    data.author = uid;
     socket.emit('typing',data);
   };
 
@@ -136,8 +136,9 @@ export const SocketContextProvider = (props) => {
 
   // this function is called on entry to populate with all the messages
   const onPopulate = () => {    
-    const uid = user_account_state.user_account.uid;
+    
     const populate_message = chat_constants.chat_user_init;
+    console.log('UID',uid);
     populate_message.author = uid;
     populate_message.chat_id = chat_constants.chat_room_init.chat_id;
 
