@@ -33,7 +33,7 @@
     "redux-logger": "^3.0.6",
     "redux-promise": "^0.6.0",
     "redux-thunk": "^2.3.0",
-    "simple-crypto-js": "^2.0.2",
+    "simple-crypto-js": "^2.3.0",
     "slackbots": "^1.2.0",
     "typescript": "*",
     "use-immer": "^0.3.4",
